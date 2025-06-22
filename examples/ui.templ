@@ -173,10 +173,10 @@ templ FormComponentsSection() {
 
                         <div class="form-control">
                             <label class="label">
-                                <span class="label-text font-medium">Multi-Select Dropdown</span>
+                                <span class="label-text font-medium">Multi-Select with Count</span>
                             </label>
                             @ui.MultiSelect(ui.MultiSelectProps{
-                                Placeholder: "Select multiple options",
+                                Placeholder: "Select departments",
                                 Options: []ui.MultiSelectOption{
                                     {Value: "tech", Label: "Technology", Selected: true},
                                     {Value: "design", Label: "Design"},
@@ -186,6 +186,8 @@ templ FormComponentsSection() {
                                 },
                             })
                         </div>
+
+
 
                         <div class="form-control">
                             <label class="label cursor-pointer justify-start gap-3">
@@ -238,58 +240,85 @@ templ FormComponentsSection() {
                         <div class="form-control">
                             <label class="label">
                                 <span class="label-text font-medium">File Upload</span>
+                                <span class="label-text-alt">Images only, max 10MB</span>
                             </label>
                             <input 
                                 type="file" 
+                                accept="image/*"
                                 class="file-input file-input-bordered file-input-primary w-full" 
-                                placeholder="Choose file"
                             />
                         </div>
 
                         <div class="form-control">
                             <label class="label">
                                 <span class="label-text font-medium">Multiple File Upload</span>
+                                <span class="label-text-alt">Select multiple files</span>
                             </label>
                             <input 
                                 type="file" 
                                 multiple 
                                 class="file-input file-input-bordered file-input-secondary w-full" 
-                                placeholder="Choose files"
                             />
                         </div>
 
                         <div class="form-control">
                             <label class="label">
-                                <span class="label-text font-medium">Date Input</span>
+                                <span class="label-text font-medium">📅 Date Selection</span>
+                                <span class="label-text-alt">Pick a date</span>
                             </label>
-                            @ui.Input(ui.InputProps{
-                                Type: "date",
-                                Variant: "bordered",
-                                Size: "md",
-                            })
+                            <div class="relative">
+                                @ui.Input(ui.InputProps{
+                                    Type: "date",
+                                    Variant: "bordered",
+                                    Size: "md",
+                                    Class: "pl-10",
+                                })
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <svg class="w-5 h-5 text-base-content/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                    </svg>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="form-control">
                             <label class="label">
-                                <span class="label-text font-medium">Time Input</span>
+                                <span class="label-text font-medium">⏰ Time Selection</span>
+                                <span class="label-text-alt">Choose time</span>
                             </label>
-                            @ui.Input(ui.InputProps{
-                                Type: "time",
-                                Variant: "bordered",
-                                Size: "md",
-                            })
+                            <div class="relative">
+                                @ui.Input(ui.InputProps{
+                                    Type: "time",
+                                    Variant: "bordered",
+                                    Size: "md",
+                                    Class: "pl-10",
+                                })
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <svg class="w-5 h-5 text-base-content/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="form-control">
                             <label class="label">
-                                <span class="label-text font-medium">Color Picker</span>
+                                <span class="label-text font-medium">🎨 Color Picker</span>
+                                <span class="label-text-alt">Brand primary color</span>
                             </label>
-                            @ui.Input(ui.InputProps{
-                                Type: "color",
-                                Variant: "bordered",
-                                Size: "md",
-                                Value: "#21569e",
-                            })
+                            <div class="flex items-center gap-3">
+                                @ui.Input(ui.InputProps{
+                                    Type: "color",
+                                    Variant: "bordered",
+                                    Size: "md",
+                                    Value: "#21569e",
+                                    Class: "w-16 h-10 p-1 cursor-pointer",
+                                })
+                                <div class="flex items-center gap-2">
+                                    <span class="text-sm font-mono text-base-content/70">#21569e</span>
+                                    <div class="w-6 h-6 rounded border border-base-300" style="background-color: #21569e;"></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -574,14 +603,29 @@ templ LayoutComponentsSection() {
                         @ui.Separator(ui.SeparatorProps{Orientation: "horizontal", Variant: "primary"})
                         <p class="text-center">Content after separator</p>
                         
-                        <div class="mt-4">
-                            <h4 class="font-medium mb-2">Dividers</h4>
-                            <div class="space-y-3">
-                                <div>Simple content above</div>
-                                @ui.Divider(ui.DividerProps{Orientation: "horizontal", Variant: "neutral"})
-                                <div>Content between dividers</div>
-                                                                 @ui.DividerWithText(ui.DividerProps{Orientation: "horizontal", Variant: "primary"}, "OR")
-                                <div>Content below with text divider</div>
+                                                <div class="mt-4">
+                            <h4 class="font-medium mb-2">Dividers & Separators</h4>
+                            <div class="space-y-6">
+                                <div>
+                                    <h5 class="text-sm font-medium mb-2">Horizontal Dividers</h5>
+                                    <div class="space-y-3">
+                                        <div>Simple content above</div>
+                                        @ui.Divider(ui.DividerProps{Orientation: "horizontal", Variant: "neutral"})
+                                        <div>Content between dividers</div>
+                                        @ui.DividerWithText(ui.DividerProps{Orientation: "horizontal", Variant: "primary"}, "OR")
+                                        <div>Content below with text divider</div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h5 class="text-sm font-medium mb-2">Vertical Separator</h5>
+                                    <div class="flex items-center gap-4 min-h-[60px]">
+                                        <div class="text-center">Left Content</div>
+                                        @ui.Separator(ui.SeparatorProps{Orientation: "vertical", Variant: "primary"})
+                                        <div class="text-center">Right Content</div>
+                                        @ui.SeparatorWithText(ui.SeparatorProps{Orientation: "vertical", Variant: "secondary"}, "OR")
+                                        <div class="text-center">More Content</div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 

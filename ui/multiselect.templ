@@ -20,35 +20,44 @@ type MultiSelectProps struct {
 	Required    bool
 	Options     []MultiSelectOption
 	MaxHeight   string // e.g., "200px", "max-h-48"
+	ShowSelected bool   // show selected items as badges
+	WrapSelected bool   // wrap selected items or show overflow
+	MaxDisplay   int    // max items to display before showing count
 }
 
 // MultiSelect creates a custom multi-select component with checkboxes
 templ MultiSelect(props MultiSelectProps) {
 	<div class={ getMultiSelectClasses(props) }>
 		<div class="dropdown w-full">
-			<div tabindex="0" role="button" class="btn btn-outline justify-between w-full">
-				<span class="text-left">
-					if getSelectedCount(props.Options) > 0 {
-						{ getSelectedText(props.Options) }
+			<div tabindex="0" role="button" class="btn btn-outline justify-between w-full min-h-[2.5rem] h-auto">
+				<div class="flex-1 text-left">
+					if props.ShowSelected && getSelectedCount(props.Options) > 0 {
+						@MultiSelectSelectedDisplay(props)
 					} else {
-						if props.Placeholder != "" {
-							{ props.Placeholder }
-						} else {
-							Select options...
-						}
+						<span class="text-base-content/70">
+							if getSelectedCount(props.Options) > 0 {
+								{ getSelectedCountText(props.Options) }
+							} else {
+								if props.Placeholder != "" {
+									{ props.Placeholder }
+								} else {
+									Select options...
+								}
+							}
+						</span>
 					}
-				</span>
-				<svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				</div>
+				<svg class="w-4 h-4 ml-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
 				</svg>
 			</div>
 			<div class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-full" style={ getDropdownStyle(props.MaxHeight) }>
 				<div class="form-control">
 					for _, option := range props.Options {
-						<label class="label cursor-pointer justify-start">
+						<label class="label cursor-pointer justify-start hover:bg-base-200 rounded">
 							<input
 								type="checkbox"
-								class="checkbox checkbox-sm mr-2"
+								class="checkbox checkbox-sm mr-3"
 								if props.Name != "" {
 									name={ props.Name + "[]" }
 								}
@@ -66,6 +75,40 @@ templ MultiSelect(props MultiSelectProps) {
 				</div>
 			</div>
 		</div>
+	</div>
+}
+
+// MultiSelectSelectedDisplay shows selected items as badges
+templ MultiSelectSelectedDisplay(props MultiSelectProps) {
+	<div class={ getSelectedDisplayClasses(props) }>
+		if len(getSelectedOptions(props.Options)) <= getMaxDisplayCount(props) {
+			for _, item := range getSelectedOptions(props.Options) {
+				<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20 mr-1 mb-1">
+					{ item.Label }
+					<button type="button" class="ml-1 inline-flex items-center justify-center w-4 h-4 rounded-full hover:bg-primary/20">
+						<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+						</svg>
+					</button>
+				</span>
+			}
+		} else {
+			for i, item := range getSelectedOptions(props.Options) {
+				if i < getMaxDisplayCount(props)-1 {
+					<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20 mr-1 mb-1">
+						{ item.Label }
+						<button type="button" class="ml-1 inline-flex items-center justify-center w-4 h-4 rounded-full hover:bg-primary/20">
+							<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+							</svg>
+						</button>
+					</span>
+				}
+			}
+			<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-base-200 text-base-content border border-base-300 mr-1 mb-1">
+				+{ fmt.Sprintf("%d", len(getSelectedOptions(props.Options)) - getMaxDisplayCount(props) + 1) } more
+			</span>
+		}
 	</div>
 }
 
@@ -123,4 +166,46 @@ func getDropdownStyle(maxHeight string) string {
 		return "overflow-y: auto;"
 	}
 	return fmt.Sprintf("max-height: %s; overflow-y: auto;", maxHeight)
+}
+
+func getSelectedDisplayClasses(props MultiSelectProps) string {
+	classes := "flex flex-wrap gap-2"
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+}
+
+func getSelectedOptions(options []MultiSelectOption) []MultiSelectOption {
+	selectedOptions := []MultiSelectOption{}
+	for _, option := range options {
+		if option.Selected {
+			selectedOptions = append(selectedOptions, option)
+		}
+	}
+	return selectedOptions
+}
+
+func getMaxDisplayCount(props MultiSelectProps) int {
+	if props.MaxDisplay > 0 {
+		return props.MaxDisplay
+	}
+	return 5 // Default max display count
+}
+
+func getSelectedCountText(options []MultiSelectOption) string {
+	selectedCount := getSelectedCount(options)
+	if selectedCount == 0 {
+		return "Select options..."
+	}
+	if selectedCount == 1 {
+		for _, option := range options {
+			if option.Selected {
+				return option.Label
+			}
+		}
+	}
+	return fmt.Sprintf("%d selected", selectedCount)
 } 

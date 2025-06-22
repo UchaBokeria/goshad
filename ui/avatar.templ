@@ -35,7 +35,7 @@ templ Avatar(props AvatarProps) {
 
 // getAvatarClasses returns the appropriate CSS classes for the avatar container
 func getAvatarClasses(props AvatarProps) string {
-	classes := "avatar"
+	classes := "avatar flex items-center justify-center"
 	
 	if props.Online || props.Offline {
 		classes += " relative"

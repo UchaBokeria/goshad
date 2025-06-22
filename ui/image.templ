@@ -77,6 +77,11 @@ func getImageClasses(props ImageProps) string {
 		classes += "object-cover"
 	}
 	
+	// For rounded full images, ensure aspect ratio is square
+	if props.Rounded == "full" {
+		classes += " aspect-square"
+	}
+	
 	// Rounded corners
 	switch props.Rounded {
 	case "none":

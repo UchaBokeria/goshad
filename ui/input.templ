@@ -103,4 +103,173 @@ func getInputClasses(props InputProps) string {
 	}
 	
 	return classes
+}
+
+// FileUploadProps defines the properties for the FileUpload component
+type FileUploadProps struct {
+	Name        string
+	ID          string
+	Multiple    bool
+	Accept      string // file types like "image/*" or ".pdf,.doc"
+	MaxSize     string // display text like "Max 10MB"
+	DragDrop    bool   // enable drag and drop
+	Variant     string // primary, secondary, accent, etc.
+	Size        string // xs, sm, md, lg
+	Disabled    bool
+	Class       string
+}
+
+// FileUpload creates a file upload component with optional drag and drop
+templ FileUpload(props FileUploadProps) {
+	if props.DragDrop {
+		@FileUploadDragDrop(props)
+	} else {
+		@FileUploadStandard(props)
+	}
+}
+
+// FileUploadStandard creates a standard file input
+templ FileUploadStandard(props FileUploadProps) {
+	<input
+		type="file"
+		if props.Name != "" {
+			name={ props.Name }
+		}
+		if props.ID != "" {
+			id={ props.ID }
+		}
+		if props.Multiple {
+			multiple
+		}
+		if props.Accept != "" {
+			accept={ props.Accept }
+		}
+		if props.Disabled {
+			disabled
+		}
+		class={ getFileUploadClasses(props) }
+	/>
+}
+
+// FileUploadDragDrop creates a drag and drop file upload area
+templ FileUploadDragDrop(props FileUploadProps) {
+	<div class={ getFileUploadDragDropClasses(props) }>
+		<input
+			type="file"
+			if props.Name != "" {
+				name={ props.Name }
+			}
+			if props.ID != "" {
+				id={ props.ID }
+			}
+			if props.Multiple {
+				multiple
+			}
+			if props.Accept != "" {
+				accept={ props.Accept }
+			}
+			if props.Disabled {
+				disabled
+			}
+			class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+		/>
+		<div class="flex flex-col items-center justify-center p-6 text-center">
+			<svg class="w-12 h-12 mb-4 text-base-content/40" fill="none" stroke="currentColor" viewBox="0 0 48 48">
+				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"></path>
+			</svg>
+			<div class="text-base-content mb-2">
+				<span class="font-medium text-primary">Click to upload</span>
+				<span> or drag and drop</span>
+			</div>
+			if props.Accept != "" {
+				<p class="text-xs text-base-content/60">{ getFileTypeText(props.Accept) }</p>
+			}
+			if props.MaxSize != "" {
+				<p class="text-xs text-base-content/60">{ props.MaxSize }</p>
+			}
+		</div>
+	</div>
+}
+
+// getFileUploadClasses returns the appropriate CSS classes for file input
+func getFileUploadClasses(props FileUploadProps) string {
+	classes := "file-input file-input-bordered w-full"
+	
+	switch props.Variant {
+	case "primary":
+		classes += " file-input-primary"
+	case "secondary":
+		classes += " file-input-secondary"
+	case "accent":
+		classes += " file-input-accent"
+	case "info":
+		classes += " file-input-info"
+	case "success":
+		classes += " file-input-success"
+	case "warning":
+		classes += " file-input-warning"
+	case "error":
+		classes += " file-input-error"
+	}
+	
+	switch props.Size {
+	case "xs":
+		classes += " file-input-xs"
+	case "sm":
+		classes += " file-input-sm"
+	case "lg":
+		classes += " file-input-lg"
+	default:
+		classes += " file-input-md"
+	}
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+}
+
+// getFileUploadDragDropClasses returns the appropriate CSS classes for drag drop area
+func getFileUploadDragDropClasses(props FileUploadProps) string {
+	classes := "relative border-2 border-dashed rounded-lg transition-colors hover:border-primary/50"
+	
+	if props.Disabled {
+		classes += " border-base-300 bg-base-200 opacity-50"
+	} else {
+		classes += " border-base-300 bg-base-100 hover:bg-base-50"
+	}
+	
+	switch props.Size {
+	case "xs":
+		classes += " min-h-[80px]"
+	case "sm":
+		classes += " min-h-[100px]"
+	case "lg":
+		classes += " min-h-[160px]"
+	default:
+		classes += " min-h-[120px]"
+	}
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+}
+
+// getFileTypeText returns user-friendly file type text
+func getFileTypeText(accept string) string {
+	switch accept {
+	case "image/*":
+		return "PNG, JPG, GIF up to 10MB"
+	case ".pdf":
+		return "PDF files only"
+	case ".doc,.docx":
+		return "Word documents only"
+	case ".pdf,.doc,.docx":
+		return "PDF and Word documents"
+	default:
+		return accept
+	}
 } 
