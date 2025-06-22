@@ -18,9 +18,9 @@ type TextProps struct {
 }
 
 // Text creates a text component with styling
-templ Text(props TextProps, content templ.Component) {
+templ Text(props TextProps) {
 	<span class={ getTextClasses(props) }>
-		@content
+		{ children... }
 	</span>
 }
 
@@ -32,9 +32,9 @@ templ TextWithString(props TextProps, text string) {
 }
 
 // Paragraph creates a paragraph text component
-templ Paragraph(props TextProps, content templ.Component) {
+templ Paragraph(props TextProps) {
 	<p class={ getTextClasses(props) }>
-		@content
+		{ children... }
 	</p>
 }
 
@@ -46,9 +46,9 @@ templ ParagraphWithString(props TextProps, text string) {
 }
 
 // Code creates an inline code text component
-templ Code(props TextProps, content templ.Component) {
+templ Code(props TextProps) {
 	<code class={ getCodeClasses(props) }>
-		@content
+		{ children... }
 	</code>
 }
 
@@ -60,9 +60,9 @@ templ CodeWithString(props TextProps, text string) {
 }
 
 // Pre creates a preformatted text component
-templ Pre(props TextProps, content templ.Component) {
+templ Pre(props TextProps) {
 	<pre class={ getPreClasses(props) }>
-		@content
+		{ children... }
 	</pre>
 }
 
@@ -74,23 +74,23 @@ templ PreWithString(props TextProps, text string) {
 }
 
 // Small creates small text component
-templ Small(props TextProps, content templ.Component) {
+templ Small(props TextProps) {
 	<small class={ getTextClasses(props) }>
-		@content
+		{ children... }
 	</small>
 }
 
 // Strong creates bold text component
-templ Strong(props TextProps, content templ.Component) {
+templ Strong(props TextProps) {
 	<strong class={ getStrongClasses(props) }>
-		@content
+		{ children... }
 	</strong>
 }
 
 // Em creates emphasized (italic) text component
-templ Em(props TextProps, content templ.Component) {
+templ Em(props TextProps) {
 	<em class={ getEmClasses(props) }>
-		@content
+		{ children... }
 	</em>
 }
 
@@ -215,7 +215,7 @@ func getCodeClasses(props TextProps) string {
 	classes := getTextClasses(props)
 	
 	// Add default code styling
-	baseCodeClasses := "font-mono text-sm bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded"
+	baseCodeClasses := "font-mono text-sm bg-base-200 dark:bg-base-300 px-2 py-1 rounded-md"
 	
 	if classes != "" {
 		return baseCodeClasses + " " + classes
@@ -229,7 +229,7 @@ func getPreClasses(props TextProps) string {
 	classes := getTextClasses(props)
 	
 	// Add default pre styling
-	basePreClasses := "font-mono text-sm bg-gray-100 dark:bg-gray-800 p-4 rounded-lg overflow-x-auto"
+	basePreClasses := "font-mono text-sm bg-base-200 dark:bg-base-300 p-4 rounded-lg overflow-x-auto border border-base-300"
 	
 	if classes != "" {
 		return basePreClasses + " " + classes
@@ -258,7 +258,7 @@ func getStrongClasses(props TextProps) string {
 func getEmClasses(props TextProps) string {
 	classes := getTextClasses(props)
 	
-	// Ensure italic is applied if not already set
+	// Ensure italic is applied
 	if !props.Italic {
 		if classes != "" {
 			classes += " italic"

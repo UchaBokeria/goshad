@@ -4,18 +4,20 @@ import "fmt"
 
 // ProgressProps defines the properties for the Progress component
 type ProgressProps struct {
-	Value    int    // current value
-	Max      int    // maximum value (default 100)
-	Size     string // xs, sm, md, lg
-	Variant  string // primary, secondary, accent, info, success, warning, error
-	ShowText bool   // show percentage text
-	Text     string // custom text instead of percentage
-	Class    string
+	Value     int    // current value
+	Max       int    // maximum value (default 100)
+	Size      string // xs, sm, md, lg
+	Variant   string // primary, secondary, accent, info, success, warning, error
+	ShowText  bool   // show percentage text
+	Text      string // custom text instead of percentage
+	Animated  bool   // add animation
+	Striped   bool   // add striped pattern
+	Class     string
 }
 
 // Progress creates a progress bar component with DaisyUI styling
 templ Progress(props ProgressProps) {
-	<div class="relative">
+	<div class="relative w-full">
 		<progress
 			class={ getProgressClasses(props) }
 			value={ getIntAsString(props.Value) }
@@ -23,7 +25,7 @@ templ Progress(props ProgressProps) {
 		></progress>
 		if props.ShowText || props.Text != "" {
 			<div class="absolute inset-0 flex items-center justify-center">
-				<span class="text-xs font-medium text-base-content">
+				<span class="text-xs font-medium text-base-content drop-shadow-sm">
 					if props.Text != "" {
 						{ props.Text }
 					} else {
@@ -38,13 +40,15 @@ templ Progress(props ProgressProps) {
 // CircularProgress creates a circular progress indicator
 templ CircularProgress(props ProgressProps) {
 	<div class={ getCircularProgressClasses(props) }>
-		<div class="radial-progress" style={ getRadialProgressStyle(props.Value, props.Max) }>
+		<div class="radial-progress bg-base-300 text-base-content border-4 border-base-300" style={ getRadialProgressStyle(props.Value, props.Max) }>
 			if props.ShowText || props.Text != "" {
-				if props.Text != "" {
-					{ props.Text }
-				} else {
-					{ getPercentageText(props.Value, props.Max) }
-				}
+				<span class="text-sm font-medium">
+					if props.Text != "" {
+						{ props.Text }
+					} else {
+						{ getPercentageText(props.Value, props.Max) }
+					}
+				</span>
 			}
 		</div>
 	</div>
@@ -53,7 +57,7 @@ templ CircularProgress(props ProgressProps) {
 // ProgressWithLabel creates a progress bar with label
 templ ProgressWithLabel(props ProgressProps, label string) {
 	<div class="w-full">
-		<div class="flex justify-between mb-1">
+		<div class="flex justify-between items-center mb-2">
 			<span class="text-sm font-medium text-base-content">{ label }</span>
 			<span class="text-sm font-medium text-base-content">
 				{ getPercentageText(props.Value, props.Max) }
@@ -63,9 +67,48 @@ templ ProgressWithLabel(props ProgressProps, label string) {
 	</div>
 }
 
+// ProgressWithSteps creates a multi-step progress indicator
+templ ProgressWithSteps(currentStep int, totalSteps int, props ProgressProps) {
+	<div class="w-full">
+		<div class="flex justify-between items-center mb-2">
+			<span class="text-sm font-medium text-base-content">Step { fmt.Sprintf("%d", currentStep) } of { fmt.Sprintf("%d", totalSteps) }</span>
+			<span class="text-sm font-medium text-base-content">
+				{ fmt.Sprintf("%d", (currentStep * 100) / totalSteps) }%
+			</span>
+		</div>
+		@Progress(ProgressProps{
+			Value: (currentStep * 100) / totalSteps,
+			Max: 100,
+			Size: props.Size,
+			Variant: props.Variant,
+			ShowText: false,
+			Animated: props.Animated,
+			Striped: props.Striped,
+			Class: props.Class,
+		})
+		<div class="flex justify-between mt-1">
+			for i := 1; i <= totalSteps; i++ {
+				<div class={ getStepClasses(i, currentStep) }>
+					{ fmt.Sprintf("%d", i) }
+				</div>
+			}
+		</div>
+	</div>
+}
+
 // getProgressClasses returns the appropriate CSS classes for the progress bar
 func getProgressClasses(props ProgressProps) string {
 	classes := "progress w-full"
+	
+	// Add animation if specified
+	if props.Animated {
+		classes += " progress-animated"
+	}
+	
+	// Add striped pattern if specified
+	if props.Striped {
+		classes += " progress-striped"
+	}
 	
 	switch props.Size {
 	case "xs":
@@ -76,6 +119,8 @@ func getProgressClasses(props ProgressProps) string {
 		classes += " progress-md"
 	case "lg":
 		classes += " progress-lg"
+	default:
+		classes += " progress-md"
 	}
 	
 	switch props.Variant {
@@ -93,6 +138,8 @@ func getProgressClasses(props ProgressProps) string {
 		classes += " progress-warning"
 	case "error":
 		classes += " progress-error"
+	default:
+		classes += " progress-primary"
 	}
 	
 	if props.Class != "" {
@@ -106,8 +153,34 @@ func getProgressClasses(props ProgressProps) string {
 func getCircularProgressClasses(props ProgressProps) string {
 	classes := "flex items-center justify-center"
 	
+	switch props.Size {
+	case "xs":
+		classes += " text-xs"
+	case "sm":
+		classes += " text-sm"
+	case "md":
+		classes += " text-base"
+	case "lg":
+		classes += " text-lg"
+	default:
+		classes += " text-base"
+	}
+	
 	if props.Class != "" {
 		classes += " " + props.Class
+	}
+	
+	return classes
+}
+
+// getStepClasses returns the appropriate CSS classes for progress steps
+func getStepClasses(step, currentStep int) string {
+	classes := "flex items-center justify-center w-6 h-6 rounded-full text-xs font-medium"
+	
+	if step <= currentStep {
+		classes += " bg-primary text-primary-content"
+	} else {
+		classes += " bg-base-300 text-base-content"
 	}
 	
 	return classes
@@ -120,6 +193,8 @@ func getMaxAsString(max int) string {
 	}
 	return fmt.Sprintf("%d", max)
 }
+
+
 
 // getPercentageText returns the percentage text
 func getPercentageText(value, max int) string {
@@ -136,5 +211,5 @@ func getRadialProgressStyle(value, max int) string {
 		max = 100
 	}
 	percentage := (value * 100) / max
-	return fmt.Sprintf("--value:%d;", percentage)
+	return fmt.Sprintf("--value:%d; --size:4rem; --thickness:4px;", percentage)
 } 

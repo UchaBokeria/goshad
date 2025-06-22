@@ -10,9 +10,9 @@ type TooltipProps struct {
 }
 
 // Tooltip creates a tooltip component with DaisyUI styling
-templ Tooltip(props TooltipProps, content templ.Component) {
+templ Tooltip(props TooltipProps) {
 	<div class={ getTooltipClasses(props) } data-tip={ props.Text }>
-		@content
+		{ children... }
 	</div>
 }
 
@@ -33,18 +33,22 @@ templ TooltipButton(tooltipProps TooltipProps, buttonProps ButtonProps) {
 }
 
 // TooltipIcon creates an icon with tooltip
-templ TooltipIcon(tooltipProps TooltipProps, iconProps IconProps, content templ.Component) {
+templ TooltipIcon(tooltipProps TooltipProps, iconName string, iconSize string) {
 	<div class={ getTooltipClasses(tooltipProps) } data-tip={ tooltipProps.Text }>
-		@Icon(iconProps, content)
+		<svg class={ "w-" + iconSize + " h-" + iconSize + " fill-current" } viewBox="0 0 24 24">
+			{ children... }
+		</svg>
 	</div>
 }
 
 // CustomTooltip creates a custom tooltip with HTML content
-templ CustomTooltip(props TooltipProps, trigger templ.Component) {
+templ CustomTooltip(props TooltipProps) {
 	<div class="relative inline-block group">
-		@trigger
-		<div class={ getCustomTooltipClasses(props) }>
 		{ children... }
+		<div class={ getCustomTooltipClasses(props) }>
+			<div class="bg-base-100 text-base-content p-2 rounded shadow-lg border border-base-300">
+				{ props.Text }
+			</div>
 		</div>
 	</div>
 }
@@ -99,7 +103,7 @@ func getTooltipClasses(props TooltipProps) string {
 
 // getCustomTooltipClasses returns the appropriate CSS classes for custom tooltips
 func getCustomTooltipClasses(props TooltipProps) string {
-	classes := "absolute z-10 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+	classes := "absolute z-50 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-opacity duration-200"
 	
 	// Position
 	switch props.Position {

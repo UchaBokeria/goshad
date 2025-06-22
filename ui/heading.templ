@@ -11,46 +11,48 @@ type HeadingProps struct {
 }
 
 // Heading creates a heading element (h1-h6) with customizable styling
-templ Heading(props HeadingProps, content templ.Component) {
+templ Heading(props HeadingProps) {
 	switch props.Level {
 	case 1:
 		<h1 class={ getHeadingClasses(props) }>
-			@content
+			{ children... }
 		</h1>
 	case 2:
 		<h2 class={ getHeadingClasses(props) }>
-			@content
+			{ children... }
 		</h2>
 	case 3:
 		<h3 class={ getHeadingClasses(props) }>
-			@content
+			{ children... }
 		</h3>
 	case 4:
 		<h4 class={ getHeadingClasses(props) }>
-			@content
+			{ children... }
 		</h4>
 	case 5:
 		<h5 class={ getHeadingClasses(props) }>
-			@content
+			{ children... }
 		</h5>
 	case 6:
 		<h6 class={ getHeadingClasses(props) }>
-			@content
+			{ children... }
 		</h6>
 	default:
 		<h2 class={ getHeadingClasses(props) }>
-			@content
+			{ children... }
 		</h2>
 	}
 }
 
 // HeadingWithText creates a simple text heading
 templ HeadingWithText(props HeadingProps, text string) {
-	@Heading(props, templ.Raw(text))
+	@Heading(props) {
+		{ text }
+	}
 }
 
 // H1, H2, H3, H4, H5, H6 convenience components
-templ H1(props HeadingProps, content templ.Component) {
+templ H1(props HeadingProps) {
 	@Heading(HeadingProps{
 		Level:  1,
 		Size:   props.Size,
@@ -58,10 +60,12 @@ templ H1(props HeadingProps, content templ.Component) {
 		Color:  props.Color,
 		Align:  props.Align,
 		Class:  props.Class,
-	}, content)
+	}) {
+		{ children... }
+	}
 }
 
-templ H2(props HeadingProps, content templ.Component) {
+templ H2(props HeadingProps) {
 	@Heading(HeadingProps{
 		Level:  2,
 		Size:   props.Size,
@@ -69,10 +73,12 @@ templ H2(props HeadingProps, content templ.Component) {
 		Color:  props.Color,
 		Align:  props.Align,
 		Class:  props.Class,
-	}, content)
+	}) {
+		{ children... }
+	}
 }
 
-templ H3(props HeadingProps, content templ.Component) {
+templ H3(props HeadingProps) {
 	@Heading(HeadingProps{
 		Level:  3,
 		Size:   props.Size,
@@ -80,10 +86,12 @@ templ H3(props HeadingProps, content templ.Component) {
 		Color:  props.Color,
 		Align:  props.Align,
 		Class:  props.Class,
-	}, content)
+	}) {
+		{ children... }
+	}
 }
 
-templ H4(props HeadingProps, content templ.Component) {
+templ H4(props HeadingProps) {
 	@Heading(HeadingProps{
 		Level:  4,
 		Size:   props.Size,
@@ -91,10 +99,12 @@ templ H4(props HeadingProps, content templ.Component) {
 		Color:  props.Color,
 		Align:  props.Align,
 		Class:  props.Class,
-	}, content)
+	}) {
+		{ children... }
+	}
 }
 
-templ H5(props HeadingProps, content templ.Component) {
+templ H5(props HeadingProps) {
 	@Heading(HeadingProps{
 		Level:  5,
 		Size:   props.Size,
@@ -102,10 +112,12 @@ templ H5(props HeadingProps, content templ.Component) {
 		Color:  props.Color,
 		Align:  props.Align,
 		Class:  props.Class,
-	}, content)
+	}) {
+		{ children... }
+	}
 }
 
-templ H6(props HeadingProps, content templ.Component) {
+templ H6(props HeadingProps) {
 	@Heading(HeadingProps{
 		Level:  6,
 		Size:   props.Size,
@@ -113,7 +125,9 @@ templ H6(props HeadingProps, content templ.Component) {
 		Color:  props.Color,
 		Align:  props.Align,
 		Class:  props.Class,
-	}, content)
+	}) {
+		{ children... }
+	}
 }
 
 // getHeadingClasses returns the appropriate CSS classes for the heading

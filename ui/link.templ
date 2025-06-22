@@ -14,10 +14,10 @@ type LinkProps struct {
 }
 
 // Link creates a link component with styling
-templ Link(props LinkProps, content templ.Component) {
+templ Link(props LinkProps) {
 	if props.Disabled {
 		<span class={ getDisabledLinkClasses(props) }>
-			@content
+			{ children... }
 		</span>
 	} else {
 		<a
@@ -32,7 +32,7 @@ templ Link(props LinkProps, content templ.Component) {
 				rel="noopener noreferrer"
 			}
 		>
-			@content
+			{ children... }
 			if props.External {
 				<svg class="inline w-3 h-3 ml-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
 					<path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"></path>
@@ -45,11 +45,13 @@ templ Link(props LinkProps, content templ.Component) {
 
 // LinkWithText creates a simple text link
 templ LinkWithText(props LinkProps, text string) {
-	@Link(props, templ.Raw(text))
+	@Link(props) {
+		{ text }
+	}
 }
 
 // ButtonLink creates a link styled as a button
-templ ButtonLink(props LinkProps, buttonProps ButtonProps, content templ.Component) {
+templ ButtonLink(props LinkProps, buttonProps ButtonProps) {
 	<a
 		href={ props.Href }
 		class={ getButtonClasses(buttonProps) }
@@ -65,7 +67,7 @@ templ ButtonLink(props LinkProps, buttonProps ButtonProps, content templ.Compone
 			aria-disabled="true"
 		}
 	>
-		@content
+		{ children... }
 		if props.External {
 			<svg class="inline w-4 h-4 ml-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
 				<path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"></path>

@@ -10,29 +10,29 @@ type CardProps struct {
 }
 
 // Card creates a card component with DaisyUI styling
-templ Card(props CardProps, content templ.Component) {
+templ Card(props CardProps) {
 	<div class={ getCardClasses(props) }>
-		@content
+		{ children... }
 	</div>
 }
 
 // CardWithBody creates a card with body wrapper
-templ CardWithBody(props CardProps, content templ.Component) {
+templ CardWithBody(props CardProps) {
 	<div class={ getCardClasses(props) }>
 		<div class="card-body">
-			@content
+			{ children... }
 		</div>
 	</div>
 }
 
 // CardWithImage creates a card with image and body
-templ CardWithImage(props CardProps, imageSrc string, imageAlt string, content templ.Component) {
+templ CardWithImage(props CardProps, imageSrc string, imageAlt string) {
 	<div class={ getCardClasses(props) }>
 		<figure>
 			<img src={ imageSrc } alt={ imageAlt } />
 		</figure>
 		<div class="card-body">
-			@content
+			{ children... }
 		</div>
 	</div>
 }
@@ -43,9 +43,9 @@ templ CardTitle(text string) {
 }
 
 // CardActions creates a card actions section
-templ CardActions(content templ.Component) {
+templ CardActions() {
 	<div class="card-actions justify-end">
-		@content
+		{ children... }
 	</div>
 }
 

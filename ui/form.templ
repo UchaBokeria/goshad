@@ -12,7 +12,7 @@ type FormProps struct {
 }
 
 // Form creates a form component wrapper
-templ Form(props FormProps, content templ.Component) {
+templ Form(props FormProps) {
 	<form
 		if props.Method != "" {
 			method={ props.Method }
@@ -31,21 +31,21 @@ templ Form(props FormProps, content templ.Component) {
 		}
 		class={ getFormClasses(props) }
 	>
-		@content
+		{ children... }
 	</form>
 }
 
 // FormSection creates a form section with spacing
-templ FormSection(props FormProps, content templ.Component) {
+templ FormSection(props FormProps) {
 	<div class={ getFormSectionClasses(props) }>
-		@content
+		{ children... }
 	</div>
 }
 
 // FormActions creates a form actions section (typically for buttons)
-templ FormActions(props FormProps, content templ.Component) {
+templ FormActions(props FormProps) {
 	<div class={ getFormActionsClasses(props) }>
-		@content
+		{ children... }
 	</div>
 }
 

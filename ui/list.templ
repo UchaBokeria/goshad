@@ -19,14 +19,14 @@ type ListItem struct {
 }
 
 // List creates a list component (ul or ol)
-templ List(props ListProps, content templ.Component) {
+templ List(props ListProps) {
 	if props.Ordered {
 		<ol class={ getListClasses(props) }>
-			@content
+			{ children... }
 		</ol>
 	} else {
 		<ul class={ getListClasses(props) }>
-			@content
+			{ children... }
 		</ul>
 	}
 }
@@ -53,31 +53,30 @@ templ ListWithItems(props ListProps, items []ListItem) {
 }
 
 // ListItem creates a single list item
-templ ListItemComponent(item ListItem, content templ.Component) {
+templ ListItemComponent(item ListItem) {
 	<li class={ getListItemClasses(item) }>
-		@content
+		{ children... }
 	</li>
 }
 
 // MenuList creates a menu-style list using DaisyUI
-templ MenuList(props ListProps, content templ.Component) {
+templ MenuList(props ListProps) {
 	<ul class={ getMenuListClasses(props) }>
-		@content
+		{ children... }
 	</ul>
 }
 
 // MenuItem creates a menu item
-templ MenuItem(item ListItem, content templ.Component) {
+templ MenuItem(item ListItem) {
 	<li class={ getMenuItemClasses(item) }>
-		@content
+		{ children... }
 	</li>
 }
 
 // getListClasses returns the appropriate CSS classes for the list
 func getListClasses(props ListProps) string {
-	classes := ""
+	var classes string
 	
-	// List style
 	switch props.Variant {
 	case "disc":
 		classes = "list-disc"
@@ -93,11 +92,21 @@ func getListClasses(props ListProps) string {
 		}
 	}
 	
-	// Padding for nested lists
-	if props.Nested {
-		classes += " pl-6"
-	} else {
-		classes += " pl-5"
+	// Add padding for list items
+	classes += " pl-6"
+	
+	// Size
+	switch props.Size {
+	case "xs":
+		classes += " text-xs"
+	case "sm":
+		classes += " text-sm"
+	case "base":
+		classes += " text-base"
+	case "lg":
+		classes += " text-lg"
+	case "xl":
+		classes += " text-xl"
 	}
 	
 	// Spacing
@@ -114,22 +123,6 @@ func getListClasses(props ListProps) string {
 		classes += " space-y-2"
 	}
 	
-	// Size
-	switch props.Size {
-	case "xs":
-		classes += " text-xs"
-	case "sm":
-		classes += " text-sm"
-	case "base":
-		classes += " text-base"
-	case "lg":
-		classes += " text-lg"
-	case "xl":
-		classes += " text-xl"
-	default:
-		classes += " text-base"
-	}
-	
 	if props.Class != "" {
 		classes += " " + props.Class
 	}
@@ -142,18 +135,15 @@ func getListItemClasses(item ListItem) string {
 	classes := ""
 	
 	if item.Active {
-		classes += "font-semibold text-primary"
+		classes += " text-primary font-medium"
 	}
 	
 	if item.Disabled {
-		classes += " opacity-50 cursor-not-allowed"
+		classes += " text-base-content/40 cursor-not-allowed"
 	}
 	
 	if item.Class != "" {
-		if classes != "" {
-			classes += " "
-		}
-		classes += item.Class
+		classes += " " + item.Class
 	}
 	
 	return classes
@@ -163,20 +153,14 @@ func getListItemClasses(item ListItem) string {
 func getMenuListClasses(props ListProps) string {
 	classes := "menu"
 	
-	// Size
 	switch props.Size {
 	case "xs":
 		classes += " menu-xs"
 	case "sm":
 		classes += " menu-sm"
-	case "md":
-		classes += " menu-md"
 	case "lg":
 		classes += " menu-lg"
 	}
-	
-	// Background
-	classes += " bg-base-100 rounded-box"
 	
 	if props.Class != "" {
 		classes += " " + props.Class
@@ -190,7 +174,7 @@ func getMenuItemClasses(item ListItem) string {
 	classes := ""
 	
 	if item.Active {
-		classes += "active"
+		classes += " active"
 	}
 	
 	if item.Disabled {
@@ -198,10 +182,7 @@ func getMenuItemClasses(item ListItem) string {
 	}
 	
 	if item.Class != "" {
-		if classes != "" {
-			classes += " "
-		}
-		classes += item.Class
+		classes += " " + item.Class
 	}
 	
 	return classes

@@ -16,7 +16,7 @@ templ Spinner(props SpinnerProps) {
 templ SpinnerWithText(props SpinnerProps, text string) {
 	<div class="flex items-center gap-2">
 		@Spinner(props)
-		<span>{ text }</span>
+		<span class="text-base-content">{ text }</span>
 	</div>
 }
 
@@ -28,27 +28,34 @@ templ ButtonSpinner(props SpinnerProps) {
 // DotSpinner creates a three-dot loading animation
 templ DotSpinner(props SpinnerProps) {
 	<div class={ getDotSpinnerClasses(props) }>
-		<div class="dot-spinner-dot"></div>
-		<div class="dot-spinner-dot"></div>
-		<div class="dot-spinner-dot"></div>
+		<div class={ getDotSpinnerDotClasses(props) }></div>
+		<div class={ getDotSpinnerDotClasses(props) + " [animation-delay:0.1s]" }></div>
+		<div class={ getDotSpinnerDotClasses(props) + " [animation-delay:0.2s]" }></div>
 	</div>
 }
 
 // PulseSpinner creates a pulsing circle loader
 templ PulseSpinner(props SpinnerProps) {
 	<div class={ getPulseSpinnerClasses(props) }>
-		<div class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75"></div>
-		<div class="relative inline-flex rounded-full"></div>
+		<div class={ getPulseSpinnerRingClasses(props) + " animate-ping" }></div>
+		<div class={ getPulseSpinnerCenterClasses(props) }></div>
 	</div>
 }
 
 // BarSpinner creates a bar-style loading animation
 templ BarSpinner(props SpinnerProps) {
 	<div class={ getBarSpinnerClasses(props) }>
-		<div class="bar-spinner-bar"></div>
-		<div class="bar-spinner-bar"></div>
-		<div class="bar-spinner-bar"></div>
-		<div class="bar-spinner-bar"></div>
+		<div class={ getBarSpinnerBarClasses(props) + " [animation-delay:0s]" }></div>
+		<div class={ getBarSpinnerBarClasses(props) + " [animation-delay:0.1s]" }></div>
+		<div class={ getBarSpinnerBarClasses(props) + " [animation-delay:0.2s]" }></div>
+		<div class={ getBarSpinnerBarClasses(props) + " [animation-delay:0.3s]" }></div>
+	</div>
+}
+
+// RingSpinner creates a ring-style loading animation
+templ RingSpinner(props SpinnerProps) {
+	<div class={ getRingSpinnerClasses(props) }>
+		<div class={ getRingSpinnerInnerClasses(props) }></div>
 	</div>
 }
 
@@ -120,21 +127,74 @@ func getButtonSpinnerClasses(props SpinnerProps) string {
 
 // getDotSpinnerClasses returns the appropriate CSS classes for dot spinners
 func getDotSpinnerClasses(props SpinnerProps) string {
-	classes := "flex space-x-1"
+	classes := "flex space-x-1 items-center justify-center"
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+}
+
+// getDotSpinnerDotClasses returns the appropriate CSS classes for dot spinner dots
+func getDotSpinnerDotClasses(props SpinnerProps) string {
+	classes := "animate-bounce rounded-full"
 	
 	switch props.Size {
 	case "xs":
-		classes += " text-xs"
+		classes += " h-1.5 w-1.5"
 	case "sm":
-		classes += " text-sm"
+		classes += " h-2 w-2"
 	case "md":
-		classes += " text-base"
+		classes += " h-3 w-3"
 	case "lg":
-		classes += " text-lg"
+		classes += " h-4 w-4"
 	case "xl":
-		classes += " text-xl"
+		classes += " h-5 w-5"
 	default:
-		classes += " text-base"
+		classes += " h-3 w-3"
+	}
+	
+	// Color variants
+	switch props.Variant {
+	case "primary":
+		classes += " bg-primary"
+	case "secondary":
+		classes += " bg-secondary"
+	case "accent":
+		classes += " bg-accent"
+	case "info":
+		classes += " bg-info"
+	case "success":
+		classes += " bg-success"
+	case "warning":
+		classes += " bg-warning"
+	case "error":
+		classes += " bg-error"
+	default:
+		classes += " bg-primary"
+	}
+	
+	return classes
+}
+
+// getPulseSpinnerClasses returns the appropriate CSS classes for pulse spinners
+func getPulseSpinnerClasses(props SpinnerProps) string {
+	classes := "relative inline-flex items-center justify-center"
+	
+	switch props.Size {
+	case "xs":
+		classes += " h-6 w-6"
+	case "sm":
+		classes += " h-8 w-8"
+	case "md":
+		classes += " h-12 w-12"
+	case "lg":
+		classes += " h-16 w-16"
+	case "xl":
+		classes += " h-20 w-20"
+	default:
+		classes += " h-12 w-12"
 	}
 	
 	if props.Class != "" {
@@ -144,9 +204,36 @@ func getDotSpinnerClasses(props SpinnerProps) string {
 	return classes
 }
 
-// getPulseSpinnerClasses returns the appropriate CSS classes for pulse spinners
-func getPulseSpinnerClasses(props SpinnerProps) string {
-	classes := "relative inline-flex"
+// getPulseSpinnerRingClasses returns the appropriate CSS classes for pulse spinner ring
+func getPulseSpinnerRingClasses(props SpinnerProps) string {
+	classes := "absolute inline-flex h-full w-full rounded-full opacity-75"
+	
+	// Color variants
+	switch props.Variant {
+	case "primary":
+		classes += " bg-primary"
+	case "secondary":
+		classes += " bg-secondary"
+	case "accent":
+		classes += " bg-accent"
+	case "info":
+		classes += " bg-info"
+	case "success":
+		classes += " bg-success"
+	case "warning":
+		classes += " bg-warning"
+	case "error":
+		classes += " bg-error"
+	default:
+		classes += " bg-primary"
+	}
+	
+	return classes
+}
+
+// getPulseSpinnerCenterClasses returns the appropriate CSS classes for pulse spinner center
+func getPulseSpinnerCenterClasses(props SpinnerProps) string {
+	classes := "relative inline-flex rounded-full"
 	
 	switch props.Size {
 	case "xs":
@@ -183,7 +270,27 @@ func getPulseSpinnerClasses(props SpinnerProps) string {
 		classes += " bg-primary"
 	}
 	
-	classes += " rounded-full"
+	return classes
+}
+
+// getBarSpinnerClasses returns the appropriate CSS classes for bar spinners
+func getBarSpinnerClasses(props SpinnerProps) string {
+	classes := "flex space-x-1 items-end justify-center"
+	
+	switch props.Size {
+	case "xs":
+		classes += " h-4"
+	case "sm":
+		classes += " h-6"
+	case "md":
+		classes += " h-8"
+	case "lg":
+		classes += " h-10"
+	case "xl":
+		classes += " h-12"
+	default:
+		classes += " h-8"
+	}
 	
 	if props.Class != "" {
 		classes += " " + props.Class
@@ -192,12 +299,96 @@ func getPulseSpinnerClasses(props SpinnerProps) string {
 	return classes
 }
 
-// getBarSpinnerClasses returns the appropriate CSS classes for bar spinners
-func getBarSpinnerClasses(props SpinnerProps) string {
-	classes := "flex space-x-1"
+// getBarSpinnerBarClasses returns the appropriate CSS classes for bar spinner bars
+func getBarSpinnerBarClasses(props SpinnerProps) string {
+	classes := "animate-pulse rounded-sm"
+	
+	switch props.Size {
+	case "xs":
+		classes += " h-2 w-1"
+	case "sm":
+		classes += " h-3 w-1"
+	case "md":
+		classes += " h-4 w-1"
+	case "lg":
+		classes += " h-5 w-1.5"
+	case "xl":
+		classes += " h-6 w-2"
+	default:
+		classes += " h-4 w-1"
+	}
+	
+	// Color variants
+	switch props.Variant {
+	case "primary":
+		classes += " bg-primary"
+	case "secondary":
+		classes += " bg-secondary"
+	case "accent":
+		classes += " bg-accent"
+	case "info":
+		classes += " bg-info"
+	case "success":
+		classes += " bg-success"
+	case "warning":
+		classes += " bg-warning"
+	case "error":
+		classes += " bg-error"
+	default:
+		classes += " bg-primary"
+	}
+	
+	return classes
+}
+
+// getRingSpinnerClasses returns the appropriate CSS classes for ring spinners
+func getRingSpinnerClasses(props SpinnerProps) string {
+	classes := "inline-block relative"
+	
+	switch props.Size {
+	case "xs":
+		classes += " h-4 w-4"
+	case "sm":
+		classes += " h-6 w-6"
+	case "md":
+		classes += " h-8 w-8"
+	case "lg":
+		classes += " h-12 w-12"
+	case "xl":
+		classes += " h-16 w-16"
+	default:
+		classes += " h-8 w-8"
+	}
 	
 	if props.Class != "" {
 		classes += " " + props.Class
+	}
+	
+	return classes
+}
+
+// getRingSpinnerInnerClasses returns the appropriate CSS classes for ring spinner inner
+func getRingSpinnerInnerClasses(props SpinnerProps) string {
+	classes := "block w-full h-full rounded-full animate-spin border-2 border-solid border-t-transparent"
+	
+	// Color variants
+	switch props.Variant {
+	case "primary":
+		classes += " border-primary"
+	case "secondary":
+		classes += " border-secondary"
+	case "accent":
+		classes += " border-accent"
+	case "info":
+		classes += " border-info"
+	case "success":
+		classes += " border-success"
+	case "warning":
+		classes += " border-warning"
+	case "error":
+		classes += " border-error"
+	default:
+		classes += " border-primary"
 	}
 	
 	return classes

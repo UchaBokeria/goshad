@@ -14,16 +14,16 @@ type GridProps struct {
 }
 
 // Grid creates a responsive grid wrapper
-templ Grid(props GridProps, content templ.Component) {
+templ Grid(props GridProps) {
 	<div class={ getGridClasses(props) }>
-		@content
+		{ children... }
 	</div>
 }
 
 // GridItem creates a grid item with specific span properties
-templ GridItem(colSpan string, rowSpan string, class string, content templ.Component) {
+templ GridItem(colSpan string, rowSpan string, class string) {
 	<div class={ getGridItemClasses(colSpan, rowSpan, class) }>
-		@content
+		{ children... }
 	</div>
 }
 
@@ -41,20 +41,11 @@ func getGridClasses(props GridProps) string {
 		classes += " grid-rows-" + props.Rows
 	}
 	
-	// Auto-fit and auto-fill (custom CSS)
-	if props.AutoFit != "" {
-		// This would require custom CSS: grid-template-columns: repeat(auto-fit, minmax(200px, 1fr))
-		classes += " auto-fit-" + props.AutoFit
-	} else if props.AutoFill != "" {
-		// This would require custom CSS: grid-template-columns: repeat(auto-fill, minmax(200px, 1fr))
-		classes += " auto-fill-" + props.AutoFill
-	}
-	
 	// Gap
 	if props.Gap != "" {
 		classes += " gap-" + props.Gap
 	} else {
-		// Individual gap settings
+		// Add individual gaps if main gap is not set
 		if props.GapX != "" {
 			classes += " gap-x-" + props.GapX
 		}
@@ -63,17 +54,14 @@ func getGridClasses(props GridProps) string {
 		}
 	}
 	
-	// Responsive classes
-	for breakpoint, responsiveProps := range props.Responsive {
-		if responsiveProps.Cols != "" {
-			classes += " " + breakpoint + ":grid-cols-" + responsiveProps.Cols
-		}
-		if responsiveProps.Rows != "" {
-			classes += " " + breakpoint + ":grid-rows-" + responsiveProps.Rows
-		}
-		if responsiveProps.Gap != "" {
-			classes += " " + breakpoint + ":gap-" + responsiveProps.Gap
-		}
+	// Auto-fit grid
+	if props.AutoFit != "" {
+		classes += " grid-cols-[repeat(auto-fit,minmax(" + props.AutoFit + ",1fr))]"
+	}
+	
+	// Auto-fill grid
+	if props.AutoFill != "" {
+		classes += " grid-cols-[repeat(auto-fill,minmax(" + props.AutoFill + ",1fr))]"
 	}
 	
 	if props.Class != "" {
@@ -84,31 +72,18 @@ func getGridClasses(props GridProps) string {
 }
 
 // getGridItemClasses returns the appropriate CSS classes for grid items
-func getGridItemClasses(colSpan, rowSpan, class string) string {
-	var classes string
+func getGridItemClasses(colSpan string, rowSpan string, class string) string {
+	classes := ""
 	
-	// Column span
 	if colSpan != "" {
-		if colSpan == "full" {
-			classes += "col-span-full"
-		} else {
-			classes += "col-span-" + colSpan
-		}
+		classes += "col-span-" + colSpan
 	}
 	
-	// Row span
 	if rowSpan != "" {
-		if rowSpan == "full" {
-			if classes != "" {
-				classes += " "
-			}
-			classes += "row-span-full"
-		} else {
-			if classes != "" {
-				classes += " "
-			}
-			classes += "row-span-" + rowSpan
+		if classes != "" {
+			classes += " "
 		}
+		classes += "row-span-" + rowSpan
 	}
 	
 	if class != "" {

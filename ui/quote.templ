@@ -12,10 +12,10 @@ type QuoteProps struct {
 }
 
 // Quote creates a quote component with styling
-templ Quote(props QuoteProps, content templ.Component) {
+templ Quote(props QuoteProps) {
 	<blockquote class={ getQuoteClasses(props) }>
 		<div class={ getQuoteContentClasses(props) }>
-			@content
+			{ children... }
 		</div>
 		if props.Author != "" || props.Source != "" {
 			<footer class={ getQuoteFooterClasses(props) }>
@@ -35,15 +35,17 @@ templ Quote(props QuoteProps, content templ.Component) {
 
 // QuoteWithText creates a simple text quote
 templ QuoteWithText(props QuoteProps, text string) {
-	@Quote(props, templ.Raw(text))
+	@Quote(props) {
+		{ text }
+	}
 }
 
 // PullQuote creates a pull quote (highlighted quote within content)
-templ PullQuote(props QuoteProps, content templ.Component) {
+templ PullQuote(props QuoteProps) {
 	<aside class={ getPullQuoteClasses(props) }>
 		<blockquote class={ getQuoteClasses(props) }>
 			<div class={ getQuoteContentClasses(props) }>
-				@content
+				{ children... }
 			</div>
 			if props.Author != "" || props.Source != "" {
 				<footer class={ getQuoteFooterClasses(props) }>
@@ -63,7 +65,7 @@ templ PullQuote(props QuoteProps, content templ.Component) {
 }
 
 // TestimonialQuote creates a testimonial-style quote
-templ TestimonialQuote(props QuoteProps, content templ.Component) {
+templ TestimonialQuote(props QuoteProps) {
 	<div class={ getTestimonialQuoteClasses(props) }>
 		<div class="flex items-start">
 			<svg class="w-8 h-8 text-gray-400 dark:text-gray-600 mr-3 flex-shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 14">
@@ -71,7 +73,7 @@ templ TestimonialQuote(props QuoteProps, content templ.Component) {
 			</svg>
 			<div>
 				<div class={ getQuoteContentClasses(props) }>
-					@content
+					{ children... }
 				</div>
 				if props.Author != "" || props.Source != "" {
 					<footer class={ getQuoteFooterClasses(props) }>
@@ -97,7 +99,7 @@ func getQuoteClasses(props QuoteProps) string {
 	
 	switch props.Variant {
 	case "bordered":
-		classes += " border-l-4 border-gray-300 pl-4"
+		classes += " border-l-4 border-primary/30 pl-4"
 	case "accent":
 		classes += " border-l-4 border-accent pl-4"
 	}
@@ -143,15 +145,15 @@ func getQuoteContentClasses(props QuoteProps) string {
 	
 	// Quote marks with pseudo-elements
 	classes += " before:content-['\"'] after:content-['\"']"
-	classes += " before:text-4xl after:text-4xl before:leading-none after:leading-none"
-	classes += " before:text-gray-400 after:text-gray-400"
+	classes += " before:text-2xl after:text-2xl before:leading-none after:leading-none"
+	classes += " before:text-primary/60 after:text-primary/60"
 	
 	return classes
 }
 
 // getQuoteFooterClasses returns the appropriate CSS classes for quote footer
 func getQuoteFooterClasses(props QuoteProps) string {
-	classes := "mt-2 text-sm text-gray-600 dark:text-gray-400"
+	classes := "mt-2 text-sm text-base-content/70"
 	
 	if props.Centered {
 		classes += " text-center"
@@ -162,7 +164,7 @@ func getQuoteFooterClasses(props QuoteProps) string {
 
 // getPullQuoteClasses returns the appropriate CSS classes for pull quotes
 func getPullQuoteClasses(props QuoteProps) string {
-	classes := "float-right ml-6 mb-4 w-1/3 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg"
+	classes := "float-right ml-6 mb-4 w-1/3 p-4 bg-base-200 rounded-lg border border-base-300"
 	
 	if props.Class != "" {
 		classes += " " + props.Class
@@ -173,7 +175,7 @@ func getPullQuoteClasses(props QuoteProps) string {
 
 // getTestimonialQuoteClasses returns the appropriate CSS classes for testimonial quotes
 func getTestimonialQuoteClasses(props QuoteProps) string {
-	classes := "p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg"
+	classes := "p-6 bg-base-100 rounded-lg shadow-lg border border-base-300"
 	
 	if props.Class != "" {
 		classes += " " + props.Class

@@ -41,10 +41,10 @@ templ Select(props SelectProps) {
 		if props.Multiple {
 			multiple
 		}
-		if props.Placeholder != "" {
-			placeholder={ props.Placeholder }
-		}
 	>
+		if props.Placeholder != "" {
+			<option value="" disabled selected>{ props.Placeholder }</option>
+		}
 		for _, option := range props.Options {
 			<option
 				value={ option.Value }
@@ -58,6 +58,7 @@ templ Select(props SelectProps) {
 				{ option.Label }
 			</option>
 		}
+		{ children... }
 	</select>
 }
 

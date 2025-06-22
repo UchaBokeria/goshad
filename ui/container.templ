@@ -2,16 +2,16 @@ package ui
 
 // ContainerProps defines the properties for the Container component
 type ContainerProps struct {
-	MaxWidth string // xs, sm, md, lg, xl, 2xl, full
+	Size     string // xs, sm, md, lg, xl, 2xl, full
 	Centered bool
 	Padding  string // none, sm, md, lg, xl
 	Class    string
 }
 
 // Container creates a responsive container component
-templ Container(props ContainerProps, content templ.Component) {
+templ Container(props ContainerProps) {
 	<div class={ getContainerClasses(props) }>
-		@content
+		{ children... }
 	</div>
 }
 
@@ -26,8 +26,8 @@ func getContainerClasses(props ContainerProps) string {
 		classes = "container"
 	}
 	
-	// Max width
-	switch props.MaxWidth {
+	// Max width (renamed from MaxWidth to Size for consistency)
+	switch props.Size {
 	case "xs":
 		classes += " max-w-xs"
 	case "sm":
@@ -43,7 +43,7 @@ func getContainerClasses(props ContainerProps) string {
 	case "full":
 		classes += " max-w-full"
 	default:
-		// Use default container behavior
+		classes += " max-w-4xl"
 	}
 	
 	// Padding

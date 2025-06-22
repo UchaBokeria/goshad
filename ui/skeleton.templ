@@ -4,11 +4,12 @@ import "fmt"
 
 // SkeletonProps defines the properties for the Skeleton component
 type SkeletonProps struct {
-	Width   string // w-full, w-1/2, w-32, etc.
-	Height  string // h-4, h-8, h-16, etc.
-	Rounded string // none, sm, md, lg, full
-	Animate bool   // enable animation
-	Class   string
+	Width    string // w-full, w-1/2, w-32, etc.
+	Height   string // h-4, h-8, h-16, etc.
+	Rounded  string // none, sm, md, lg, xl, full
+	Gradient bool   // use gradient animation
+	Wave     bool   // use wave animation
+	Class    string
 }
 
 // Skeleton creates a skeleton loading component
@@ -18,7 +19,7 @@ templ Skeleton(props SkeletonProps) {
 
 // SkeletonText creates skeleton text lines
 templ SkeletonText(lines int, props SkeletonProps) {
-	<div class="space-y-2">
+	<div class="space-y-3">
 		for i := 0; i < lines; i++ {
 			<div class={ getSkeletonTextClasses(props, i, lines) }></div>
 		}
@@ -28,11 +29,18 @@ templ SkeletonText(lines int, props SkeletonProps) {
 // SkeletonCard creates a skeleton card layout
 templ SkeletonCard(props SkeletonProps) {
 	<div class={ getSkeletonCardClasses(props) }>
-		<div class="flex animate-pulse">
-			<div class="rounded-full bg-gray-300 h-10 w-10"></div>
-			<div class="ml-4 space-y-2 flex-1">
-				<div class="h-4 bg-gray-300 rounded w-3/4"></div>
-				<div class="h-4 bg-gray-300 rounded w-1/2"></div>
+		<div class="animate-pulse">
+			<div class="flex space-x-4">
+				<div class="rounded-full bg-base-300 h-12 w-12 flex-shrink-0"></div>
+				<div class="flex-1 space-y-3 py-1">
+					<div class="h-4 bg-base-300 rounded w-3/4"></div>
+					<div class="h-4 bg-base-300 rounded w-1/2"></div>
+				</div>
+			</div>
+			<div class="mt-4 space-y-3">
+				<div class="h-4 bg-base-300 rounded"></div>
+				<div class="h-4 bg-base-300 rounded w-5/6"></div>
+				<div class="h-4 bg-base-300 rounded w-4/6"></div>
 			</div>
 		</div>
 	</div>
@@ -51,11 +59,18 @@ templ SkeletonButton(props SkeletonProps) {
 // SkeletonTable creates a skeleton table
 templ SkeletonTable(rows int, cols int) {
 	<div class="animate-pulse">
-		<div class="space-y-3">
+		<div class="space-y-4">
+			<!-- Table header -->
+			<div class="grid gap-4 p-4 bg-base-200 rounded-lg" style={ getGridColsStyle(cols) }>
+				for c := 0; c < cols; c++ {
+					<div class="h-4 bg-base-300 rounded w-3/4"></div>
+				}
+			</div>
+			<!-- Table rows -->
 			for r := 0; r < rows; r++ {
-				<div class="grid gap-4" style={ getGridColsStyle(cols) }>
+				<div class="grid gap-4 p-4 border-b border-base-200" style={ getGridColsStyle(cols) }>
 					for c := 0; c < cols; c++ {
-						<div class="h-4 bg-gray-300 rounded"></div>
+						<div class="h-4 bg-base-300 rounded"></div>
 					}
 				</div>
 			}
@@ -63,9 +78,36 @@ templ SkeletonTable(rows int, cols int) {
 	</div>
 }
 
+// SkeletonList creates a skeleton list
+templ SkeletonList(items int) {
+	<div class="space-y-3">
+		for i := 0; i < items; i++ {
+			<div class="animate-pulse flex items-center space-x-4 p-3 bg-base-100 rounded-lg border border-base-200">
+				<div class="rounded-full bg-base-300 h-10 w-10 flex-shrink-0"></div>
+				<div class="flex-1 space-y-2">
+					<div class="h-4 bg-base-300 rounded w-3/4"></div>
+					<div class="h-3 bg-base-300 rounded w-1/2"></div>
+				</div>
+				<div class="h-6 bg-base-300 rounded w-16"></div>
+			</div>
+		}
+	</div>
+}
+
+// SkeletonImage creates a skeleton image placeholder
+templ SkeletonImage(props SkeletonProps) {
+	<div class={ getSkeletonImageClasses(props) }>
+		<div class="flex items-center justify-center text-base-content/30">
+			<svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+				<path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"></path>
+			</svg>
+		</div>
+	</div>
+}
+
 // getSkeletonClasses returns the appropriate CSS classes for the skeleton
 func getSkeletonClasses(props SkeletonProps) string {
-	classes := "bg-gray-300 dark:bg-gray-700"
+	classes := "bg-base-300 animate-pulse"
 	
 	// Width
 	if props.Width != "" {
@@ -91,15 +133,21 @@ func getSkeletonClasses(props SkeletonProps) string {
 		classes += " rounded-md"
 	case "lg":
 		classes += " rounded-lg"
+	case "xl":
+		classes += " rounded-xl"
 	case "full":
 		classes += " rounded-full"
 	default:
 		classes += " rounded"
 	}
 	
-	// Animation
-	if props.Animate {
-		classes += " animate-pulse"
+	// Enhanced animations
+	if props.Gradient {
+		classes += " bg-gradient-to-r from-base-300 via-base-200 to-base-300 bg-[length:200%_100%] animate-[shimmer_2s_infinite]"
+	}
+	
+	if props.Wave {
+		classes += " relative overflow-hidden"
 	}
 	
 	if props.Class != "" {
@@ -111,13 +159,21 @@ func getSkeletonClasses(props SkeletonProps) string {
 
 // getSkeletonTextClasses returns the appropriate CSS classes for skeleton text
 func getSkeletonTextClasses(props SkeletonProps, lineIndex, totalLines int) string {
-	classes := "h-4 bg-gray-300 dark:bg-gray-700 rounded animate-pulse"
+	classes := "h-4 bg-base-300 rounded animate-pulse"
+	
+	// Make lines vary in width for more natural look
+	switch lineIndex % 3 {
+	case 0:
+		classes += " w-full"
+	case 1:
+		classes += " w-5/6"
+	case 2:
+		classes += " w-4/6"
+	}
 	
 	// Make the last line shorter
 	if lineIndex == totalLines-1 && totalLines > 1 {
 		classes += " w-3/4"
-	} else {
-		classes += " w-full"
 	}
 	
 	if props.Class != "" {
@@ -129,7 +185,7 @@ func getSkeletonTextClasses(props SkeletonProps, lineIndex, totalLines int) stri
 
 // getSkeletonCardClasses returns the appropriate CSS classes for skeleton cards
 func getSkeletonCardClasses(props SkeletonProps) string {
-	classes := "p-4 border border-gray-200 dark:border-gray-700 rounded-lg"
+	classes := "p-6 bg-base-100 border border-base-200 rounded-lg shadow-sm"
 	
 	if props.Class != "" {
 		classes += " " + props.Class
@@ -140,14 +196,14 @@ func getSkeletonCardClasses(props SkeletonProps) string {
 
 // getSkeletonAvatarClasses returns the appropriate CSS classes for skeleton avatars
 func getSkeletonAvatarClasses(size, shape string) string {
-	classes := "bg-gray-300 dark:bg-gray-700 animate-pulse"
+	classes := "bg-base-300 animate-pulse flex-shrink-0"
 	
 	// Size
 	switch size {
 	case "xs":
-		classes += " w-8 h-8"
+		classes += " w-6 h-6"
 	case "sm":
-		classes += " w-10 h-10"
+		classes += " w-8 h-8"
 	case "md":
 		classes += " w-12 h-12"
 	case "lg":
@@ -160,7 +216,7 @@ func getSkeletonAvatarClasses(size, shape string) string {
 	
 	// Shape
 	if shape == "square" {
-		classes += " rounded"
+		classes += " rounded-lg"
 	} else {
 		classes += " rounded-full"
 	}
@@ -170,12 +226,55 @@ func getSkeletonAvatarClasses(size, shape string) string {
 
 // getSkeletonButtonClasses returns the appropriate CSS classes for skeleton buttons
 func getSkeletonButtonClasses(props SkeletonProps) string {
-	classes := "h-10 bg-gray-300 dark:bg-gray-700 rounded animate-pulse"
+	classes := "h-10 bg-base-300 rounded-lg animate-pulse"
 	
 	if props.Width != "" {
 		classes += " " + props.Width
 	} else {
 		classes += " w-24"
+	}
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+}
+
+// getSkeletonImageClasses returns the appropriate CSS classes for skeleton images
+func getSkeletonImageClasses(props SkeletonProps) string {
+	classes := "bg-base-300 animate-pulse"
+	
+	// Width
+	if props.Width != "" {
+		classes += " " + props.Width
+	} else {
+		classes += " w-full"
+	}
+	
+	// Height
+	if props.Height != "" {
+		classes += " " + props.Height
+	} else {
+		classes += " h-48"
+	}
+	
+	// Rounded
+	switch props.Rounded {
+	case "none":
+		// no rounded
+	case "sm":
+		classes += " rounded-sm"
+	case "md":
+		classes += " rounded-md"
+	case "lg":
+		classes += " rounded-lg"
+	case "xl":
+		classes += " rounded-xl"
+	case "full":
+		classes += " rounded-full"
+	default:
+		classes += " rounded"
 	}
 	
 	if props.Class != "" {

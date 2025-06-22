@@ -9,9 +9,9 @@ type BadgeProps struct {
 }
 
 // Badge creates a badge component with DaisyUI styling
-templ Badge(props BadgeProps, content templ.Component) {
+templ Badge(props BadgeProps) {
 	<div class={ getBadgeClasses(props) }>
-		@content
+		{ children... }
 	</div>
 }
 

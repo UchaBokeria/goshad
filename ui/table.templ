@@ -23,10 +23,10 @@ type TableColumn struct {
 type TableRow map[string]interface{}
 
 // Table creates a table component with DaisyUI styling
-templ Table(props TableProps, content templ.Component) {
+templ Table(props TableProps) {
 	<div class="overflow-x-auto">
 		<table class={ getTableClasses(props) }>
-			@content
+			{ children... }
 		</table>
 	</div>
 }
@@ -58,37 +58,37 @@ templ TableWithData(props TableProps, columns []TableColumn, rows []TableRow) {
 }
 
 // TableHeader creates a table header section
-templ TableHeader(content templ.Component) {
+templ TableHeader() {
 	<thead>
-		@content
+		{ children... }
 	</thead>
 }
 
 // TableBody creates a table body section
-templ TableBody(content templ.Component) {
+templ TableBody() {
 	<tbody>
-		@content
+		{ children... }
 	</tbody>
 }
 
 // TableRowComponent creates a table row
-templ TableRowComponent(active bool, hover bool, content templ.Component) {
+templ TableRowComponent(active bool, hover bool) {
 	<tr class={ getTableRowClasses(active, hover) }>
-		@content
+		{ children... }
 	</tr>
 }
 
 // TableCell creates a table cell
-templ TableCell(content templ.Component) {
+templ TableCell() {
 	<td>
-		@content
+		{ children... }
 	</td>
 }
 
 // TableHeaderCell creates a table header cell
-templ TableHeaderCell(content templ.Component) {
+templ TableHeaderCell() {
 	<th>
-		@content
+		{ children... }
 	</th>
 }
 
@@ -140,7 +140,7 @@ func getTableHeaderClasses(col TableColumn) string {
 	classes := ""
 	
 	if col.Width != "" {
-		classes += col.Width
+		classes += " w-" + col.Width
 	}
 	
 	switch col.Align {
@@ -161,53 +161,35 @@ func getTableCellClasses(col TableColumn) string {
 	
 	switch col.Align {
 	case "center":
-		classes += "text-center"
+		classes += " text-center"
 	case "right":
-		classes += "text-right"
+		classes += " text-right"
 	default:
-		classes += "text-left"
+		classes += " text-left"
 	}
 	
 	return classes
 }
 
 // getTableRowClasses returns the appropriate CSS classes for table rows
-func getTableRowClasses(active, hover bool) string {
+func getTableRowClasses(active bool, hover bool) string {
 	classes := ""
 	
 	if active {
-		classes += "active"
+		classes += " active"
 	}
 	
 	if hover {
-		if classes != "" {
-			classes += " "
-		}
-		classes += "hover"
+		classes += " hover"
 	}
 	
 	return classes
 }
 
-// getStringValue converts interface{} to string for display
+// getStringValue converts interface{} to string for table display
 func getStringValue(value interface{}) string {
 	if value == nil {
 		return ""
 	}
-	
-	switch v := value.(type) {
-	case string:
-		return v
-	case int:
-		return fmt.Sprintf("%d", v)
-	case float64:
-		return fmt.Sprintf("%.2f", v)
-	case bool:
-		if v {
-			return "Yes"
-		}
-		return "No"
-	default:
-		return fmt.Sprintf("%v", v)
-	}
+	return fmt.Sprintf("%v", value)
 } 

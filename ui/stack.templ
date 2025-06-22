@@ -10,9 +10,9 @@ type StackProps struct {
 }
 
 // Stack creates a vertical spacing layout component
-templ Stack(props StackProps, content templ.Component) {
+templ Stack(props StackProps) {
 	<div class={ getStackClasses(props) }>
-		@content
+		{ children... }
 	</div>
 }
 
@@ -29,19 +29,21 @@ templ StackWithDivider(props StackProps, items []templ.Component) {
 }
 
 // VStack creates a vertical stack (alias for Stack with column direction)
-templ VStack(spacing string, align string, class string, content templ.Component) {
+templ VStack(spacing string, align string, class string) {
 	@Stack(StackProps{
 		Direction: "column",
 		Spacing:   spacing,
 		Align:     align,
 		Class:     class,
-	}, content)
+	}) {
+		{ children... }
+	}
 }
 
 // StackItem creates a stack item with optional properties
-templ StackItem(grow bool, shrink bool, class string, content templ.Component) {
+templ StackItem(grow bool, shrink bool, class string) {
 	<div class={ getStackItemClasses(grow, shrink, class) }>
-		@content
+		{ children... }
 	</div>
 }
 
@@ -56,17 +58,44 @@ templ StackGroup(props StackProps, items []string) {
 
 // getStackClasses returns the appropriate CSS classes for the stack container
 func getStackClasses(props StackProps) string {
-	classes := "flex flex-col"
+	classes := "flex"
 	
-	// Direction
-	if props.Direction == "column-reverse" {
-		classes = "flex flex-col-reverse"
+	switch props.Direction {
+	case "column-reverse":
+		classes += " flex-col-reverse"
+	default:
+		classes += " flex-col"
 	}
 	
 	// Spacing
-	if props.Spacing != "" {
-		classes += " space-y-" + props.Spacing
-	} else {
+	switch props.Spacing {
+	case "0":
+		classes += " space-y-0"
+	case "1":
+		classes += " space-y-1"
+	case "2":
+		classes += " space-y-2"
+	case "3":
+		classes += " space-y-3"
+	case "4":
+		classes += " space-y-4"
+	case "5":
+		classes += " space-y-5"
+	case "6":
+		classes += " space-y-6"
+	case "8":
+		classes += " space-y-8"
+	case "10":
+		classes += " space-y-10"
+	case "12":
+		classes += " space-y-12"
+	case "16":
+		classes += " space-y-16"
+	case "20":
+		classes += " space-y-20"
+	case "24":
+		classes += " space-y-24"
+	default:
 		classes += " space-y-4"
 	}
 	
@@ -92,17 +121,15 @@ func getStackClasses(props StackProps) string {
 }
 
 // getStackItemClasses returns the appropriate CSS classes for stack items
-func getStackItemClasses(grow, shrink bool, class string) string {
-	var classes string
+func getStackItemClasses(grow bool, shrink bool, class string) string {
+	classes := ""
 	
 	if grow {
-		classes += "flex-grow"
+		classes += " flex-grow"
 	}
+	
 	if shrink {
-		if classes != "" {
-			classes += " "
-		}
-		classes += "flex-shrink"
+		classes += " flex-shrink"
 	}
 	
 	if class != "" {

@@ -14,9 +14,42 @@ type FlexProps struct {
 }
 
 // Flex creates a flexbox layout wrapper
-templ Flex(props FlexProps, content templ.Component) {
+templ Flex(props FlexProps) {
 	<div class={ getFlexClasses(props) }>
-		@content
+		{ children... }
+	</div>
+}
+
+// HStack creates a horizontal flex container (row direction)
+templ HStack(justify string, align string, gap string, class string) {
+	@Flex(FlexProps{
+		Direction: "row",
+		Justify:   justify,
+		Align:     align,
+		Gap:       gap,
+		Class:     class,
+	}) {
+		{ children... }
+	}
+}
+
+// VStack creates a vertical flex container (column direction)
+templ VStackFlex(justify string, align string, gap string, class string) {
+	@Flex(FlexProps{
+		Direction: "col",
+		Justify:   justify,
+		Align:     align,
+		Gap:       gap,
+		Class:     class,
+	}) {
+		{ children... }
+	}
+}
+
+// FlexItem creates a flex item with specific properties
+templ FlexItem(grow bool, shrink bool, basis string, class string) {
+	<div class={ getFlexItemClasses(grow, shrink, basis, class) }>
+		{ children... }
 	</div>
 }
 
@@ -113,6 +146,38 @@ func getFlexClasses(props FlexProps) string {
 	
 	if props.Class != "" {
 		classes += " " + props.Class
+	}
+	
+	return classes
+}
+
+// getFlexItemClasses returns the appropriate CSS classes for flex items
+func getFlexItemClasses(grow bool, shrink bool, basis string, class string) string {
+	classes := ""
+	
+	if grow {
+		classes += "flex-grow"
+	}
+	
+	if shrink {
+		if classes != "" {
+			classes += " "
+		}
+		classes += "flex-shrink"
+	}
+	
+	if basis != "" {
+		if classes != "" {
+			classes += " "
+		}
+		classes += "flex-" + basis
+	}
+	
+	if class != "" {
+		if classes != "" {
+			classes += " "
+		}
+		classes += class
 	}
 	
 	return classes
