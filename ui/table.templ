@@ -1,0 +1,213 @@
+package ui
+
+import "fmt"
+
+// TableProps defines the properties for the Table component
+type TableProps struct {
+	Zebra    bool   // zebra striping
+	Compact  bool   // compact size
+	Size     string // xs, sm, md, lg
+	Pinned   bool   // pinned rows/cols
+	Class    string
+}
+
+// TableColumn represents a table column
+type TableColumn struct {
+	Header string
+	Key    string
+	Width  string
+	Align  string // left, center, right
+}
+
+// TableRow represents a table row data
+type TableRow map[string]interface{}
+
+// Table creates a table component with DaisyUI styling
+templ Table(props TableProps, content templ.Component) {
+	<div class="overflow-x-auto">
+		<table class={ getTableClasses(props) }>
+			@content
+		</table>
+	</div>
+}
+
+// TableWithData creates a table with predefined data
+templ TableWithData(props TableProps, columns []TableColumn, rows []TableRow) {
+	<div class="overflow-x-auto">
+		<table class={ getTableClasses(props) }>
+			<thead>
+				<tr>
+					for _, col := range columns {
+						<th class={ getTableHeaderClasses(col) }>{ col.Header }</th>
+					}
+				</tr>
+			</thead>
+			<tbody>
+				for _, row := range rows {
+					<tr>
+						for _, col := range columns {
+							<td class={ getTableCellClasses(col) }>
+								{ getStringValue(row[col.Key]) }
+							</td>
+						}
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+}
+
+// TableHeader creates a table header section
+templ TableHeader(content templ.Component) {
+	<thead>
+		@content
+	</thead>
+}
+
+// TableBody creates a table body section
+templ TableBody(content templ.Component) {
+	<tbody>
+		@content
+	</tbody>
+}
+
+// TableRowComponent creates a table row
+templ TableRowComponent(active bool, hover bool, content templ.Component) {
+	<tr class={ getTableRowClasses(active, hover) }>
+		@content
+	</tr>
+}
+
+// TableCell creates a table cell
+templ TableCell(content templ.Component) {
+	<td>
+		@content
+	</td>
+}
+
+// TableHeaderCell creates a table header cell
+templ TableHeaderCell(content templ.Component) {
+	<th>
+		@content
+	</th>
+}
+
+// ResponsiveTable creates a responsive table with horizontal scrolling
+templ ResponsiveTable(props TableProps, content templ.Component) {
+	<div class="overflow-x-auto w-full">
+		<table class={ getTableClasses(props) }>
+			@content
+		</table>
+	</div>
+}
+
+// getTableClasses returns the appropriate CSS classes for the table
+func getTableClasses(props TableProps) string {
+	classes := "table w-full"
+	
+	if props.Zebra {
+		classes += " table-zebra"
+	}
+	
+	if props.Compact {
+		classes += " table-compact"
+	}
+	
+	switch props.Size {
+	case "xs":
+		classes += " table-xs"
+	case "sm":
+		classes += " table-sm"
+	case "md":
+		classes += " table-md"
+	case "lg":
+		classes += " table-lg"
+	}
+	
+	if props.Pinned {
+		classes += " table-pin-rows table-pin-cols"
+	}
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+}
+
+// getTableHeaderClasses returns the appropriate CSS classes for table headers
+func getTableHeaderClasses(col TableColumn) string {
+	classes := ""
+	
+	if col.Width != "" {
+		classes += col.Width
+	}
+	
+	switch col.Align {
+	case "center":
+		classes += " text-center"
+	case "right":
+		classes += " text-right"
+	default:
+		classes += " text-left"
+	}
+	
+	return classes
+}
+
+// getTableCellClasses returns the appropriate CSS classes for table cells
+func getTableCellClasses(col TableColumn) string {
+	classes := ""
+	
+	switch col.Align {
+	case "center":
+		classes += "text-center"
+	case "right":
+		classes += "text-right"
+	default:
+		classes += "text-left"
+	}
+	
+	return classes
+}
+
+// getTableRowClasses returns the appropriate CSS classes for table rows
+func getTableRowClasses(active, hover bool) string {
+	classes := ""
+	
+	if active {
+		classes += "active"
+	}
+	
+	if hover {
+		if classes != "" {
+			classes += " "
+		}
+		classes += "hover"
+	}
+	
+	return classes
+}
+
+// getStringValue converts interface{} to string for display
+func getStringValue(value interface{}) string {
+	if value == nil {
+		return ""
+	}
+	
+	switch v := value.(type) {
+	case string:
+		return v
+	case int:
+		return fmt.Sprintf("%d", v)
+	case float64:
+		return fmt.Sprintf("%.2f", v)
+	case bool:
+		if v {
+			return "Yes"
+		}
+		return "No"
+	default:
+		return fmt.Sprintf("%v", v)
+	}
+} 

@@ -1,0 +1,191 @@
+package ui
+
+import "fmt"
+
+// SkeletonProps defines the properties for the Skeleton component
+type SkeletonProps struct {
+	Width   string // w-full, w-1/2, w-32, etc.
+	Height  string // h-4, h-8, h-16, etc.
+	Rounded string // none, sm, md, lg, full
+	Animate bool   // enable animation
+	Class   string
+}
+
+// Skeleton creates a skeleton loading component
+templ Skeleton(props SkeletonProps) {
+	<div class={ getSkeletonClasses(props) }></div>
+}
+
+// SkeletonText creates skeleton text lines
+templ SkeletonText(lines int, props SkeletonProps) {
+	<div class="space-y-2">
+		for i := 0; i < lines; i++ {
+			<div class={ getSkeletonTextClasses(props, i, lines) }></div>
+		}
+	</div>
+}
+
+// SkeletonCard creates a skeleton card layout
+templ SkeletonCard(props SkeletonProps) {
+	<div class={ getSkeletonCardClasses(props) }>
+		<div class="flex animate-pulse">
+			<div class="rounded-full bg-gray-300 h-10 w-10"></div>
+			<div class="ml-4 space-y-2 flex-1">
+				<div class="h-4 bg-gray-300 rounded w-3/4"></div>
+				<div class="h-4 bg-gray-300 rounded w-1/2"></div>
+			</div>
+		</div>
+	</div>
+}
+
+// SkeletonAvatar creates a skeleton avatar
+templ SkeletonAvatar(size string, shape string) {
+	<div class={ getSkeletonAvatarClasses(size, shape) }></div>
+}
+
+// SkeletonButton creates a skeleton button
+templ SkeletonButton(props SkeletonProps) {
+	<div class={ getSkeletonButtonClasses(props) }></div>
+}
+
+// SkeletonTable creates a skeleton table
+templ SkeletonTable(rows int, cols int) {
+	<div class="animate-pulse">
+		<div class="space-y-3">
+			for r := 0; r < rows; r++ {
+				<div class="grid gap-4" style={ getGridColsStyle(cols) }>
+					for c := 0; c < cols; c++ {
+						<div class="h-4 bg-gray-300 rounded"></div>
+					}
+				</div>
+			}
+		</div>
+	</div>
+}
+
+// getSkeletonClasses returns the appropriate CSS classes for the skeleton
+func getSkeletonClasses(props SkeletonProps) string {
+	classes := "bg-gray-300 dark:bg-gray-700"
+	
+	// Width
+	if props.Width != "" {
+		classes += " " + props.Width
+	} else {
+		classes += " w-full"
+	}
+	
+	// Height
+	if props.Height != "" {
+		classes += " " + props.Height
+	} else {
+		classes += " h-4"
+	}
+	
+	// Rounded
+	switch props.Rounded {
+	case "none":
+		// no rounded
+	case "sm":
+		classes += " rounded-sm"
+	case "md":
+		classes += " rounded-md"
+	case "lg":
+		classes += " rounded-lg"
+	case "full":
+		classes += " rounded-full"
+	default:
+		classes += " rounded"
+	}
+	
+	// Animation
+	if props.Animate {
+		classes += " animate-pulse"
+	}
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+}
+
+// getSkeletonTextClasses returns the appropriate CSS classes for skeleton text
+func getSkeletonTextClasses(props SkeletonProps, lineIndex, totalLines int) string {
+	classes := "h-4 bg-gray-300 dark:bg-gray-700 rounded animate-pulse"
+	
+	// Make the last line shorter
+	if lineIndex == totalLines-1 && totalLines > 1 {
+		classes += " w-3/4"
+	} else {
+		classes += " w-full"
+	}
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+}
+
+// getSkeletonCardClasses returns the appropriate CSS classes for skeleton cards
+func getSkeletonCardClasses(props SkeletonProps) string {
+	classes := "p-4 border border-gray-200 dark:border-gray-700 rounded-lg"
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+}
+
+// getSkeletonAvatarClasses returns the appropriate CSS classes for skeleton avatars
+func getSkeletonAvatarClasses(size, shape string) string {
+	classes := "bg-gray-300 dark:bg-gray-700 animate-pulse"
+	
+	// Size
+	switch size {
+	case "xs":
+		classes += " w-8 h-8"
+	case "sm":
+		classes += " w-10 h-10"
+	case "md":
+		classes += " w-12 h-12"
+	case "lg":
+		classes += " w-16 h-16"
+	case "xl":
+		classes += " w-20 h-20"
+	default:
+		classes += " w-12 h-12"
+	}
+	
+	// Shape
+	if shape == "square" {
+		classes += " rounded"
+	} else {
+		classes += " rounded-full"
+	}
+	
+	return classes
+}
+
+// getSkeletonButtonClasses returns the appropriate CSS classes for skeleton buttons
+func getSkeletonButtonClasses(props SkeletonProps) string {
+	classes := "h-10 bg-gray-300 dark:bg-gray-700 rounded animate-pulse"
+	
+	if props.Width != "" {
+		classes += " " + props.Width
+	} else {
+		classes += " w-24"
+	}
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+}
+
+// getGridColsStyle returns the CSS grid-template-columns style
+func getGridColsStyle(cols int) string {
+	return "grid-template-columns: repeat(" + fmt.Sprintf("%d", cols) + ", 1fr);"
+} 

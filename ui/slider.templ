@@ -1,0 +1,147 @@
+package ui
+
+
+
+// SliderProps defines the properties for the Slider component
+type SliderProps struct {
+	Min      int
+	Max      int
+	Value    int
+	Step     int
+	Name     string
+	ID       string
+	Disabled bool
+	Size     string // xs, sm, md, lg
+	Variant  string // primary, secondary, accent, success, warning, info, error
+	ShowValue bool
+	Class    string
+}
+
+// Slider creates a range input (slider) component with DaisyUI styling
+templ Slider(props SliderProps) {
+	<input
+		type="range"
+		class={ getSliderClasses(props) }
+		min={ getIntAsString(props.Min) }
+		max={ getIntAsString(props.Max) }
+		value={ getIntAsString(props.Value) }
+		if props.Step > 0 {
+			step={ getIntAsString(props.Step) }
+		}
+		if props.Name != "" {
+			name={ props.Name }
+		}
+		if props.ID != "" {
+			id={ props.ID }
+		}
+		if props.Disabled {
+			disabled
+		}
+	/>
+}
+
+// SliderWithLabel creates a slider with label and value display
+templ SliderWithLabel(props SliderProps, label string) {
+	<div class="form-control w-full">
+		<label class="label">
+			<span class="label-text">{ label }</span>
+			if props.ShowValue {
+				<span class="label-text-alt">{ getIntAsString(props.Value) }</span>
+			}
+		</label>
+		@Slider(props)
+		<div class="label">
+			<span class="label-text-alt">{ getIntAsString(props.Min) }</span>
+			<span class="label-text-alt">{ getIntAsString(props.Max) }</span>
+		</div>
+	</div>
+}
+
+// RangeSlider creates a dual-handle range slider (custom implementation)
+templ RangeSlider(minValue, maxValue int, props SliderProps) {
+	<div class="relative">
+		<input
+			type="range"
+			class={ getSliderClasses(props) + " absolute w-full" }
+			min={ getIntAsString(props.Min) }
+			max={ getIntAsString(props.Max) }
+			value={ getIntAsString(minValue) }
+			if props.Step > 0 {
+				step={ getIntAsString(props.Step) }
+			}
+			if props.Name != "" {
+				name={ props.Name + "_min" }
+			}
+			if props.Disabled {
+				disabled
+			}
+		/>
+		<input
+			type="range"
+			class={ getSliderClasses(props) + " absolute w-full" }
+			min={ getIntAsString(props.Min) }
+			max={ getIntAsString(props.Max) }
+			value={ getIntAsString(maxValue) }
+			if props.Step > 0 {
+				step={ getIntAsString(props.Step) }
+			}
+			if props.Name != "" {
+				name={ props.Name + "_max" }
+			}
+			if props.Disabled {
+				disabled
+			}
+		/>
+	</div>
+}
+
+// SteppedSlider creates a slider with visible steps
+templ SteppedSlider(props SliderProps, steps []string) {
+	<div class="form-control w-full">
+		@Slider(props)
+		<div class="w-full flex justify-between text-xs px-2 mt-1">
+			for _, step := range steps {
+				<span class="text-base-content/60">{ step }</span>
+			}
+		</div>
+	</div>
+}
+
+// getSliderClasses returns the appropriate CSS classes for the slider
+func getSliderClasses(props SliderProps) string {
+	classes := "range"
+	
+	switch props.Size {
+	case "xs":
+		classes += " range-xs"
+	case "sm":
+		classes += " range-sm"
+	case "md":
+		classes += " range-md"
+	case "lg":
+		classes += " range-lg"
+	}
+	
+	switch props.Variant {
+	case "primary":
+		classes += " range-primary"
+	case "secondary":
+		classes += " range-secondary"
+	case "accent":
+		classes += " range-accent"
+	case "success":
+		classes += " range-success"
+	case "warning":
+		classes += " range-warning"
+	case "info":
+		classes += " range-info"
+	case "error":
+		classes += " range-error"
+	}
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+} 

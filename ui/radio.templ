@@ -1,0 +1,212 @@
+package ui
+
+// RadioProps defines the properties for the Radio component
+type RadioProps struct {
+	Name     string
+	ID       string
+	Value    string
+	Checked  bool
+	Disabled bool
+	Required bool
+	Size     string // xs, sm, md, lg
+	Variant  string // primary, secondary, accent, success, warning, info, error
+	Class    string
+}
+
+// RadioOption represents a single radio option
+type RadioOption struct {
+	Value    string
+	Label    string
+	Checked  bool
+	Disabled bool
+}
+
+// RadioGroupProps defines the properties for the RadioGroup component
+type RadioGroupProps struct {
+	Name     string
+	Options  []RadioOption
+	Size     string // xs, sm, md, lg
+	Variant  string // primary, secondary, accent, success, warning, info, error
+	Inline   bool   // display options inline
+	Required bool
+	Disabled bool
+	Class    string
+}
+
+// Radio creates a radio button component with DaisyUI styling
+templ Radio(props RadioProps) {
+	<input
+		type="radio"
+		class={ getRadioClasses(props) }
+		if props.Name != "" {
+			name={ props.Name }
+		}
+		if props.ID != "" {
+			id={ props.ID }
+		}
+		if props.Value != "" {
+			value={ props.Value }
+		}
+		if props.Checked {
+			checked
+		}
+		if props.Disabled {
+			disabled
+		}
+		if props.Required {
+			required
+		}
+	/>
+}
+
+// RadioWithLabel creates a radio button with label
+templ RadioWithLabel(props RadioProps, label string) {
+	<div class="form-control">
+		<label class="label cursor-pointer justify-start gap-2">
+			@Radio(props)
+			<span class="label-text">{ label }</span>
+		</label>
+	</div>
+}
+
+// RadioGroup creates a group of radio buttons
+templ RadioGroup(props RadioGroupProps) {
+	<div class={ getRadioGroupClasses(props) }>
+		for _, option := range props.Options {
+			<div class="form-control">
+				<label class="label cursor-pointer justify-start gap-2">
+					@Radio(RadioProps{
+						Name:     props.Name,
+						Value:    option.Value,
+						Checked:  option.Checked,
+						Disabled: option.Disabled || props.Disabled,
+						Required: props.Required,
+						Size:     props.Size,
+						Variant:  props.Variant,
+					})
+					<span class={ getRadioLabelClasses(option.Disabled || props.Disabled) }>
+						{ option.Label }
+					</span>
+				</label>
+			</div>
+		}
+	</div>
+}
+
+// RadioCards creates radio buttons styled as cards
+templ RadioCards(props RadioGroupProps) {
+	<div class={ getRadioCardsClasses(props) }>
+		for _, option := range props.Options {
+			<label class={ getRadioCardClasses(option.Disabled || props.Disabled) }>
+				@Radio(RadioProps{
+					Name:     props.Name,
+					Value:    option.Value,
+					Checked:  option.Checked,
+					Disabled: option.Disabled || props.Disabled,
+					Required: props.Required,
+					Size:     props.Size,
+					Variant:  props.Variant,
+					Class:    "sr-only",
+				})
+				<div class="w-full text-center">
+					{ option.Label }
+				</div>
+			</label>
+		}
+	</div>
+}
+
+// getRadioClasses returns the appropriate CSS classes for the radio button
+func getRadioClasses(props RadioProps) string {
+	classes := "radio"
+	
+	switch props.Size {
+	case "xs":
+		classes += " radio-xs"
+	case "sm":
+		classes += " radio-sm"
+	case "md":
+		classes += " radio-md"
+	case "lg":
+		classes += " radio-lg"
+	}
+	
+	switch props.Variant {
+	case "primary":
+		classes += " radio-primary"
+	case "secondary":
+		classes += " radio-secondary"
+	case "accent":
+		classes += " radio-accent"
+	case "success":
+		classes += " radio-success"
+	case "warning":
+		classes += " radio-warning"
+	case "info":
+		classes += " radio-info"
+	case "error":
+		classes += " radio-error"
+	}
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+}
+
+// getRadioGroupClasses returns the appropriate CSS classes for the radio group
+func getRadioGroupClasses(props RadioGroupProps) string {
+	classes := ""
+	
+	if props.Inline {
+		classes = "flex flex-wrap gap-4"
+	} else {
+		classes = "space-y-2"
+	}
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+}
+
+// getRadioLabelClasses returns the appropriate CSS classes for radio labels
+func getRadioLabelClasses(disabled bool) string {
+	classes := "label-text"
+	
+	if disabled {
+		classes += " text-base-content/40"
+	}
+	
+	return classes
+}
+
+// getRadioCardsClasses returns the appropriate CSS classes for radio cards container
+func getRadioCardsClasses(props RadioGroupProps) string {
+	classes := ""
+	
+	if props.Inline {
+		classes = "flex flex-wrap gap-2"
+	} else {
+		classes = "space-y-2"
+	}
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+}
+
+// getRadioCardClasses returns the appropriate CSS classes for individual radio cards
+func getRadioCardClasses(disabled bool) string {
+	classes := "flex items-center justify-center p-4 border border-gray-300 rounded-lg cursor-pointer hover:border-primary focus:outline-none focus:ring-2 focus:ring-primary"
+	
+	if disabled {
+		classes += " opacity-50 cursor-not-allowed"
+	}
+	
+	return classes
+} 

@@ -1,0 +1,116 @@
+package ui
+
+// StackProps defines the properties for the Stack component
+type StackProps struct {
+	Direction string // column (default), column-reverse
+	Spacing   string // 0, 1, 2, 3, 4, 5, 6, 8, 10, 12, 16, 20, 24
+	Align     string // start, end, center, stretch
+	Divider   bool   // add dividers between items
+	Class     string
+}
+
+// Stack creates a vertical spacing layout component
+templ Stack(props StackProps, content templ.Component) {
+	<div class={ getStackClasses(props) }>
+		@content
+	</div>
+}
+
+// StackWithDivider creates a stack with dividers between items
+templ StackWithDivider(props StackProps, items []templ.Component) {
+	<div class={ getStackClasses(props) }>
+		for i, item := range items {
+			@item
+			if i < len(items)-1 && props.Divider {
+				<div class="divider my-0"></div>
+			}
+		}
+	</div>
+}
+
+// VStack creates a vertical stack (alias for Stack with column direction)
+templ VStack(spacing string, align string, class string, content templ.Component) {
+	@Stack(StackProps{
+		Direction: "column",
+		Spacing:   spacing,
+		Align:     align,
+		Class:     class,
+	}, content)
+}
+
+// StackItem creates a stack item with optional properties
+templ StackItem(grow bool, shrink bool, class string, content templ.Component) {
+	<div class={ getStackItemClasses(grow, shrink, class) }>
+		@content
+	</div>
+}
+
+// StackGroup creates a group of stacked items with consistent spacing
+templ StackGroup(props StackProps, items []string) {
+	<div class={ getStackClasses(props) }>
+		for _, item := range items {
+			<div>{ item }</div>
+		}
+	</div>
+}
+
+// getStackClasses returns the appropriate CSS classes for the stack container
+func getStackClasses(props StackProps) string {
+	classes := "flex flex-col"
+	
+	// Direction
+	if props.Direction == "column-reverse" {
+		classes = "flex flex-col-reverse"
+	}
+	
+	// Spacing
+	if props.Spacing != "" {
+		classes += " space-y-" + props.Spacing
+	} else {
+		classes += " space-y-4"
+	}
+	
+	// Alignment
+	switch props.Align {
+	case "start":
+		classes += " items-start"
+	case "end":
+		classes += " items-end"
+	case "center":
+		classes += " items-center"
+	case "stretch":
+		classes += " items-stretch"
+	default:
+		classes += " items-start"
+	}
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+}
+
+// getStackItemClasses returns the appropriate CSS classes for stack items
+func getStackItemClasses(grow, shrink bool, class string) string {
+	var classes string
+	
+	if grow {
+		classes += "flex-grow"
+	}
+	if shrink {
+		if classes != "" {
+			classes += " "
+		}
+		classes += "flex-shrink"
+	}
+	
+	if class != "" {
+		if classes != "" {
+			classes += " "
+		}
+		classes += class
+	}
+	
+	return classes
+} 

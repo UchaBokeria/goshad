@@ -1,0 +1,140 @@
+package ui
+
+import "fmt"
+
+// ProgressProps defines the properties for the Progress component
+type ProgressProps struct {
+	Value    int    // current value
+	Max      int    // maximum value (default 100)
+	Size     string // xs, sm, md, lg
+	Variant  string // primary, secondary, accent, info, success, warning, error
+	ShowText bool   // show percentage text
+	Text     string // custom text instead of percentage
+	Class    string
+}
+
+// Progress creates a progress bar component with DaisyUI styling
+templ Progress(props ProgressProps) {
+	<div class="relative">
+		<progress
+			class={ getProgressClasses(props) }
+			value={ getIntAsString(props.Value) }
+			max={ getMaxAsString(props.Max) }
+		></progress>
+		if props.ShowText || props.Text != "" {
+			<div class="absolute inset-0 flex items-center justify-center">
+				<span class="text-xs font-medium text-base-content">
+					if props.Text != "" {
+						{ props.Text }
+					} else {
+						{ getPercentageText(props.Value, props.Max) }
+					}
+				</span>
+			</div>
+		}
+	</div>
+}
+
+// CircularProgress creates a circular progress indicator
+templ CircularProgress(props ProgressProps) {
+	<div class={ getCircularProgressClasses(props) }>
+		<div class="radial-progress" style={ getRadialProgressStyle(props.Value, props.Max) }>
+			if props.ShowText || props.Text != "" {
+				if props.Text != "" {
+					{ props.Text }
+				} else {
+					{ getPercentageText(props.Value, props.Max) }
+				}
+			}
+		</div>
+	</div>
+}
+
+// ProgressWithLabel creates a progress bar with label
+templ ProgressWithLabel(props ProgressProps, label string) {
+	<div class="w-full">
+		<div class="flex justify-between mb-1">
+			<span class="text-sm font-medium text-base-content">{ label }</span>
+			<span class="text-sm font-medium text-base-content">
+				{ getPercentageText(props.Value, props.Max) }
+			</span>
+		</div>
+		@Progress(props)
+	</div>
+}
+
+// getProgressClasses returns the appropriate CSS classes for the progress bar
+func getProgressClasses(props ProgressProps) string {
+	classes := "progress w-full"
+	
+	switch props.Size {
+	case "xs":
+		classes += " progress-xs"
+	case "sm":
+		classes += " progress-sm"
+	case "md":
+		classes += " progress-md"
+	case "lg":
+		classes += " progress-lg"
+	}
+	
+	switch props.Variant {
+	case "primary":
+		classes += " progress-primary"
+	case "secondary":
+		classes += " progress-secondary"
+	case "accent":
+		classes += " progress-accent"
+	case "info":
+		classes += " progress-info"
+	case "success":
+		classes += " progress-success"
+	case "warning":
+		classes += " progress-warning"
+	case "error":
+		classes += " progress-error"
+	}
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+}
+
+// getCircularProgressClasses returns the appropriate CSS classes for circular progress
+func getCircularProgressClasses(props ProgressProps) string {
+	classes := "flex items-center justify-center"
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+}
+
+// getMaxAsString returns the max value as string, defaulting to 100
+func getMaxAsString(max int) string {
+	if max <= 0 {
+		return "100"
+	}
+	return fmt.Sprintf("%d", max)
+}
+
+// getPercentageText returns the percentage text
+func getPercentageText(value, max int) string {
+	if max <= 0 {
+		max = 100
+	}
+	percentage := (value * 100) / max
+	return fmt.Sprintf("%d%%", percentage)
+}
+
+// getRadialProgressStyle returns the CSS custom property for radial progress
+func getRadialProgressStyle(value, max int) string {
+	if max <= 0 {
+		max = 100
+	}
+	percentage := (value * 100) / max
+	return fmt.Sprintf("--value:%d;", percentage)
+} 

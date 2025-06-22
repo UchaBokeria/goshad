@@ -14,7 +14,7 @@ type LabelProps struct {
 // Label creates a label component
 templ Label(props LabelProps, content templ.Component) {
 	<label
-		class={ getLabelClasses(props) }
+		class={ getFormLabelClasses(props) }
 		if props.For != "" {
 			for={ props.For }
 		}
@@ -29,7 +29,7 @@ templ Label(props LabelProps, content templ.Component) {
 // LabelWithText creates a simple text label
 templ LabelWithText(props LabelProps, text string) {
 	<label
-		class={ getLabelClasses(props) }
+		class={ getFormLabelClasses(props) }
 		if props.For != "" {
 			for={ props.For }
 		}
@@ -54,7 +54,7 @@ templ DaisyLabel(props LabelProps, content templ.Component) {
 }
 
 // getLabelClasses returns the appropriate CSS classes for the label
-func getLabelClasses(props LabelProps) string {
+func getFormLabelClasses(props LabelProps) string {
 	classes := "block"
 	
 	// Size

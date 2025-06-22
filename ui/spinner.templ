@@ -1,0 +1,204 @@
+package ui
+
+// SpinnerProps defines the properties for the Spinner component
+type SpinnerProps struct {
+	Size    string // xs, sm, md, lg, xl
+	Variant string // default, primary, secondary, accent, info, success, warning, error
+	Class   string
+}
+
+// Spinner creates a loading spinner component with DaisyUI styling
+templ Spinner(props SpinnerProps) {
+	<span class={ getSpinnerClasses(props) }></span>
+}
+
+// SpinnerWithText creates a spinner with loading text
+templ SpinnerWithText(props SpinnerProps, text string) {
+	<div class="flex items-center gap-2">
+		@Spinner(props)
+		<span>{ text }</span>
+	</div>
+}
+
+// ButtonSpinner creates a spinner for use inside buttons
+templ ButtonSpinner(props SpinnerProps) {
+	<span class={ getButtonSpinnerClasses(props) }></span>
+}
+
+// DotSpinner creates a three-dot loading animation
+templ DotSpinner(props SpinnerProps) {
+	<div class={ getDotSpinnerClasses(props) }>
+		<div class="dot-spinner-dot"></div>
+		<div class="dot-spinner-dot"></div>
+		<div class="dot-spinner-dot"></div>
+	</div>
+}
+
+// PulseSpinner creates a pulsing circle loader
+templ PulseSpinner(props SpinnerProps) {
+	<div class={ getPulseSpinnerClasses(props) }>
+		<div class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75"></div>
+		<div class="relative inline-flex rounded-full"></div>
+	</div>
+}
+
+// BarSpinner creates a bar-style loading animation
+templ BarSpinner(props SpinnerProps) {
+	<div class={ getBarSpinnerClasses(props) }>
+		<div class="bar-spinner-bar"></div>
+		<div class="bar-spinner-bar"></div>
+		<div class="bar-spinner-bar"></div>
+		<div class="bar-spinner-bar"></div>
+	</div>
+}
+
+// getSpinnerClasses returns the appropriate CSS classes for the spinner
+func getSpinnerClasses(props SpinnerProps) string {
+	classes := "loading loading-spinner"
+	
+	switch props.Size {
+	case "xs":
+		classes += " loading-xs"
+	case "sm":
+		classes += " loading-sm"
+	case "md":
+		classes += " loading-md"
+	case "lg":
+		classes += " loading-lg"
+	case "xl":
+		classes += " loading-xl"
+	}
+	
+	// Color variants
+	switch props.Variant {
+	case "primary":
+		classes += " text-primary"
+	case "secondary":
+		classes += " text-secondary"
+	case "accent":
+		classes += " text-accent"
+	case "info":
+		classes += " text-info"
+	case "success":
+		classes += " text-success"
+	case "warning":
+		classes += " text-warning"
+	case "error":
+		classes += " text-error"
+	}
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+}
+
+// getButtonSpinnerClasses returns the appropriate CSS classes for button spinners
+func getButtonSpinnerClasses(props SpinnerProps) string {
+	classes := "loading loading-spinner"
+	
+	switch props.Size {
+	case "xs":
+		classes += " loading-xs"
+	case "sm":
+		classes += " loading-sm"
+	case "md":
+		classes += " loading-md"
+	case "lg":
+		classes += " loading-lg"
+	default:
+		classes += " loading-sm"
+	}
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+}
+
+// getDotSpinnerClasses returns the appropriate CSS classes for dot spinners
+func getDotSpinnerClasses(props SpinnerProps) string {
+	classes := "flex space-x-1"
+	
+	switch props.Size {
+	case "xs":
+		classes += " text-xs"
+	case "sm":
+		classes += " text-sm"
+	case "md":
+		classes += " text-base"
+	case "lg":
+		classes += " text-lg"
+	case "xl":
+		classes += " text-xl"
+	default:
+		classes += " text-base"
+	}
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+}
+
+// getPulseSpinnerClasses returns the appropriate CSS classes for pulse spinners
+func getPulseSpinnerClasses(props SpinnerProps) string {
+	classes := "relative inline-flex"
+	
+	switch props.Size {
+	case "xs":
+		classes += " h-3 w-3"
+	case "sm":
+		classes += " h-4 w-4"
+	case "md":
+		classes += " h-6 w-6"
+	case "lg":
+		classes += " h-8 w-8"
+	case "xl":
+		classes += " h-10 w-10"
+	default:
+		classes += " h-6 w-6"
+	}
+	
+	// Color variants
+	switch props.Variant {
+	case "primary":
+		classes += " bg-primary"
+	case "secondary":
+		classes += " bg-secondary"
+	case "accent":
+		classes += " bg-accent"
+	case "info":
+		classes += " bg-info"
+	case "success":
+		classes += " bg-success"
+	case "warning":
+		classes += " bg-warning"
+	case "error":
+		classes += " bg-error"
+	default:
+		classes += " bg-primary"
+	}
+	
+	classes += " rounded-full"
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+}
+
+// getBarSpinnerClasses returns the appropriate CSS classes for bar spinners
+func getBarSpinnerClasses(props SpinnerProps) string {
+	classes := "flex space-x-1"
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+} 

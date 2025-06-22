@@ -1,0 +1,102 @@
+package ui
+
+// SwitchProps defines the properties for the Switch component
+type SwitchProps struct {
+	Name     string
+	ID       string
+	Checked  bool
+	Disabled bool
+	Required bool
+	Size     string // xs, sm, md, lg
+	Variant  string // primary, secondary, accent, success, warning, info, error
+	Class    string
+}
+
+// Switch creates a toggle switch component with DaisyUI styling
+templ Switch(props SwitchProps) {
+	<input
+		type="checkbox"
+		class={ getSwitchClasses(props) }
+		if props.Name != "" {
+			name={ props.Name }
+		}
+		if props.ID != "" {
+			id={ props.ID }
+		}
+		if props.Checked {
+			checked
+		}
+		if props.Disabled {
+			disabled
+		}
+		if props.Required {
+			required
+		}
+	/>
+}
+
+// SwitchWithLabel creates a switch with label
+templ SwitchWithLabel(props SwitchProps, label string) {
+	<div class="form-control">
+		<label class="label cursor-pointer justify-start gap-2">
+			@Switch(props)
+			<span class="label-text">{ label }</span>
+		</label>
+	</div>
+}
+
+// SwitchCard creates a switch styled as a card
+templ SwitchCard(props SwitchProps, title string, description string) {
+	<div class="card card-compact bg-base-100 shadow-xl">
+		<div class="card-body">
+			<div class="flex items-center justify-between">
+				<div>
+					<h3 class="card-title text-sm">{ title }</h3>
+					if description != "" {
+						<p class="text-xs text-base-content/60">{ description }</p>
+					}
+				</div>
+				@Switch(props)
+			</div>
+		</div>
+	</div>
+}
+
+// getSwitchClasses returns the appropriate CSS classes for the switch
+func getSwitchClasses(props SwitchProps) string {
+	classes := "toggle"
+	
+	switch props.Size {
+	case "xs":
+		classes += " toggle-xs"
+	case "sm":
+		classes += " toggle-sm"
+	case "md":
+		classes += " toggle-md"
+	case "lg":
+		classes += " toggle-lg"
+	}
+	
+	switch props.Variant {
+	case "primary":
+		classes += " toggle-primary"
+	case "secondary":
+		classes += " toggle-secondary"
+	case "accent":
+		classes += " toggle-accent"
+	case "success":
+		classes += " toggle-success"
+	case "warning":
+		classes += " toggle-warning"
+	case "info":
+		classes += " toggle-info"
+	case "error":
+		classes += " toggle-error"
+	}
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+} 

@@ -3,162 +3,356 @@ package examples
 import "github.com/UchaBokeria/goshad/ui"
 
 templ UI() {
-    <div class="container mx-auto p-8">
-        <h1 class="text-4xl font-bold mb-8 text-center">GoShad UI Components Demo</h1>
-        
-        <!-- Input Components Section -->
-        <div class="mb-12">
-            <h2 class="text-2xl font-semibold mb-6">Input Components</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Basic Input -->
-                <div class="space-y-4">
-                    <h3 class="text-lg font-medium">Basic Inputs</h3>
-                    @ui.Input(ui.InputProps{
-                        Placeholder: "Enter your name",
-                        Variant: "bordered",
-                    })
-                    @ui.Input(ui.InputProps{
-                        Type: "email",
-                        Placeholder: "Enter your email",
-                        Variant: "primary",
-                    })
-                </div>
-                
-                <!-- Input with Labels -->
-                <div class="space-y-4">
-                    <h3 class="text-lg font-medium">Inputs with Labels</h3>
-                    @ui.InputWithLabel("Full Name", ui.InputProps{
-                        Placeholder: "John Doe",
-                        Variant: "bordered",
-                    })
-                    @ui.InputWithLabel("Password", ui.InputProps{
-                        Type: "password",
-                        Placeholder: "••••••••",
-                        Variant: "bordered",
-                    })
-                </div>
-            </div>
-            
-            <!-- Different Input Sizes -->
-            <div class="mt-6">
-                <h3 class="text-lg font-medium mb-4">Input Sizes</h3>
-                <div class="space-y-3">
-                    @ui.Input(ui.InputProps{Placeholder: "Extra Small", Size: "xs", Variant: "bordered"})
-                    @ui.Input(ui.InputProps{Placeholder: "Small", Size: "sm", Variant: "bordered"})
-                    @ui.Input(ui.InputProps{Placeholder: "Medium (Default)", Size: "md", Variant: "bordered"})
-                    @ui.Input(ui.InputProps{Placeholder: "Large", Size: "lg", Variant: "bordered"})
-                </div>
-            </div>
+    <div class="max-w-6xl mx-auto space-y-12">
+        <!-- Header -->
+        <div class="text-center space-y-4">
+            <h1 class="text-4xl font-bold text-primary">GoShad UI Components</h1>
+            <p class="text-lg text-base-content/70">Built with a-h/templ, Tailwind CSS, and DaisyUI</p>
         </div>
+
+        <!-- Buttons Section -->
+        @ButtonSection()
         
-        <!-- Button Components Section -->
-        <div class="mb-12">
-            <h2 class="text-2xl font-semibold mb-6">Button Components</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Basic Buttons -->
-                <div class="space-y-4">
-                    <h3 class="text-lg font-medium">Button Variants</h3>
-                    <div class="flex flex-wrap gap-2">
-                        @ui.ButtonText("Primary", ui.ButtonProps{Variant: "primary"})
-                        @ui.ButtonText("Secondary", ui.ButtonProps{Variant: "secondary"})
-                        @ui.ButtonText("Accent", ui.ButtonProps{Variant: "accent"})
-                        @ui.ButtonText("Ghost", ui.ButtonProps{Variant: "ghost"})
-                    </div>
-                </div>
-                
-                <!-- Button Sizes -->
-                <div class="space-y-4">
-                    <h3 class="text-lg font-medium">Button Sizes</h3>
-                    <div class="flex flex-wrap gap-2 items-center">
-                        @ui.ButtonText("XS", ui.ButtonProps{Size: "xs", Variant: "primary"})
-                        @ui.ButtonText("Small", ui.ButtonProps{Size: "sm", Variant: "primary"})
-                        @ui.ButtonText("Medium", ui.ButtonProps{Size: "md", Variant: "primary"})
-                        @ui.ButtonText("Large", ui.ButtonProps{Size: "lg", Variant: "primary"})
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Button States -->
-            <div class="mt-6">
-                <h3 class="text-lg font-medium mb-4">Button States</h3>
-                <div class="flex flex-wrap gap-2">
-                    @ui.ButtonText("Loading", ui.ButtonProps{Variant: "primary", Loading: true})
-                    @ui.ButtonText("Disabled", ui.ButtonProps{Variant: "primary", Disabled: true})
-                    @ui.ButtonText("Outline", ui.ButtonProps{Variant: "primary", Outline: true})
-                    @ui.ButtonText("Wide", ui.ButtonProps{Variant: "primary", Wide: true})
-                </div>
-            </div>
-        </div>
+        <!-- Form Components Section -->
+        @FormSection()
         
-        <!-- Select Components Section -->
-        <div class="mb-12">
-            <h2 class="text-2xl font-semibold mb-6">Select Components</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Basic Select -->
-                <div class="space-y-4">
-                    <h3 class="text-lg font-medium">Basic Select</h3>
-                    @ui.Select(ui.SelectProps{
-                        Variant: "bordered",
-                        Options: []ui.SelectOption{
-                            {Value: "", Label: "Select an option", Selected: true},
-                            {Value: "option1", Label: "Option 1"},
-                            {Value: "option2", Label: "Option 2"},
-                            {Value: "option3", Label: "Option 3"},
-                        },
-                    })
-                </div>
-                
-                <!-- Select with Label -->
-                <div class="space-y-4">
-                    <h3 class="text-lg font-medium">Select with Label</h3>
-                    @ui.SelectWithLabel("Choose Country", ui.SelectProps{
-                        Variant: "bordered",
-                        Options: []ui.SelectOption{
-                            {Value: "", Label: "Select country"},
-                            {Value: "us", Label: "United States"},
-                            {Value: "ca", Label: "Canada"},
-                            {Value: "uk", Label: "United Kingdom"},
-                            {Value: "ge", Label: "Georgia"},
-                        },
-                    })
-                </div>
-            </div>
-        </div>
+        <!-- Layout Section -->
+        @LayoutSection()
         
-        <!-- MultiSelect Components Section -->
-        <div class="mb-12">
-            <h2 class="text-2xl font-semibold mb-6">MultiSelect Components</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Basic MultiSelect -->
-                <div class="space-y-4">
-                    <h3 class="text-lg font-medium">Basic MultiSelect</h3>
-                    @ui.MultiSelect(ui.MultiSelectProps{
-                        Placeholder: "Select multiple options",
-                        Options: []ui.MultiSelectOption{
-                            {Value: "html", Label: "HTML"},
-                            {Value: "css", Label: "CSS"},
-                            {Value: "js", Label: "JavaScript", Selected: true},
-                            {Value: "go", Label: "Go", Selected: true},
-                            {Value: "python", Label: "Python"},
-                        },
-                    })
-                </div>
-                
-                <!-- MultiSelect with Label -->
-                <div class="space-y-4">
-                    <h3 class="text-lg font-medium">MultiSelect with Label</h3>
-                    @ui.MultiSelectWithLabel("Select Skills", ui.MultiSelectProps{
-                        Placeholder: "Choose your skills",
-                        Options: []ui.MultiSelectOption{
-                            {Value: "frontend", Label: "Frontend Development"},
-                            {Value: "backend", Label: "Backend Development"},
-                            {Value: "mobile", Label: "Mobile Development"},
-                            {Value: "devops", Label: "DevOps"},
-                            {Value: "design", Label: "UI/UX Design"},
-                        },
-                    })
-                </div>
-            </div>
-        </div>
+        <!-- Display Section -->
+        @DisplaySection()
     </div>
 }
+
+templ ButtonSection() {
+	<section class="card bg-base-100 shadow-xl">
+		<div class="card-body">
+			<h2 class="card-title text-2xl text-secondary">Buttons</h2>
+			
+			<div class="space-y-6">
+				<div>
+					<h3 class="text-lg font-semibold mb-3">Button Variants</h3>
+					<div class="flex flex-wrap gap-3">
+						@ui.Button(ui.ButtonProps{Variant: "primary", Size: "md", Type: "button"}) { Primary }
+						@ui.Button(ui.ButtonProps{Variant: "secondary", Size: "md", Type: "button"}) { Secondary }
+						@ui.Button(ui.ButtonProps{Variant: "accent", Size: "md", Type: "button"}) { Accent }
+						@ui.Button(ui.ButtonProps{Variant: "info", Size: "md", Type: "button"}) { Info }
+						@ui.Button(ui.ButtonProps{Variant: "success", Size: "md", Type: "button"}) { Success }
+						@ui.Button(ui.ButtonProps{Variant: "warning", Size: "md", Type: "button"}) { Warning }
+						@ui.Button(ui.ButtonProps{Variant: "error", Size: "md", Type: "button"}) { Error }
+					</div>
+				</div>
+				
+				<div>
+					<h3 class="text-lg font-semibold mb-3">Button Sizes</h3>
+					<div class="flex items-center gap-3">
+						@ui.Button(ui.ButtonProps{Variant: "primary", Size: "xs", Type: "button"}) { XS }
+						@ui.Button(ui.ButtonProps{Variant: "primary", Size: "sm", Type: "button"}) { Small }
+						@ui.Button(ui.ButtonProps{Variant: "primary", Size: "md", Type: "button"}) { Medium }
+						@ui.Button(ui.ButtonProps{Variant: "primary", Size: "lg", Type: "button"}) { Large }
+					</div>
+				</div>
+				
+				<div>
+					<h3 class="text-lg font-semibold mb-3">Button States</h3>
+					<div class="flex gap-3">
+						@ui.Button(ui.ButtonProps{Variant: "primary", Size: "md", Type: "button"}) { Normal }
+						@ui.Button(ui.ButtonProps{Variant: "primary", Outline: true, Size: "md", Type: "button"}) { Outline }
+						@ui.Button(ui.ButtonProps{Variant: "primary", Disabled: true, Size: "md", Type: "button"}) { Disabled }
+						@ui.Button(ui.ButtonProps{Variant: "primary", Loading: true, Size: "md", Type: "button"}) { Loading }
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+}
+
+templ FormSection() {
+	<section class="card bg-base-100 shadow-xl">
+		<div class="card-body">
+			<h2 class="card-title text-2xl text-secondary">Form Components</h2>
+			
+			<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+				<div class="space-y-4">
+					<h3 class="text-lg font-semibold">Input Fields</h3>
+					
+					<div class="form-control">
+						<label class="label">
+							<span class="label-text">Email</span>
+						</label>
+						@ui.Input(ui.InputProps{
+							Type: "email",
+							Placeholder: "Enter your email",
+							Variant: "bordered",
+							Size: "md",
+						})
+					</div>
+					
+					<div class="form-control">
+						<label class="label">
+							<span class="label-text">Password</span>
+						</label>
+						@ui.Input(ui.InputProps{
+							Type: "password",
+							Placeholder: "Enter password",
+							Variant: "bordered",
+							Size: "md",
+						})
+					</div>
+					
+					<div class="form-control">
+						<label class="label">
+							<span class="label-text">Message</span>
+						</label>
+						@ui.Textarea(ui.TextareaProps{
+							Placeholder: "Type your message",
+							Variant: "bordered",
+							Rows: 4,
+						})
+					</div>
+				</div>
+				
+				<div class="space-y-4">
+					<h3 class="text-lg font-semibold">Selection Components</h3>
+					
+					<div class="form-control">
+						<label class="label">
+							<span class="label-text">Country</span>
+						</label>
+						@ui.Select(ui.SelectProps{
+							Variant: "bordered",
+							Placeholder: "Choose a country",
+							Size: "md",
+						}) {
+							<option value="us">United States</option>
+							<option value="ca">Canada</option>
+							<option value="mx">Mexico</option>
+						}
+					</div>
+					
+					<div class="form-control">
+						<label class="label cursor-pointer justify-start gap-2">
+							<input type="checkbox" class="checkbox checkbox-primary" />
+							<span class="label-text">Remember me</span>
+						</label>
+					</div>
+					
+					<div class="form-control">
+						<label class="label cursor-pointer justify-start gap-2">
+							<input type="radio" name="radio-example" class="radio radio-primary" />
+							<span class="label-text">Option 1</span>
+						</label>
+					</div>
+					
+					<div class="form-control">
+						<label class="label cursor-pointer justify-start gap-2">
+							<input type="checkbox" class="toggle toggle-primary" />
+							<span class="label-text">Toggle me</span>
+						</label>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+}
+
+templ LayoutSection() {
+	<section class="card bg-base-100 shadow-xl">
+		<div class="card-body">
+			<h2 class="card-title text-2xl text-secondary">Layout Components</h2>
+			
+			<div class="space-y-6">
+				<div>
+					<h3 class="text-lg font-semibold mb-3">Grid Layout</h3>
+					<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+						<div class="bg-primary/20 p-4 rounded text-center">Grid Item 1</div>
+						<div class="bg-secondary/20 p-4 rounded text-center">Grid Item 2</div>
+						<div class="bg-accent/20 p-4 rounded text-center">Grid Item 3</div>
+					</div>
+				</div>
+				
+				<div>
+					<h3 class="text-lg font-semibold mb-3">Flex Layout</h3>
+					<div class="flex flex-wrap gap-4 justify-center">
+						<div class="bg-info/20 p-4 rounded">Flex Item 1</div>
+						<div class="bg-success/20 p-4 rounded">Flex Item 2</div>
+						<div class="bg-warning/20 p-4 rounded">Flex Item 3</div>
+					</div>
+				</div>
+				
+				<div>
+					<h3 class="text-lg font-semibold mb-3">Stack Layout</h3>
+					<div class="space-y-3">
+						<div class="bg-primary/10 p-3 rounded">Stack Item 1</div>  
+						<div class="bg-primary/20 p-3 rounded">Stack Item 2</div>
+						<div class="bg-primary/30 p-3 rounded">Stack Item 3</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+}
+
+templ DisplaySection() {
+	<section class="card bg-base-100 shadow-xl">
+		<div class="card-body">
+			<h2 class="card-title text-2xl text-secondary">Display Components</h2>
+			
+			<div class="space-y-6">
+				<div>
+					<h3 class="text-lg font-semibold mb-3">Cards</h3>
+					<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+						<div class="card bg-base-100 shadow-xl border">
+							<div class="card-body">
+								<h3 class="card-title">Card Title</h3>
+								<p>This is a basic card example with some content.</p>
+								<div class="card-actions justify-end">
+									@ui.Button(ui.ButtonProps{Variant: "primary", Size: "sm", Type: "button"}) { Action }
+								</div>
+							</div>
+						</div>
+						
+						<div class="card bg-base-100 shadow-xl border">
+							<figure>
+								<img src="https://picsum.photos/400/225" alt="Sample" class="w-full h-48 object-cover"/>
+							</figure>
+							<div class="card-body">
+								<h3 class="card-title">Card with Image</h3>
+								<p>Card with an image at the top.</p>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<div>
+					<h3 class="text-lg font-semibold mb-3">Avatars & Badges</h3>
+					<div class="flex items-center gap-4 flex-wrap">
+						<div class="avatar">
+							<div class="w-12 rounded-full">
+								<img src="https://picsum.photos/100/100" alt="Avatar"/>
+							</div>
+						</div>
+						<div class="avatar online">
+							<div class="w-12 rounded-full">
+								<img src="https://picsum.photos/100/100?random=1" alt="Avatar"/>
+							</div>
+						</div>
+						<div class="badge badge-primary">Primary</div>
+						<div class="badge badge-secondary">Secondary</div>
+						<div class="badge badge-accent badge-outline">Accent</div>
+					</div>
+				</div>
+				
+				<div>
+					<h3 class="text-lg font-semibold mb-3">Alerts</h3>
+					<div class="space-y-3">
+						<div class="alert alert-info">
+							<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+							</svg>
+							<span>Info alert! You have a new message.</span>
+						</div>
+						<div class="alert alert-success">
+							<svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+							</svg>
+							<span>Success! Your purchase has been confirmed.</span>
+						</div>
+						<div class="alert alert-warning">
+							<svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+							</svg>
+							<span>Warning! Something needs your attention.</span>
+						</div>
+					</div>
+				</div>
+				
+				<div>
+					<h3 class="text-lg font-semibold mb-3">Progress & Loading</h3>
+					<div class="space-y-4">
+						<progress class="progress progress-primary w-full" value="32" max="100"></progress>
+						<progress class="progress progress-secondary w-full" value="70" max="100"></progress>
+						<progress class="progress progress-accent w-full" value="85" max="100"></progress>
+						
+						<div class="flex gap-4">
+							<span class="loading loading-spinner text-primary"></span>
+							<span class="loading loading-dots text-secondary"></span>
+							<span class="loading loading-ring text-accent"></span>
+							<span class="loading loading-ball text-warning"></span>
+						</div>
+					</div>
+				</div>
+				
+				<div>
+					<h3 class="text-lg font-semibold mb-3">Tables</h3>
+					<div class="overflow-x-auto">
+						<table class="table table-zebra w-full">
+							<thead>
+								<tr>
+									<th>Name</th>
+									<th>Email</th>
+									<th>Role</th>
+									<th>Status</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>John Doe</td>
+									<td>john@example.com</td>
+									<td>Developer</td>
+									<td><div class="badge badge-success">Active</div></td>
+								</tr>
+								<tr>
+									<td>Jane Smith</td>
+									<td>jane@example.com</td>
+									<td>Designer</td>
+									<td><div class="badge badge-warning">Pending</div></td>
+								</tr>
+								<tr>
+									<td>Bob Johnson</td>
+									<td>bob@example.com</td>
+									<td>Manager</td>
+									<td><div class="badge badge-error">Inactive</div></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				
+				<div>
+					<h3 class="text-lg font-semibold mb-3">Navigation</h3>
+					<div class="space-y-4">
+						<div>
+							<h4 class="font-medium mb-2">Links</h4>
+							<div class="space-y-2">
+								<div><a href="#" class="link link-primary">Primary Link</a></div>
+								<div><a href="#" class="link link-secondary">Secondary Link</a></div>
+								<div><a href="#" class="link link-hover">Hover Link</a></div>
+							</div>
+						</div>
+						
+						<div>
+							<h4 class="font-medium mb-2">Tooltips</h4>
+							<div class="flex gap-4">
+								<div class="tooltip" data-tip="This is a tooltip">
+									<button class="btn">Hover me</button>
+								</div>
+								<div class="tooltip tooltip-open tooltip-bottom" data-tip="Always visible">
+									<button class="btn">Always visible</button>
+								</div>
+							</div>
+						</div>
+						
+						<div>
+							<h4 class="font-medium mb-2">Range Sliders</h4>
+							<div class="space-y-4">
+								<input type="range" min="0" max="100" value="40" class="range range-primary" />
+								<input type="range" min="0" max="100" value="70" class="range range-secondary" />
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+} 

@@ -1,0 +1,55 @@
+package ui
+
+// ToggleProps defines the properties for the Toggle component (alias of Switch)
+type ToggleProps struct {
+	Name     string
+	ID       string
+	Checked  bool
+	Disabled bool
+	Required bool
+	Size     string // xs, sm, md, lg
+	Variant  string // primary, secondary, accent, success, warning, info, error
+	Class    string
+}
+
+// Toggle creates a toggle component (semantic alias of Switch)
+templ Toggle(props ToggleProps) {
+	@Switch(SwitchProps{
+		Name:     props.Name,
+		ID:       props.ID,
+		Checked:  props.Checked,
+		Disabled: props.Disabled,
+		Required: props.Required,
+		Size:     props.Size,
+		Variant:  props.Variant,
+		Class:    props.Class,
+	})
+}
+
+// ToggleWithLabel creates a toggle with label (alias of SwitchWithLabel)
+templ ToggleWithLabel(props ToggleProps, label string) {
+	@SwitchWithLabel(SwitchProps{
+		Name:     props.Name,
+		ID:       props.ID,
+		Checked:  props.Checked,
+		Disabled: props.Disabled,
+		Required: props.Required,
+		Size:     props.Size,
+		Variant:  props.Variant,
+		Class:    props.Class,
+	}, label)
+}
+
+// ToggleCard creates a toggle styled as a card (alias of SwitchCard)
+templ ToggleCard(props ToggleProps, title string, description string) {
+	@SwitchCard(SwitchProps{
+		Name:     props.Name,
+		ID:       props.ID,
+		Checked:  props.Checked,
+		Disabled: props.Disabled,
+		Required: props.Required,
+		Size:     props.Size,
+		Variant:  props.Variant,
+		Class:    props.Class,
+	}, title, description)
+} 

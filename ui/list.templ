@@ -1,0 +1,208 @@
+package ui
+
+// ListProps defines the properties for the List component
+type ListProps struct {
+	Ordered   bool
+	Variant   string // default, disc, decimal, none
+	Size      string // xs, sm, base, lg, xl
+	Spacing   string // none, tight, normal, loose
+	Nested    bool
+	Class     string
+}
+
+// ListItem represents a single list item
+type ListItem struct {
+	Content string
+	Active  bool
+	Disabled bool
+	Class   string
+}
+
+// List creates a list component (ul or ol)
+templ List(props ListProps, content templ.Component) {
+	if props.Ordered {
+		<ol class={ getListClasses(props) }>
+			@content
+		</ol>
+	} else {
+		<ul class={ getListClasses(props) }>
+			@content
+		</ul>
+	}
+}
+
+// ListWithItems creates a list with predefined items
+templ ListWithItems(props ListProps, items []ListItem) {
+	if props.Ordered {
+		<ol class={ getListClasses(props) }>
+			for _, item := range items {
+				<li class={ getListItemClasses(item) }>
+					{ item.Content }
+				</li>
+			}
+		</ol>
+	} else {
+		<ul class={ getListClasses(props) }>
+			for _, item := range items {
+				<li class={ getListItemClasses(item) }>
+					{ item.Content }
+				</li>
+			}
+		</ul>
+	}
+}
+
+// ListItem creates a single list item
+templ ListItemComponent(item ListItem, content templ.Component) {
+	<li class={ getListItemClasses(item) }>
+		@content
+	</li>
+}
+
+// MenuList creates a menu-style list using DaisyUI
+templ MenuList(props ListProps, content templ.Component) {
+	<ul class={ getMenuListClasses(props) }>
+		@content
+	</ul>
+}
+
+// MenuItem creates a menu item
+templ MenuItem(item ListItem, content templ.Component) {
+	<li class={ getMenuItemClasses(item) }>
+		@content
+	</li>
+}
+
+// getListClasses returns the appropriate CSS classes for the list
+func getListClasses(props ListProps) string {
+	classes := ""
+	
+	// List style
+	switch props.Variant {
+	case "disc":
+		classes = "list-disc"
+	case "decimal":
+		classes = "list-decimal"
+	case "none":
+		classes = "list-none"
+	default:
+		if props.Ordered {
+			classes = "list-decimal"
+		} else {
+			classes = "list-disc"
+		}
+	}
+	
+	// Padding for nested lists
+	if props.Nested {
+		classes += " pl-6"
+	} else {
+		classes += " pl-5"
+	}
+	
+	// Spacing
+	switch props.Spacing {
+	case "none":
+		classes += " space-y-0"
+	case "tight":
+		classes += " space-y-1"
+	case "normal":
+		classes += " space-y-2"
+	case "loose":
+		classes += " space-y-4"
+	default:
+		classes += " space-y-2"
+	}
+	
+	// Size
+	switch props.Size {
+	case "xs":
+		classes += " text-xs"
+	case "sm":
+		classes += " text-sm"
+	case "base":
+		classes += " text-base"
+	case "lg":
+		classes += " text-lg"
+	case "xl":
+		classes += " text-xl"
+	default:
+		classes += " text-base"
+	}
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+}
+
+// getListItemClasses returns the appropriate CSS classes for list items
+func getListItemClasses(item ListItem) string {
+	classes := ""
+	
+	if item.Active {
+		classes += "font-semibold text-primary"
+	}
+	
+	if item.Disabled {
+		classes += " opacity-50 cursor-not-allowed"
+	}
+	
+	if item.Class != "" {
+		if classes != "" {
+			classes += " "
+		}
+		classes += item.Class
+	}
+	
+	return classes
+}
+
+// getMenuListClasses returns the appropriate CSS classes for menu lists
+func getMenuListClasses(props ListProps) string {
+	classes := "menu"
+	
+	// Size
+	switch props.Size {
+	case "xs":
+		classes += " menu-xs"
+	case "sm":
+		classes += " menu-sm"
+	case "md":
+		classes += " menu-md"
+	case "lg":
+		classes += " menu-lg"
+	}
+	
+	// Background
+	classes += " bg-base-100 rounded-box"
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+}
+
+// getMenuItemClasses returns the appropriate CSS classes for menu items
+func getMenuItemClasses(item ListItem) string {
+	classes := ""
+	
+	if item.Active {
+		classes += "active"
+	}
+	
+	if item.Disabled {
+		classes += " disabled"
+	}
+	
+	if item.Class != "" {
+		if classes != "" {
+			classes += " "
+		}
+		classes += item.Class
+	}
+	
+	return classes
+} 

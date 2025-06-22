@@ -1,0 +1,124 @@
+package ui
+
+// TooltipProps defines the properties for the Tooltip component
+type TooltipProps struct {
+	Text      string
+	Position  string // top, bottom, left, right
+	Color     string // primary, secondary, accent, info, success, warning, error
+	Open      bool   // force open state
+	Class     string
+}
+
+// Tooltip creates a tooltip component with DaisyUI styling
+templ Tooltip(props TooltipProps, content templ.Component) {
+	<div class={ getTooltipClasses(props) } data-tip={ props.Text }>
+		@content
+	</div>
+}
+
+// TooltipWithText creates a tooltip with simple text content
+templ TooltipWithText(props TooltipProps, text string) {
+	<div class={ getTooltipClasses(props) } data-tip={ props.Text }>
+		{ text }
+	</div>
+}
+
+// TooltipButton creates a button with tooltip
+templ TooltipButton(tooltipProps TooltipProps, buttonProps ButtonProps, content templ.Component) {
+	<div class={ getTooltipClasses(tooltipProps) } data-tip={ tooltipProps.Text }>
+		@Button(buttonProps, content)
+	</div>
+}
+
+// TooltipIcon creates an icon with tooltip
+templ TooltipIcon(tooltipProps TooltipProps, iconProps IconProps, content templ.Component) {
+	<div class={ getTooltipClasses(tooltipProps) } data-tip={ tooltipProps.Text }>
+		@Icon(iconProps, content)
+	</div>
+}
+
+// CustomTooltip creates a custom tooltip with HTML content
+templ CustomTooltip(props TooltipProps, trigger templ.Component, content templ.Component) {
+	<div class="relative inline-block group">
+		@trigger
+		<div class={ getCustomTooltipClasses(props) }>
+			@content
+		</div>
+	</div>
+}
+
+// getTooltipClasses returns the appropriate CSS classes for the tooltip
+func getTooltipClasses(props TooltipProps) string {
+	classes := "tooltip"
+	
+	// Position
+	switch props.Position {
+	case "top":
+		classes += " tooltip-top"
+	case "bottom":
+		classes += " tooltip-bottom"
+	case "left":
+		classes += " tooltip-left"
+	case "right":
+		classes += " tooltip-right"
+	default:
+		classes += " tooltip-top"
+	}
+	
+	// Color
+	switch props.Color {
+	case "primary":
+		classes += " tooltip-primary"
+	case "secondary":
+		classes += " tooltip-secondary"
+	case "accent":
+		classes += " tooltip-accent"
+	case "info":
+		classes += " tooltip-info"
+	case "success":
+		classes += " tooltip-success"
+	case "warning":
+		classes += " tooltip-warning"
+	case "error":
+		classes += " tooltip-error"
+	}
+	
+	// Force open state
+	if props.Open {
+		classes += " tooltip-open"
+	}
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+}
+
+// getCustomTooltipClasses returns the appropriate CSS classes for custom tooltips
+func getCustomTooltipClasses(props TooltipProps) string {
+	classes := "absolute z-10 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+	
+	// Position
+	switch props.Position {
+	case "top":
+		classes += " bottom-full left-1/2 transform -translate-x-1/2 mb-2"
+	case "bottom":
+		classes += " top-full left-1/2 transform -translate-x-1/2 mt-2"
+	case "left":
+		classes += " right-full top-1/2 transform -translate-y-1/2 mr-2"
+	case "right":
+		classes += " left-full top-1/2 transform -translate-y-1/2 ml-2"
+	default:
+		classes += " bottom-full left-1/2 transform -translate-x-1/2 mb-2"
+	}
+	
+	// Base styling
+	classes += " bg-gray-900 text-white text-sm rounded py-1 px-2 pointer-events-none whitespace-nowrap"
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+} 

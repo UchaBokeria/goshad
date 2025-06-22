@@ -1,0 +1,271 @@
+package ui
+
+// TextProps defines the properties for the Text component
+type TextProps struct {
+	Size      string // xs, sm, base, lg, xl, 2xl, 3xl, 4xl, 5xl, 6xl, 7xl, 8xl, 9xl
+	Weight    string // thin, extralight, light, normal, medium, semibold, bold, extrabold, black
+	Color     string // text color classes
+	Align     string // left, center, right, justify
+	Transform string // uppercase, lowercase, capitalize, normal-case
+	Leading   string // tight, snug, normal, relaxed, loose
+	Tracking  string // tighter, tight, normal, wide, wider, widest
+	Family    string // sans, serif, mono
+	Italic    bool
+	Underline bool
+	Truncate  bool
+	Wrap      string // normal, nowrap, break-words, break-all
+	Class     string
+}
+
+// Text creates a text component with styling
+templ Text(props TextProps, content templ.Component) {
+	<span class={ getTextClasses(props) }>
+		@content
+	</span>
+}
+
+// TextWithString creates a simple text component with string content
+templ TextWithString(props TextProps, text string) {
+	<span class={ getTextClasses(props) }>
+		{ text }
+	</span>
+}
+
+// Paragraph creates a paragraph text component
+templ Paragraph(props TextProps, content templ.Component) {
+	<p class={ getTextClasses(props) }>
+		@content
+	</p>
+}
+
+// ParagraphWithString creates a paragraph with string content
+templ ParagraphWithString(props TextProps, text string) {
+	<p class={ getTextClasses(props) }>
+		{ text }
+	</p>
+}
+
+// Code creates an inline code text component
+templ Code(props TextProps, content templ.Component) {
+	<code class={ getCodeClasses(props) }>
+		@content
+	</code>
+}
+
+// CodeWithString creates inline code with string content
+templ CodeWithString(props TextProps, text string) {
+	<code class={ getCodeClasses(props) }>
+		{ text }
+	</code>
+}
+
+// Pre creates a preformatted text component
+templ Pre(props TextProps, content templ.Component) {
+	<pre class={ getPreClasses(props) }>
+		@content
+	</pre>
+}
+
+// PreWithString creates preformatted text with string content
+templ PreWithString(props TextProps, text string) {
+	<pre class={ getPreClasses(props) }>
+		{ text }
+	</pre>
+}
+
+// Small creates small text component
+templ Small(props TextProps, content templ.Component) {
+	<small class={ getTextClasses(props) }>
+		@content
+	</small>
+}
+
+// Strong creates bold text component
+templ Strong(props TextProps, content templ.Component) {
+	<strong class={ getStrongClasses(props) }>
+		@content
+	</strong>
+}
+
+// Em creates emphasized (italic) text component
+templ Em(props TextProps, content templ.Component) {
+	<em class={ getEmClasses(props) }>
+		@content
+	</em>
+}
+
+// getTextClasses returns the appropriate CSS classes for text
+func getTextClasses(props TextProps) string {
+	var classes string
+	
+	// Size
+	if props.Size != "" {
+		classes = "text-" + props.Size
+	}
+	
+	// Weight
+	if props.Weight != "" {
+		if classes != "" {
+			classes += " "
+		}
+		classes += "font-" + props.Weight
+	}
+	
+	// Color
+	if props.Color != "" {
+		if classes != "" {
+			classes += " "
+		}
+		classes += props.Color
+	}
+	
+	// Alignment
+	if props.Align != "" {
+		if classes != "" {
+			classes += " "
+		}
+		classes += "text-" + props.Align
+	}
+	
+	// Transform
+	if props.Transform != "" {
+		if classes != "" {
+			classes += " "
+		}
+		classes += props.Transform
+	}
+	
+	// Leading (line height)
+	if props.Leading != "" {
+		if classes != "" {
+			classes += " "
+		}
+		classes += "leading-" + props.Leading
+	}
+	
+	// Tracking (letter spacing)
+	if props.Tracking != "" {
+		if classes != "" {
+			classes += " "
+		}
+		classes += "tracking-" + props.Tracking
+	}
+	
+	// Font family
+	if props.Family != "" {
+		if classes != "" {
+			classes += " "
+		}
+		classes += "font-" + props.Family
+	}
+	
+	// Style modifiers
+	if props.Italic {
+		if classes != "" {
+			classes += " "
+		}
+		classes += "italic"
+	}
+	
+	if props.Underline {
+		if classes != "" {
+			classes += " "
+		}
+		classes += "underline"
+	}
+	
+	if props.Truncate {
+		if classes != "" {
+			classes += " "
+		}
+		classes += "truncate"
+	}
+	
+	// Text wrapping
+	switch props.Wrap {
+	case "nowrap":
+		if classes != "" {
+			classes += " "
+		}
+		classes += "whitespace-nowrap"
+	case "break-words":
+		if classes != "" {
+			classes += " "
+		}
+		classes += "break-words"
+	case "break-all":
+		if classes != "" {
+			classes += " "
+		}
+		classes += "break-all"
+	}
+	
+	if props.Class != "" {
+		if classes != "" {
+			classes += " "
+		}
+		classes += props.Class
+	}
+	
+	return classes
+}
+
+// getCodeClasses returns the appropriate CSS classes for code elements
+func getCodeClasses(props TextProps) string {
+	classes := getTextClasses(props)
+	
+	// Add default code styling
+	baseCodeClasses := "font-mono text-sm bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded"
+	
+	if classes != "" {
+		return baseCodeClasses + " " + classes
+	}
+	
+	return baseCodeClasses
+}
+
+// getPreClasses returns the appropriate CSS classes for pre elements
+func getPreClasses(props TextProps) string {
+	classes := getTextClasses(props)
+	
+	// Add default pre styling
+	basePreClasses := "font-mono text-sm bg-gray-100 dark:bg-gray-800 p-4 rounded-lg overflow-x-auto"
+	
+	if classes != "" {
+		return basePreClasses + " " + classes
+	}
+	
+	return basePreClasses
+}
+
+// getStrongClasses returns the appropriate CSS classes for strong elements
+func getStrongClasses(props TextProps) string {
+	classes := getTextClasses(props)
+	
+	// Ensure bold weight is applied
+	if props.Weight == "" {
+		if classes != "" {
+			classes += " font-bold"
+		} else {
+			classes = "font-bold"
+		}
+	}
+	
+	return classes
+}
+
+// getEmClasses returns the appropriate CSS classes for em elements
+func getEmClasses(props TextProps) string {
+	classes := getTextClasses(props)
+	
+	// Ensure italic is applied if not already set
+	if !props.Italic {
+		if classes != "" {
+			classes += " italic"
+		} else {
+			classes = "italic"
+		}
+	}
+	
+	return classes
+} 

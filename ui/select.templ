@@ -12,6 +12,7 @@ type SelectOption struct {
 type SelectProps struct {
 	Name     string
 	ID       string
+	Placeholder string
 	Class    string
 	Size     string // xs, sm, md, lg
 	Variant  string // bordered, ghost, primary, secondary, accent, info, success, warning, error
@@ -39,6 +40,9 @@ templ Select(props SelectProps) {
 		}
 		if props.Multiple {
 			multiple
+		}
+		if props.Placeholder != "" {
+			placeholder={ props.Placeholder }
 		}
 	>
 		for _, option := range props.Options {
