@@ -18,7 +18,7 @@ type ButtonProps struct {
 }
 
 // Button creates a basic button with DaisyUI styling
-templ Button(props ButtonProps, content templ.Component) {
+templ Button(props ButtonProps) {
 	<button
 		type={ getButtonType(props.Type) }
 		class={ getButtonClasses(props) }
@@ -30,13 +30,15 @@ templ Button(props ButtonProps, content templ.Component) {
 		if props.Loading {
 			<span class="loading loading-spinner"></span>
 		}
-		@content
+		{ children... }
 	</button>
 }
 
 // ButtonText creates a simple text button
 templ ButtonText(text string, props ButtonProps) {
-	@Button(props, buttonTextContent(text))
+	@Button(props) {
+		{ text }
+	}
 }
 
 // Helper component for text content

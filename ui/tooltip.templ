@@ -24,9 +24,11 @@ templ TooltipWithText(props TooltipProps, text string) {
 }
 
 // TooltipButton creates a button with tooltip
-templ TooltipButton(tooltipProps TooltipProps, buttonProps ButtonProps, content templ.Component) {
+templ TooltipButton(tooltipProps TooltipProps, buttonProps ButtonProps) {
 	<div class={ getTooltipClasses(tooltipProps) } data-tip={ tooltipProps.Text }>
-		@Button(buttonProps, content)
+		@Button(buttonProps) {
+			{ children... }
+		}
 	</div>
 }
 
@@ -38,11 +40,11 @@ templ TooltipIcon(tooltipProps TooltipProps, iconProps IconProps, content templ.
 }
 
 // CustomTooltip creates a custom tooltip with HTML content
-templ CustomTooltip(props TooltipProps, trigger templ.Component, content templ.Component) {
+templ CustomTooltip(props TooltipProps, trigger templ.Component) {
 	<div class="relative inline-block group">
 		@trigger
 		<div class={ getCustomTooltipClasses(props) }>
-			@content
+		{ children... }
 		</div>
 	</div>
 }
@@ -122,3 +124,5 @@ func getCustomTooltipClasses(props TooltipProps) string {
 	
 	return classes
 } 
+
+
