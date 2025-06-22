@@ -1,0 +1,122 @@
+package ui
+
+// LabelProps defines the properties for the Label component
+type LabelProps struct {
+	For      string // HTML for attribute
+	Required bool
+	Disabled bool
+	Size     string // xs, sm, base, lg, xl
+	Weight   string // normal, medium, semibold, bold
+	Color    string // text color
+	Class    string
+}
+
+// Label creates a label component
+templ Label(props LabelProps, content templ.Component) {
+	<label
+		class={ getLabelClasses(props) }
+		if props.For != "" {
+			for={ props.For }
+		}
+	>
+		@content
+		if props.Required {
+			<span class="text-error ml-1">*</span>
+		}
+	</label>
+}
+
+// LabelWithText creates a simple text label
+templ LabelWithText(props LabelProps, text string) {
+	<label
+		class={ getLabelClasses(props) }
+		if props.For != "" {
+			for={ props.For }
+		}
+	>
+		{ text }
+		if props.Required {
+			<span class="text-error ml-1">*</span>
+		}
+	</label>
+}
+
+// DaisyLabel creates a label using DaisyUI label classes
+templ DaisyLabel(props LabelProps, content templ.Component) {
+	<label class={ getDaisyLabelClasses(props) }>
+		<span class="label-text">
+			@content
+			if props.Required {
+				<span class="text-error ml-1">*</span>
+			}
+		</span>
+	</label>
+}
+
+// getLabelClasses returns the appropriate CSS classes for the label
+func getLabelClasses(props LabelProps) string {
+	classes := "block"
+	
+	// Size
+	switch props.Size {
+	case "xs":
+		classes += " text-xs"
+	case "sm":
+		classes += " text-sm"
+	case "base":
+		classes += " text-base"
+	case "lg":
+		classes += " text-lg"
+	case "xl":
+		classes += " text-xl"
+	default:
+		classes += " text-sm"
+	}
+	
+	// Weight
+	switch props.Weight {
+	case "normal":
+		classes += " font-normal"
+	case "medium":
+		classes += " font-medium"
+	case "semibold":
+		classes += " font-semibold"
+	case "bold":
+		classes += " font-bold"
+	default:
+		classes += " font-medium"
+	}
+	
+	// Color
+	if props.Color != "" {
+		classes += " " + props.Color
+	} else if props.Disabled {
+		classes += " text-base-content/40"
+	} else {
+		classes += " text-base-content"
+	}
+	
+	// Spacing
+	classes += " mb-2"
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+}
+
+// getDaisyLabelClasses returns the appropriate CSS classes for DaisyUI labels
+func getDaisyLabelClasses(props LabelProps) string {
+	classes := "label"
+	
+	if props.Disabled {
+		classes += " opacity-50"
+	}
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+} 

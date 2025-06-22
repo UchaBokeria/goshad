@@ -1,0 +1,81 @@
+package ui
+
+// AvatarProps defines the properties for the Avatar component
+type AvatarProps struct {
+	Size     string // xs, sm, md, lg, xl (w-8, w-12, w-16, w-20, w-24)
+	Shape    string // circle, square
+	Src      string
+	Alt      string
+	Initials string
+	Online   bool
+	Offline  bool
+	Class    string
+}
+
+// Avatar creates an avatar component with DaisyUI styling
+templ Avatar(props AvatarProps) {
+	<div class={ getAvatarClasses(props) }>
+		<div class={ getAvatarImageClasses(props) }>
+			if props.Src != "" {
+				<img
+					src={ props.Src }
+					alt={ props.Alt }
+				/>
+			} else if props.Initials != "" {
+				<span class="text-xl">{ props.Initials }</span>
+			}
+		</div>
+		if props.Online {
+			<span class="bottom-0 left-7 absolute w-3.5 h-3.5 bg-green-400 border-2 border-white dark:border-gray-800 rounded-full"></span>
+		} else if props.Offline {
+			<span class="bottom-0 left-7 absolute w-3.5 h-3.5 bg-gray-400 border-2 border-white dark:border-gray-800 rounded-full"></span>
+		}
+	</div>
+}
+
+// getAvatarClasses returns the appropriate CSS classes for the avatar container
+func getAvatarClasses(props AvatarProps) string {
+	classes := "avatar"
+	
+	if props.Online || props.Offline {
+		classes += " relative"
+	}
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+}
+
+// getAvatarImageClasses returns the appropriate CSS classes for the avatar image
+func getAvatarImageClasses(props AvatarProps) string {
+	classes := ""
+	
+	switch props.Size {
+	case "xs":
+		classes += "w-8"
+	case "sm":
+		classes += "w-12"
+	case "md":
+		classes += "w-16"
+	case "lg":
+		classes += "w-20"
+	case "xl":
+		classes += "w-24"
+	default:
+		classes += "w-12"
+	}
+	
+	if props.Shape == "square" {
+		classes += " rounded"
+	} else {
+		classes += " rounded-full"
+	}
+	
+	if props.Initials != "" {
+		classes += " bg-neutral text-neutral-content flex items-center justify-center"
+	}
+	
+	return classes
+} 

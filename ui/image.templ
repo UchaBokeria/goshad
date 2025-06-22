@@ -1,0 +1,256 @@
+package ui
+
+// ImageProps defines the properties for the Image component
+type ImageProps struct {
+	Src         string
+	Alt         string
+	Width       string
+	Height      string
+	AspectRatio string // square, video, photo, etc.
+	ObjectFit   string // contain, cover, fill, none, scale-down
+	Rounded     string // none, sm, md, lg, xl, 2xl, 3xl, full
+	Shadow      string // none, sm, md, lg, xl, 2xl
+	Loading     string // lazy, eager
+	Class       string
+}
+
+// Image creates an image component with responsive styling
+templ Image(props ImageProps) {
+	<img
+		src={ props.Src }
+		alt={ props.Alt }
+		class={ getImageClasses(props) }
+		if props.Width != "" {
+			width={ props.Width }
+		}
+		if props.Height != "" {
+			height={ props.Height }
+		}
+		if props.Loading != "" {
+			loading={ props.Loading }
+		} else {
+			loading="lazy"
+		}
+	/>
+}
+
+// ImageWithWrapper creates an image with a wrapper div for better control
+templ ImageWithWrapper(props ImageProps, wrapperClass string) {
+	<div class={ getImageWrapperClasses(props, wrapperClass) }>
+		@Image(props)
+	</div>
+}
+
+// ResponsiveImage creates a responsive image with aspect ratio
+templ ResponsiveImage(props ImageProps) {
+	<div class={ getResponsiveImageClasses(props) }>
+		<img
+			src={ props.Src }
+			alt={ props.Alt }
+			class={ getResponsiveImageInnerClasses(props) }
+			if props.Loading != "" {
+				loading={ props.Loading }
+			} else {
+				loading="lazy"
+			}
+		/>
+	</div>
+}
+
+// getImageClasses returns the appropriate CSS classes for the image
+func getImageClasses(props ImageProps) string {
+	classes := ""
+	
+	// Object fit
+	switch props.ObjectFit {
+	case "contain":
+		classes += "object-contain"
+	case "cover":
+		classes += "object-cover"
+	case "fill":
+		classes += "object-fill"
+	case "none":
+		classes += "object-none"
+	case "scale-down":
+		classes += "object-scale-down"
+	default:
+		classes += "object-cover"
+	}
+	
+	// Rounded corners
+	switch props.Rounded {
+	case "none":
+		// no rounded
+	case "sm":
+		classes += " rounded-sm"
+	case "md":
+		classes += " rounded-md"
+	case "lg":
+		classes += " rounded-lg"
+	case "xl":
+		classes += " rounded-xl"
+	case "2xl":
+		classes += " rounded-2xl"
+	case "3xl":
+		classes += " rounded-3xl"
+	case "full":
+		classes += " rounded-full"
+	default:
+		classes += " rounded"
+	}
+	
+	// Shadow
+	switch props.Shadow {
+	case "sm":
+		classes += " shadow-sm"
+	case "md":
+		classes += " shadow-md"
+	case "lg":
+		classes += " shadow-lg"
+	case "xl":
+		classes += " shadow-xl"
+	case "2xl":
+		classes += " shadow-2xl"
+	case "none":
+		// no shadow
+	}
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+}
+
+// getImageWrapperClasses returns the appropriate CSS classes for the image wrapper
+func getImageWrapperClasses(props ImageProps, wrapperClass string) string {
+	classes := "overflow-hidden"
+	
+	// Rounded corners for wrapper
+	switch props.Rounded {
+	case "none":
+		// no rounded
+	case "sm":
+		classes += " rounded-sm"
+	case "md":
+		classes += " rounded-md"
+	case "lg":
+		classes += " rounded-lg"
+	case "xl":
+		classes += " rounded-xl"
+	case "2xl":
+		classes += " rounded-2xl"
+	case "3xl":
+		classes += " rounded-3xl"
+	case "full":
+		classes += " rounded-full"
+	default:
+		classes += " rounded"
+	}
+	
+	// Shadow for wrapper
+	switch props.Shadow {
+	case "sm":
+		classes += " shadow-sm"
+	case "md":
+		classes += " shadow-md"
+	case "lg":
+		classes += " shadow-lg"
+	case "xl":
+		classes += " shadow-xl"
+	case "2xl":
+		classes += " shadow-2xl"
+	case "none":
+		// no shadow
+	}
+	
+	if wrapperClass != "" {
+		classes += " " + wrapperClass
+	}
+	
+	return classes
+}
+
+// getResponsiveImageClasses returns the appropriate CSS classes for responsive image container
+func getResponsiveImageClasses(props ImageProps) string {
+	classes := "relative overflow-hidden"
+	
+	// Aspect ratio
+	switch props.AspectRatio {
+	case "square":
+		classes += " aspect-square"
+	case "video":
+		classes += " aspect-video"
+	case "photo":
+		classes += " aspect-[4/3]"
+	default:
+		classes += " aspect-video"
+	}
+	
+	// Rounded corners
+	switch props.Rounded {
+	case "none":
+		// no rounded
+	case "sm":
+		classes += " rounded-sm"
+	case "md":
+		classes += " rounded-md"
+	case "lg":
+		classes += " rounded-lg"
+	case "xl":
+		classes += " rounded-xl"
+	case "2xl":
+		classes += " rounded-2xl"
+	case "3xl":
+		classes += " rounded-3xl"
+	case "full":
+		classes += " rounded-full"
+	default:
+		classes += " rounded"
+	}
+	
+	// Shadow
+	switch props.Shadow {
+	case "sm":
+		classes += " shadow-sm"
+	case "md":
+		classes += " shadow-md"
+	case "lg":
+		classes += " shadow-lg"
+	case "xl":
+		classes += " shadow-xl"
+	case "2xl":
+		classes += " shadow-2xl"
+	case "none":
+		// no shadow
+	}
+	
+	return classes
+}
+
+// getResponsiveImageInnerClasses returns the appropriate CSS classes for responsive image element
+func getResponsiveImageInnerClasses(props ImageProps) string {
+	classes := "absolute inset-0 w-full h-full"
+	
+	// Object fit
+	switch props.ObjectFit {
+	case "contain":
+		classes += " object-contain"
+	case "cover":
+		classes += " object-cover"
+	case "fill":
+		classes += " object-fill"
+	case "none":
+		classes += " object-none"
+	case "scale-down":
+		classes += " object-scale-down"
+	default:
+		classes += " object-cover"
+	}
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+} 

@@ -1,0 +1,70 @@
+package ui
+
+// BadgeProps defines the properties for the Badge component
+type BadgeProps struct {
+	Variant string // default, neutral, primary, secondary, accent, ghost, info, success, warning, error
+	Size    string // xs, sm, md, lg
+	Outline bool
+	Class   string
+}
+
+// Badge creates a badge component with DaisyUI styling
+templ Badge(props BadgeProps, content templ.Component) {
+	<div class={ getBadgeClasses(props) }>
+		@content
+	</div>
+}
+
+// BadgeWithText creates a simple text badge
+templ BadgeWithText(props BadgeProps, text string) {
+	<div class={ getBadgeClasses(props) }>
+		{ text }
+	</div>
+}
+
+// getBadgeClasses returns the appropriate CSS classes for the badge
+func getBadgeClasses(props BadgeProps) string {
+	classes := "badge"
+	
+	switch props.Variant {
+	case "neutral":
+		classes += " badge-neutral"
+	case "primary":
+		classes += " badge-primary"
+	case "secondary":
+		classes += " badge-secondary"
+	case "accent":
+		classes += " badge-accent"
+	case "ghost":
+		classes += " badge-ghost"
+	case "info":
+		classes += " badge-info"
+	case "success":
+		classes += " badge-success"
+	case "warning":
+		classes += " badge-warning"
+	case "error":
+		classes += " badge-error"
+	}
+	
+	switch props.Size {
+	case "xs":
+		classes += " badge-xs"
+	case "sm":
+		classes += " badge-sm"
+	case "md":
+		classes += " badge-md"
+	case "lg":
+		classes += " badge-lg"
+	}
+	
+	if props.Outline {
+		classes += " badge-outline"
+	}
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+} 

@@ -1,0 +1,26 @@
+package ui
+
+// DividerProps defines the properties for the Divider component
+type DividerProps struct {
+	Orientation string // horizontal, vertical
+	Variant     string // default, neutral, primary, secondary, accent
+	Class       string
+}
+
+// Divider creates a divider component with DaisyUI styling (semantic alias of separator)
+templ Divider(props DividerProps) {
+	@Separator(SeparatorProps{
+		Orientation: props.Orientation,
+		Variant:     props.Variant,
+		Class:       props.Class,
+	})
+}
+
+// DividerWithText creates a divider with text
+templ DividerWithText(props DividerProps, text string) {
+	@SeparatorWithText(SeparatorProps{
+		Orientation: props.Orientation,
+		Variant:     props.Variant,
+		Class:       props.Class,
+	}, text)
+} 

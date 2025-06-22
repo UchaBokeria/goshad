@@ -1,0 +1,119 @@
+package ui
+
+// FlexProps defines the properties for the Flex component
+type FlexProps struct {
+	Direction   string // row, col, row-reverse, col-reverse
+	Wrap        string // nowrap, wrap, wrap-reverse
+	Justify     string // start, end, center, between, around, evenly
+	Align       string // start, end, center, baseline, stretch
+	Gap         string // 0, 1, 2, 3, 4, 5, 6, 8, 10, 12, 16, 20, 24
+	Grow        bool
+	Shrink      bool
+	Responsive  map[string]FlexProps // breakpoint responsive props
+	Class       string
+}
+
+// Flex creates a flexbox layout wrapper
+templ Flex(props FlexProps, content templ.Component) {
+	<div class={ getFlexClasses(props) }>
+		@content
+	</div>
+}
+
+// getFlexClasses returns the appropriate CSS classes for the flex container
+func getFlexClasses(props FlexProps) string {
+	classes := "flex"
+	
+	// Direction
+	switch props.Direction {
+	case "col":
+		classes += " flex-col"
+	case "row-reverse":
+		classes += " flex-row-reverse"
+	case "col-reverse":
+		classes += " flex-col-reverse"
+	default:
+		// flex-row is default
+	}
+	
+	// Wrap
+	switch props.Wrap {
+	case "wrap":
+		classes += " flex-wrap"
+	case "wrap-reverse":
+		classes += " flex-wrap-reverse"
+	case "nowrap":
+		classes += " flex-nowrap"
+	}
+	
+	// Justify content
+	switch props.Justify {
+	case "start":
+		classes += " justify-start"
+	case "end":
+		classes += " justify-end"
+	case "center":
+		classes += " justify-center"
+	case "between":
+		classes += " justify-between"
+	case "around":
+		classes += " justify-around"
+	case "evenly":
+		classes += " justify-evenly"
+	}
+	
+	// Align items
+	switch props.Align {
+	case "start":
+		classes += " items-start"
+	case "end":
+		classes += " items-end"
+	case "center":
+		classes += " items-center"
+	case "baseline":
+		classes += " items-baseline"
+	case "stretch":
+		classes += " items-stretch"
+	}
+	
+	// Gap
+	if props.Gap != "" {
+		classes += " gap-" + props.Gap
+	}
+	
+	// Grow and Shrink
+	if props.Grow {
+		classes += " flex-grow"
+	}
+	if props.Shrink {
+		classes += " flex-shrink"
+	}
+	
+	// Responsive classes
+	for breakpoint, responsiveProps := range props.Responsive {
+		if responsiveProps.Direction != "" {
+			switch responsiveProps.Direction {
+			case "col":
+				classes += " " + breakpoint + ":flex-col"
+			case "row":
+				classes += " " + breakpoint + ":flex-row"
+			case "row-reverse":
+				classes += " " + breakpoint + ":flex-row-reverse"
+			case "col-reverse":
+				classes += " " + breakpoint + ":flex-col-reverse"
+			}
+		}
+		if responsiveProps.Justify != "" {
+			classes += " " + breakpoint + ":justify-" + responsiveProps.Justify
+		}
+		if responsiveProps.Align != "" {
+			classes += " " + breakpoint + ":items-" + responsiveProps.Align
+		}
+	}
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+} 

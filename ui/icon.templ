@@ -1,0 +1,156 @@
+package ui
+
+// IconProps defines the properties for the Icon component
+type IconProps struct {
+	Name   string // icon name or class
+	Size   string // xs, sm, md, lg, xl, 2xl, 3xl, 4xl, 5xl, 6xl, 7xl, 8xl, 9xl
+	Color  string // text color class
+	Stroke string // stroke width for outline icons
+	Fill   string // fill color for solid icons
+	Class  string
+}
+
+// Icon creates an icon component wrapper
+templ Icon(props IconProps, content templ.Component) {
+	<span class={ getIconClasses(props) }>
+		@content
+	</span>
+}
+
+// IconSVG creates an SVG icon
+templ IconSVG(props IconProps, svgContent templ.Component) {
+	<svg
+		class={ getIconSVGClasses(props) }
+		if props.Fill != "" {
+			fill={ props.Fill }
+		} else {
+			fill="currentColor"
+		}
+		if props.Stroke != "" {
+			stroke={ props.Stroke }
+		}
+		viewBox="0 0 24 24"
+		xmlns="http://www.w3.org/2000/svg"
+	>
+		@svgContent
+	</svg>
+}
+
+// IconText creates a text-based icon (for icon fonts like Font Awesome)
+templ IconText(props IconProps) {
+	<i class={ getIconTextClasses(props) }></i>
+}
+
+// Common SVG icons
+templ IconChevronDown() {
+	@IconSVG(IconProps{}, templ.Raw(`<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>`))
+}
+
+templ IconChevronUp() {
+	@IconSVG(IconProps{}, templ.Raw(`<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>`))
+}
+
+templ IconX() {
+	@IconSVG(IconProps{}, templ.Raw(`<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>`))
+}
+
+templ IconCheck() {
+	@IconSVG(IconProps{}, templ.Raw(`<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>`))
+}
+
+// getIconClasses returns the appropriate CSS classes for the icon wrapper
+func getIconClasses(props IconProps) string {
+	classes := "inline-flex items-center justify-center"
+	
+	// Size
+	switch props.Size {
+	case "xs":
+		classes += " w-3 h-3"
+	case "sm":
+		classes += " w-4 h-4"
+	case "md":
+		classes += " w-5 h-5"
+	case "lg":
+		classes += " w-6 h-6"
+	case "xl":
+		classes += " w-8 h-8"
+	case "2xl":
+		classes += " w-10 h-10"
+	case "3xl":
+		classes += " w-12 h-12"
+	case "4xl":
+		classes += " w-16 h-16"
+	case "5xl":
+		classes += " w-20 h-20"
+	case "6xl":
+		classes += " w-24 h-24"
+	default:
+		classes += " w-5 h-5"
+	}
+	
+	// Color
+	if props.Color != "" {
+		classes += " " + props.Color
+	}
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+}
+
+// getIconSVGClasses returns the appropriate CSS classes for SVG icons
+func getIconSVGClasses(props IconProps) string {
+	classes := "w-full h-full"
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+}
+
+// getIconTextClasses returns the appropriate CSS classes for text-based icons
+func getIconTextClasses(props IconProps) string {
+	classes := ""
+	
+	if props.Name != "" {
+		classes = props.Name
+	}
+	
+	// Size for text icons
+	switch props.Size {
+	case "xs":
+		classes += " text-xs"
+	case "sm":
+		classes += " text-sm"
+	case "md":
+		classes += " text-base"
+	case "lg":
+		classes += " text-lg"
+	case "xl":
+		classes += " text-xl"
+	case "2xl":
+		classes += " text-2xl"
+	case "3xl":
+		classes += " text-3xl"
+	case "4xl":
+		classes += " text-4xl"
+	case "5xl":
+		classes += " text-5xl"
+	case "6xl":
+		classes += " text-6xl"
+	}
+	
+	// Color
+	if props.Color != "" {
+		classes += " " + props.Color
+	}
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+} 

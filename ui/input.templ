@@ -1,0 +1,106 @@
+package ui
+
+// InputProps defines the properties for the Input component
+type InputProps struct {
+	Type        string
+	Placeholder string
+	Value       string
+	Name        string
+	ID          string
+	Class       string
+	Size        string // xs, sm, md, lg
+	Variant     string // bordered, ghost, primary, secondary, accent, info, success, warning, error
+	Disabled    bool
+	Required    bool
+}
+
+// Input creates a basic input field with DaisyUI styling
+templ Input(props InputProps) {
+	<input
+		type={ getInputType(props.Type) }
+		if props.Placeholder != "" {
+			placeholder={ props.Placeholder }
+		}
+		if props.Value != "" {
+			value={ props.Value }
+		}
+		if props.Name != "" {
+			name={ props.Name }
+		}
+		if props.ID != "" {
+			id={ props.ID }
+		}
+		class={ getInputClasses(props) }
+		if props.Disabled {
+			disabled
+		}
+		if props.Required {
+			required
+		}
+	/>
+}
+
+// InputWithLabel creates an input field with a label
+templ InputWithLabel(label string, props InputProps) {
+	<div class="form-control w-full">
+		<label class="label">
+			<span class="label-text">{ label }</span>
+		</label>
+		@Input(props)
+	</div>
+}
+
+// Helper functions
+func getInputType(inputType string) string {
+	if inputType == "" {
+		return "text"
+	}
+	return inputType
+}
+
+func getInputClasses(props InputProps) string {
+	classes := "input"
+	
+	// Add variant classes
+	switch props.Variant {
+	case "bordered":
+		classes += " input-bordered"
+	case "ghost":
+		classes += " input-ghost"
+	case "primary":
+		classes += " input-primary"
+	case "secondary":
+		classes += " input-secondary"
+	case "accent":
+		classes += " input-accent"
+	case "info":
+		classes += " input-info"
+	case "success":
+		classes += " input-success"
+	case "warning":
+		classes += " input-warning"
+	case "error":
+		classes += " input-error"
+	default:
+		classes += " input-bordered"
+	}
+	
+	// Add size classes
+	switch props.Size {
+	case "xs":
+		classes += " input-xs"
+	case "sm":
+		classes += " input-sm"
+	case "lg":
+		classes += " input-lg"
+	default:
+		classes += " input-md"
+	}
+	
+	// Add custom classes
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+} 

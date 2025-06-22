@@ -1,0 +1,52 @@
+package ui
+
+// SeparatorProps defines the properties for the Separator component
+type SeparatorProps struct {
+	Orientation string // horizontal, vertical
+	Variant     string // default, neutral, primary, secondary, accent
+	Class       string
+}
+
+// Separator creates a separator component with DaisyUI styling
+templ Separator(props SeparatorProps) {
+	if props.Orientation == "vertical" {
+		<div class={ getSeparatorClasses(props, true) }></div>
+	} else {
+		<div class={ getSeparatorClasses(props, false) }></div>
+	}
+}
+
+// SeparatorWithText creates a separator with text
+templ SeparatorWithText(props SeparatorProps, text string) {
+	if props.Orientation == "vertical" {
+		<div class={ getSeparatorClasses(props, true) }>{ text }</div>
+	} else {
+		<div class={ getSeparatorClasses(props, false) }>{ text }</div>
+	}
+}
+
+// getSeparatorClasses returns the appropriate CSS classes for the separator
+func getSeparatorClasses(props SeparatorProps, isVertical bool) string {
+	classes := "divider"
+	
+	if isVertical {
+		classes += " divider-horizontal"
+	}
+	
+	switch props.Variant {
+	case "neutral":
+		classes += " divider-neutral"
+	case "primary":
+		classes += " divider-primary"
+	case "secondary":
+		classes += " divider-secondary"
+	case "accent":
+		classes += " divider-accent"
+	}
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+} 

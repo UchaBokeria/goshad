@@ -1,0 +1,120 @@
+package ui
+
+// ButtonProps defines the properties for the Button component
+type ButtonProps struct {
+	Type     string // button, submit, reset
+	Variant  string // primary, secondary, accent, ghost, link, info, success, warning, error
+	Size     string // xs, sm, md, lg
+	Outline  bool
+	Wide     bool
+	Block    bool
+	Circle   bool
+	Square   bool
+	Glass    bool
+	Loading  bool
+	Disabled bool
+	Class    string
+
+}
+
+// Button creates a basic button with DaisyUI styling
+templ Button(props ButtonProps, content templ.Component) {
+	<button
+		type={ getButtonType(props.Type) }
+		class={ getButtonClasses(props) }
+
+		if props.Disabled {
+			disabled
+		}
+	>
+		if props.Loading {
+			<span class="loading loading-spinner"></span>
+		}
+		@content
+	</button>
+}
+
+// ButtonText creates a simple text button
+templ ButtonText(text string, props ButtonProps) {
+	@Button(props, buttonTextContent(text))
+}
+
+// Helper component for text content
+templ buttonTextContent(text string) {
+	{ text }
+}
+
+// Helper functions
+func getButtonType(buttonType string) string {
+	if buttonType == "" {
+		return "button"
+	}
+	return buttonType
+}
+
+func getButtonClasses(props ButtonProps) string {
+	classes := "btn"
+	
+	// Add variant classes
+	switch props.Variant {
+	case "primary":
+		classes += " btn-primary"
+	case "secondary":
+		classes += " btn-secondary"
+	case "accent":
+		classes += " btn-accent"
+	case "ghost":
+		classes += " btn-ghost"
+	case "link":
+		classes += " btn-link"
+	case "info":
+		classes += " btn-info"
+	case "success":
+		classes += " btn-success"
+	case "warning":
+		classes += " btn-warning"
+	case "error":
+		classes += " btn-error"
+	}
+	
+	// Add outline variant
+	if props.Outline {
+		classes += " btn-outline"
+	}
+	
+	// Add size classes
+	switch props.Size {
+	case "xs":
+		classes += " btn-xs"
+	case "sm":
+		classes += " btn-sm"
+	case "lg":
+		classes += " btn-lg"
+	default:
+		classes += " btn-md"
+	}
+	
+	// Add modifier classes
+	if props.Wide {
+		classes += " btn-wide"
+	}
+	if props.Block {
+		classes += " btn-block"
+	}
+	if props.Circle {
+		classes += " btn-circle"
+	}
+	if props.Square {
+		classes += " btn-square"
+	}
+	if props.Glass {
+		classes += " glass"
+	}
+	
+	// Add custom classes
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+} 

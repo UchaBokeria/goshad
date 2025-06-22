@@ -1,0 +1,102 @@
+package ui
+
+// FormFieldProps defines the properties for the FormField component
+type FormFieldProps struct {
+	Label       string
+	Description string
+	Error       string
+	Required    bool
+	Disabled    bool
+	Class       string
+}
+
+// FormField creates a complete form field with label, input, description, and error
+templ FormField(props FormFieldProps, input templ.Component) {
+	<div class={ getFormFieldClasses(props) }>
+		if props.Label != "" {
+			<label class="label">
+				<span class={ getLabelClasses(props) }>
+					{ props.Label }
+					if props.Required {
+						<span class="text-error">*</span>
+					}
+				</span>
+			</label>
+		}
+		@input
+		if props.Description != "" {
+			<div class="label">
+				<span class="label-text-alt text-base-content/60">{ props.Description }</span>
+			</div>
+		}
+		if props.Error != "" {
+			<div class="label">
+				<span class="label-text-alt text-error">{ props.Error }</span>
+			</div>
+		}
+	</div>
+}
+
+// FormFieldWithInput creates a form field with input component
+templ FormFieldWithInput(props FormFieldProps, inputProps InputProps) {
+	@FormField(props, Input(inputProps))
+}
+
+// FormFieldWithSelect creates a form field with select component
+templ FormFieldWithSelect(props FormFieldProps, selectProps SelectProps) {
+	@FormField(props, Select(selectProps))
+}
+
+// FormFieldWithTextarea creates a form field with textarea component
+templ FormFieldWithTextarea(props FormFieldProps, textareaProps TextareaProps) {
+	@FormField(props, Textarea(textareaProps))
+}
+
+// FormFieldWithCheckbox creates a form field with checkbox component
+templ FormFieldWithCheckbox(props FormFieldProps, checkboxProps CheckboxProps) {
+	<div class={ getFormFieldClasses(props) }>
+		<div class="form-control">
+			<label class="label cursor-pointer justify-start gap-2">
+				@Checkbox(checkboxProps)
+				<span class={ getLabelClasses(props) }>
+					{ props.Label }
+					if props.Required {
+						<span class="text-error">*</span>
+					}
+				</span>
+			</label>
+		</div>
+		if props.Description != "" {
+			<div class="label">
+				<span class="label-text-alt text-base-content/60">{ props.Description }</span>
+			</div>
+		}
+		if props.Error != "" {
+			<div class="label">
+				<span class="label-text-alt text-error">{ props.Error }</span>
+			</div>
+		}
+	</div>
+}
+
+// getFormFieldClasses returns the appropriate CSS classes for the form field
+func getFormFieldClasses(props FormFieldProps) string {
+	classes := "form-control w-full"
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+}
+
+// getLabelClasses returns the appropriate CSS classes for the label
+func getLabelClasses(props FormFieldProps) string {
+	classes := "label-text"
+	
+	if props.Disabled {
+		classes += " text-base-content/40"
+	}
+	
+	return classes
+} 

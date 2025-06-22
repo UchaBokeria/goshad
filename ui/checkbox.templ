@@ -1,0 +1,89 @@
+package ui
+
+// CheckboxProps defines the properties for the Checkbox component
+type CheckboxProps struct {
+	Name     string
+	ID       string
+	Value    string
+	Checked  bool
+	Disabled bool
+	Required bool
+	Size     string // xs, sm, md, lg
+	Variant  string // primary, secondary, accent, success, warning, info, error
+	Class    string
+}
+
+// Checkbox creates a checkbox component with DaisyUI styling
+templ Checkbox(props CheckboxProps) {
+	<input
+		type="checkbox"
+		class={ getCheckboxClasses(props) }
+		if props.Name != "" {
+			name={ props.Name }
+		}
+		if props.ID != "" {
+			id={ props.ID }
+		}
+		if props.Value != "" {
+			value={ props.Value }
+		}
+		if props.Checked {
+			checked
+		}
+		if props.Disabled {
+			disabled
+		}
+		if props.Required {
+			required
+		}
+	/>
+}
+
+// CheckboxWithLabel creates a checkbox with label
+templ CheckboxWithLabel(props CheckboxProps, label string) {
+	<div class="form-control">
+		<label class="label cursor-pointer">
+			@Checkbox(props)
+			<span class="label-text ml-2">{ label }</span>
+		</label>
+	</div>
+}
+
+// getCheckboxClasses returns the appropriate CSS classes for the checkbox
+func getCheckboxClasses(props CheckboxProps) string {
+	classes := "checkbox"
+	
+	switch props.Size {
+	case "xs":
+		classes += " checkbox-xs"
+	case "sm":
+		classes += " checkbox-sm"
+	case "md":
+		classes += " checkbox-md"
+	case "lg":
+		classes += " checkbox-lg"
+	}
+	
+	switch props.Variant {
+	case "primary":
+		classes += " checkbox-primary"
+	case "secondary":
+		classes += " checkbox-secondary"
+	case "accent":
+		classes += " checkbox-accent"
+	case "success":
+		classes += " checkbox-success"
+	case "warning":
+		classes += " checkbox-warning"
+	case "info":
+		classes += " checkbox-info"
+	case "error":
+		classes += " checkbox-error"
+	}
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+} 

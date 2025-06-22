@@ -1,0 +1,122 @@
+package ui
+
+// GridProps defines the properties for the Grid component
+type GridProps struct {
+	Cols        string // 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
+	Rows        string // 1, 2, 3, 4, 5, 6
+	Gap         string // 0, 1, 2, 3, 4, 5, 6, 8, 10, 12, 16, 20, 24
+	GapX        string // horizontal gap
+	GapY        string // vertical gap
+	AutoFit     string // min width for auto-fit (e.g., "200px")
+	AutoFill    string // min width for auto-fill (e.g., "200px")
+	Responsive  map[string]GridProps // breakpoint responsive props
+	Class       string
+}
+
+// Grid creates a responsive grid wrapper
+templ Grid(props GridProps, content templ.Component) {
+	<div class={ getGridClasses(props) }>
+		@content
+	</div>
+}
+
+// GridItem creates a grid item with specific span properties
+templ GridItem(colSpan string, rowSpan string, class string, content templ.Component) {
+	<div class={ getGridItemClasses(colSpan, rowSpan, class) }>
+		@content
+	</div>
+}
+
+// getGridClasses returns the appropriate CSS classes for the grid container
+func getGridClasses(props GridProps) string {
+	classes := "grid"
+	
+	// Columns
+	if props.Cols != "" {
+		classes += " grid-cols-" + props.Cols
+	}
+	
+	// Rows
+	if props.Rows != "" {
+		classes += " grid-rows-" + props.Rows
+	}
+	
+	// Auto-fit and auto-fill (custom CSS)
+	if props.AutoFit != "" {
+		// This would require custom CSS: grid-template-columns: repeat(auto-fit, minmax(200px, 1fr))
+		classes += " auto-fit-" + props.AutoFit
+	} else if props.AutoFill != "" {
+		// This would require custom CSS: grid-template-columns: repeat(auto-fill, minmax(200px, 1fr))
+		classes += " auto-fill-" + props.AutoFill
+	}
+	
+	// Gap
+	if props.Gap != "" {
+		classes += " gap-" + props.Gap
+	} else {
+		// Individual gap settings
+		if props.GapX != "" {
+			classes += " gap-x-" + props.GapX
+		}
+		if props.GapY != "" {
+			classes += " gap-y-" + props.GapY
+		}
+	}
+	
+	// Responsive classes
+	for breakpoint, responsiveProps := range props.Responsive {
+		if responsiveProps.Cols != "" {
+			classes += " " + breakpoint + ":grid-cols-" + responsiveProps.Cols
+		}
+		if responsiveProps.Rows != "" {
+			classes += " " + breakpoint + ":grid-rows-" + responsiveProps.Rows
+		}
+		if responsiveProps.Gap != "" {
+			classes += " " + breakpoint + ":gap-" + responsiveProps.Gap
+		}
+	}
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+}
+
+// getGridItemClasses returns the appropriate CSS classes for grid items
+func getGridItemClasses(colSpan, rowSpan, class string) string {
+	var classes string
+	
+	// Column span
+	if colSpan != "" {
+		if colSpan == "full" {
+			classes += "col-span-full"
+		} else {
+			classes += "col-span-" + colSpan
+		}
+	}
+	
+	// Row span
+	if rowSpan != "" {
+		if rowSpan == "full" {
+			if classes != "" {
+				classes += " "
+			}
+			classes += "row-span-full"
+		} else {
+			if classes != "" {
+				classes += " "
+			}
+			classes += "row-span-" + rowSpan
+		}
+	}
+	
+	if class != "" {
+		if classes != "" {
+			classes += " "
+		}
+		classes += class
+	}
+	
+	return classes
+} 

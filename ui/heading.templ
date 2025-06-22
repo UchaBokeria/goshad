@@ -1,0 +1,172 @@
+package ui
+
+// HeadingProps defines the properties for the Heading component
+type HeadingProps struct {
+	Level   int    // 1, 2, 3, 4, 5, 6
+	Size    string // xs, sm, base, lg, xl, 2xl, 3xl, 4xl, 5xl, 6xl, 7xl, 8xl, 9xl
+	Weight  string // thin, extralight, light, normal, medium, semibold, bold, extrabold, black
+	Color   string // primary, secondary, accent, neutral, base-content, etc.
+	Align   string // left, center, right, justify
+	Class   string
+}
+
+// Heading creates a heading element (h1-h6) with customizable styling
+templ Heading(props HeadingProps, content templ.Component) {
+	switch props.Level {
+	case 1:
+		<h1 class={ getHeadingClasses(props) }>
+			@content
+		</h1>
+	case 2:
+		<h2 class={ getHeadingClasses(props) }>
+			@content
+		</h2>
+	case 3:
+		<h3 class={ getHeadingClasses(props) }>
+			@content
+		</h3>
+	case 4:
+		<h4 class={ getHeadingClasses(props) }>
+			@content
+		</h4>
+	case 5:
+		<h5 class={ getHeadingClasses(props) }>
+			@content
+		</h5>
+	case 6:
+		<h6 class={ getHeadingClasses(props) }>
+			@content
+		</h6>
+	default:
+		<h2 class={ getHeadingClasses(props) }>
+			@content
+		</h2>
+	}
+}
+
+// HeadingWithText creates a simple text heading
+templ HeadingWithText(props HeadingProps, text string) {
+	@Heading(props, templ.Raw(text))
+}
+
+// H1, H2, H3, H4, H5, H6 convenience components
+templ H1(props HeadingProps, content templ.Component) {
+	@Heading(HeadingProps{
+		Level:  1,
+		Size:   props.Size,
+		Weight: props.Weight,
+		Color:  props.Color,
+		Align:  props.Align,
+		Class:  props.Class,
+	}, content)
+}
+
+templ H2(props HeadingProps, content templ.Component) {
+	@Heading(HeadingProps{
+		Level:  2,
+		Size:   props.Size,
+		Weight: props.Weight,
+		Color:  props.Color,
+		Align:  props.Align,
+		Class:  props.Class,
+	}, content)
+}
+
+templ H3(props HeadingProps, content templ.Component) {
+	@Heading(HeadingProps{
+		Level:  3,
+		Size:   props.Size,
+		Weight: props.Weight,
+		Color:  props.Color,
+		Align:  props.Align,
+		Class:  props.Class,
+	}, content)
+}
+
+templ H4(props HeadingProps, content templ.Component) {
+	@Heading(HeadingProps{
+		Level:  4,
+		Size:   props.Size,
+		Weight: props.Weight,
+		Color:  props.Color,
+		Align:  props.Align,
+		Class:  props.Class,
+	}, content)
+}
+
+templ H5(props HeadingProps, content templ.Component) {
+	@Heading(HeadingProps{
+		Level:  5,
+		Size:   props.Size,
+		Weight: props.Weight,
+		Color:  props.Color,
+		Align:  props.Align,
+		Class:  props.Class,
+	}, content)
+}
+
+templ H6(props HeadingProps, content templ.Component) {
+	@Heading(HeadingProps{
+		Level:  6,
+		Size:   props.Size,
+		Weight: props.Weight,
+		Color:  props.Color,
+		Align:  props.Align,
+		Class:  props.Class,
+	}, content)
+}
+
+// getHeadingClasses returns the appropriate CSS classes for the heading
+func getHeadingClasses(props HeadingProps) string {
+	var classes string
+	
+	// Default sizes based on heading level if no size specified
+	if props.Size == "" {
+		switch props.Level {
+		case 1:
+			classes = "text-4xl"
+		case 2:
+			classes = "text-3xl"
+		case 3:
+			classes = "text-2xl"
+		case 4:
+			classes = "text-xl"
+		case 5:
+			classes = "text-lg"
+		case 6:
+			classes = "text-base"
+		default:
+			classes = "text-2xl"
+		}
+	} else {
+		classes = "text-" + props.Size
+	}
+	
+	// Weight
+	if props.Weight != "" {
+		classes += " font-" + props.Weight
+	} else {
+		// Default weight for headings
+		classes += " font-bold"
+	}
+	
+	// Color
+	if props.Color != "" {
+		if props.Color == "primary" || props.Color == "secondary" || props.Color == "accent" {
+			classes += " text-" + props.Color
+		} else {
+			classes += " text-" + props.Color
+		}
+	}
+	
+	// Text alignment
+	if props.Align != "" {
+		classes += " text-" + props.Align
+	}
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+} 

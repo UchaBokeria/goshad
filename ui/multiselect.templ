@@ -1,0 +1,126 @@
+package ui
+
+import "fmt"
+
+// MultiSelectOption represents a single option in the multi-select
+type MultiSelectOption struct {
+	Value    string
+	Label    string
+	Selected bool
+	Disabled bool
+}
+
+// MultiSelectProps defines the properties for the MultiSelect component
+type MultiSelectProps struct {
+	Name        string
+	ID          string
+	Class       string
+	Placeholder string
+	Disabled    bool
+	Required    bool
+	Options     []MultiSelectOption
+	MaxHeight   string // e.g., "200px", "max-h-48"
+}
+
+// MultiSelect creates a custom multi-select component with checkboxes
+templ MultiSelect(props MultiSelectProps) {
+	<div class={ getMultiSelectClasses(props) }>
+		<div class="dropdown w-full">
+			<div tabindex="0" role="button" class="btn btn-outline justify-between w-full">
+				<span class="text-left">
+					if getSelectedCount(props.Options) > 0 {
+						{ getSelectedText(props.Options) }
+					} else {
+						if props.Placeholder != "" {
+							{ props.Placeholder }
+						} else {
+							Select options...
+						}
+					}
+				</span>
+				<svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+				</svg>
+			</div>
+			<div class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-full" style={ getDropdownStyle(props.MaxHeight) }>
+				<div class="form-control">
+					for _, option := range props.Options {
+						<label class="label cursor-pointer justify-start">
+							<input
+								type="checkbox"
+								class="checkbox checkbox-sm mr-2"
+								if props.Name != "" {
+									name={ props.Name + "[]" }
+								}
+								value={ option.Value }
+								if option.Selected {
+									checked
+								}
+								if option.Disabled || props.Disabled {
+									disabled
+								}
+							/>
+							<span class="label-text">{ option.Label }</span>
+						</label>
+					}
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
+// MultiSelectWithLabel creates a multi-select field with a label
+templ MultiSelectWithLabel(label string, props MultiSelectProps) {
+	<div class="form-control w-full">
+		<label class="label">
+			<span class="label-text">{ label }</span>
+		</label>
+		@MultiSelect(props)
+	</div>
+}
+
+// Helper functions
+func getMultiSelectClasses(props MultiSelectProps) string {
+	classes := "w-full"
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+}
+
+func getSelectedCount(options []MultiSelectOption) int {
+	count := 0
+	for _, option := range options {
+		if option.Selected {
+			count++
+		}
+	}
+	return count
+}
+
+func getSelectedText(options []MultiSelectOption) string {
+	selectedCount := getSelectedCount(options)
+	if selectedCount == 0 {
+		return "Select options..."
+	}
+	if selectedCount == 1 {
+		for _, option := range options {
+			if option.Selected {
+				return option.Label
+			}
+		}
+	}
+	return fmt.Sprintf("%d selected", selectedCount)
+}
+
+func getDropdownStyle(maxHeight string) string {
+	if maxHeight == "" {
+		return "max-height: 200px; overflow-y: auto;"
+	}
+	if maxHeight[0:4] == "max-" {
+		return "overflow-y: auto;"
+	}
+	return fmt.Sprintf("max-height: %s; overflow-y: auto;", maxHeight)
+} 

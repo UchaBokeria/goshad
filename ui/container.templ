@@ -1,0 +1,70 @@
+package ui
+
+// ContainerProps defines the properties for the Container component
+type ContainerProps struct {
+	MaxWidth string // xs, sm, md, lg, xl, 2xl, full
+	Centered bool
+	Padding  string // none, sm, md, lg, xl
+	Class    string
+}
+
+// Container creates a responsive container component
+templ Container(props ContainerProps, content templ.Component) {
+	<div class={ getContainerClasses(props) }>
+		@content
+	</div>
+}
+
+// getContainerClasses returns the appropriate CSS classes for the container
+func getContainerClasses(props ContainerProps) string {
+	var classes string
+	
+	// Base container class
+	if props.Centered {
+		classes = "container mx-auto"
+	} else {
+		classes = "container"
+	}
+	
+	// Max width
+	switch props.MaxWidth {
+	case "xs":
+		classes += " max-w-xs"
+	case "sm":
+		classes += " max-w-sm"
+	case "md":
+		classes += " max-w-md"
+	case "lg":
+		classes += " max-w-lg"
+	case "xl":
+		classes += " max-w-xl"
+	case "2xl":
+		classes += " max-w-2xl"
+	case "full":
+		classes += " max-w-full"
+	default:
+		// Use default container behavior
+	}
+	
+	// Padding
+	switch props.Padding {
+	case "none":
+		// no padding
+	case "sm":
+		classes += " px-2 py-2"
+	case "md":
+		classes += " px-4 py-4"
+	case "lg":
+		classes += " px-6 py-6"
+	case "xl":
+		classes += " px-8 py-8"
+	default:
+		classes += " px-4 py-4"
+	}
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+} 

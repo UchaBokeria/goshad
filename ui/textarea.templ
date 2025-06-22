@@ -1,0 +1,115 @@
+package ui
+
+import "fmt"
+
+// TextareaProps defines the properties for the Textarea component
+type TextareaProps struct {
+	Placeholder string
+	Value       string
+	Name        string
+	ID          string
+	Class       string
+	Rows        int
+	Cols        int
+	Variant     string // bordered, ghost, primary, secondary, accent, info, success, warning, error
+	Size        string // xs, sm, md, lg
+	Disabled    bool
+	Required    bool
+	ReadOnly    bool
+	Resize      string // none, both, horizontal, vertical
+}
+
+// Textarea creates a textarea component with DaisyUI styling
+templ Textarea(props TextareaProps) {
+	<textarea
+		class={ getTextareaClasses(props) }
+		if props.Placeholder != "" {
+			placeholder={ props.Placeholder }
+		}
+		if props.Name != "" {
+			name={ props.Name }
+		}
+		if props.ID != "" {
+			id={ props.ID }
+		}
+		if props.Rows > 0 {
+			rows={ getIntAsString(props.Rows) }
+		}
+		if props.Cols > 0 {
+			cols={ getIntAsString(props.Cols) }
+		}
+		if props.Disabled {
+			disabled
+		}
+		if props.Required {
+			required
+		}
+		if props.ReadOnly {
+			readonly
+		}
+	>{ props.Value }</textarea>
+}
+
+// getTextareaClasses returns the appropriate CSS classes for the textarea
+func getTextareaClasses(props TextareaProps) string {
+	classes := "textarea"
+	
+	switch props.Variant {
+	case "bordered":
+		classes += " textarea-bordered"
+	case "ghost":
+		classes += " textarea-ghost"
+	case "primary":
+		classes += " textarea-primary"
+	case "secondary":
+		classes += " textarea-secondary"
+	case "accent":
+		classes += " textarea-accent"
+	case "info":
+		classes += " textarea-info"
+	case "success":
+		classes += " textarea-success"
+	case "warning":
+		classes += " textarea-warning"
+	case "error":
+		classes += " textarea-error"
+	default:
+		classes += " textarea-bordered"
+	}
+	
+	switch props.Size {
+	case "xs":
+		classes += " textarea-xs"
+	case "sm":
+		classes += " textarea-sm"
+	case "md":
+		classes += " textarea-md"
+	case "lg":
+		classes += " textarea-lg"
+	}
+	
+	// Resize options
+	switch props.Resize {
+	case "none":
+		classes += " resize-none"
+	case "both":
+		classes += " resize"
+	case "horizontal":
+		classes += " resize-x"
+	case "vertical":
+		classes += " resize-y"
+	}
+	
+	classes += " w-full"
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+}
+
+// getIntAsString converts an integer to string for HTML attributes
+func getIntAsString(value int) string {
+	return fmt.Sprintf("%d", value)
+} 

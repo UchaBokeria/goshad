@@ -1,0 +1,97 @@
+package ui
+
+// CardProps defines the properties for the Card component
+type CardProps struct {
+	Variant   string // default, bordered, compact, side
+	Shadow    string // none, sm, md, lg, xl, 2xl
+	Glass     bool
+	ImageFull bool // full image card
+	Class     string
+}
+
+// Card creates a card component with DaisyUI styling
+templ Card(props CardProps, content templ.Component) {
+	<div class={ getCardClasses(props) }>
+		@content
+	</div>
+}
+
+// CardWithBody creates a card with body wrapper
+templ CardWithBody(props CardProps, content templ.Component) {
+	<div class={ getCardClasses(props) }>
+		<div class="card-body">
+			@content
+		</div>
+	</div>
+}
+
+// CardWithImage creates a card with image and body
+templ CardWithImage(props CardProps, imageSrc string, imageAlt string, content templ.Component) {
+	<div class={ getCardClasses(props) }>
+		<figure>
+			<img src={ imageSrc } alt={ imageAlt } />
+		</figure>
+		<div class="card-body">
+			@content
+		</div>
+	</div>
+}
+
+// CardTitle creates a card title
+templ CardTitle(text string) {
+	<h2 class="card-title">{ text }</h2>
+}
+
+// CardActions creates a card actions section
+templ CardActions(content templ.Component) {
+	<div class="card-actions justify-end">
+		@content
+	</div>
+}
+
+// getCardClasses returns the appropriate CSS classes for the card
+func getCardClasses(props CardProps) string {
+	classes := "card"
+	
+	switch props.Variant {
+	case "bordered":
+		classes += " card-bordered"
+	case "compact":
+		classes += " card-compact"
+	case "side":
+		classes += " card-side"
+	}
+	
+	switch props.Shadow {
+	case "sm":
+		classes += " shadow-sm"
+	case "md":
+		classes += " shadow-md"
+	case "lg":
+		classes += " shadow-lg"
+	case "xl":
+		classes += " shadow-xl"
+	case "2xl":
+		classes += " shadow-2xl"
+	case "none":
+		// no shadow
+	default:
+		classes += " shadow-xl"
+	}
+	
+	if props.Glass {
+		classes += " glass"
+	}
+	
+	if props.ImageFull {
+		classes += " image-full"
+	}
+	
+	classes += " bg-base-100"
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+} 

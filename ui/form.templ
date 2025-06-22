@@ -1,0 +1,91 @@
+package ui
+
+// FormProps defines the properties for the Form component
+type FormProps struct {
+	Method   string // GET, POST, PUT, DELETE
+	Action   string
+	Enctype  string // application/x-www-form-urlencoded, multipart/form-data, text/plain
+	NoValidate bool
+	AutoComplete string // on, off
+	Gap      string // gap between form fields
+	Class    string
+}
+
+// Form creates a form component wrapper
+templ Form(props FormProps, content templ.Component) {
+	<form
+		if props.Method != "" {
+			method={ props.Method }
+		}
+		if props.Action != "" {
+			action={ props.Action }
+		}
+		if props.Enctype != "" {
+			enctype={ props.Enctype }
+		}
+		if props.NoValidate {
+			novalidate
+		}
+		if props.AutoComplete != "" {
+			autocomplete={ props.AutoComplete }
+		}
+		class={ getFormClasses(props) }
+	>
+		@content
+	</form>
+}
+
+// FormSection creates a form section with spacing
+templ FormSection(props FormProps, content templ.Component) {
+	<div class={ getFormSectionClasses(props) }>
+		@content
+	</div>
+}
+
+// FormActions creates a form actions section (typically for buttons)
+templ FormActions(props FormProps, content templ.Component) {
+	<div class={ getFormActionsClasses(props) }>
+		@content
+	</div>
+}
+
+// getFormClasses returns the appropriate CSS classes for the form
+func getFormClasses(props FormProps) string {
+	classes := "space-y-4"
+	
+	if props.Gap != "" {
+		classes = "space-y-" + props.Gap
+	}
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+}
+
+// getFormSectionClasses returns the appropriate CSS classes for form sections
+func getFormSectionClasses(props FormProps) string {
+	classes := "space-y-2"
+	
+	if props.Gap != "" {
+		classes = "space-y-" + props.Gap
+	}
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+}
+
+// getFormActionsClasses returns the appropriate CSS classes for form actions
+func getFormActionsClasses(props FormProps) string {
+	classes := "flex gap-2 justify-end pt-4"
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+} 

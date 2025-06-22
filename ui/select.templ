@@ -1,0 +1,116 @@
+package ui
+
+// SelectOption represents a single option in the select
+type SelectOption struct {
+	Value    string
+	Label    string
+	Selected bool
+	Disabled bool
+}
+
+// SelectProps defines the properties for the Select component
+type SelectProps struct {
+	Name     string
+	ID       string
+	Class    string
+	Size     string // xs, sm, md, lg
+	Variant  string // bordered, ghost, primary, secondary, accent, info, success, warning, error
+	Disabled bool
+	Required bool
+	Multiple bool
+	Options  []SelectOption
+}
+
+// Select creates a basic select dropdown with DaisyUI styling
+templ Select(props SelectProps) {
+	<select
+		if props.Name != "" {
+			name={ props.Name }
+		}
+		if props.ID != "" {
+			id={ props.ID }
+		}
+		class={ getSelectClasses(props) }
+		if props.Disabled {
+			disabled
+		}
+		if props.Required {
+			required
+		}
+		if props.Multiple {
+			multiple
+		}
+	>
+		for _, option := range props.Options {
+			<option
+				value={ option.Value }
+				if option.Selected {
+					selected
+				}
+				if option.Disabled {
+					disabled
+				}
+			>
+				{ option.Label }
+			</option>
+		}
+	</select>
+}
+
+// SelectWithLabel creates a select field with a label
+templ SelectWithLabel(label string, props SelectProps) {
+	<div class="form-control w-full">
+		<label class="label">
+			<span class="label-text">{ label }</span>
+		</label>
+		@Select(props)
+	</div>
+}
+
+// Helper functions
+func getSelectClasses(props SelectProps) string {
+	classes := "select"
+	
+	// Add variant classes
+	switch props.Variant {
+	case "bordered":
+		classes += " select-bordered"
+	case "ghost":
+		classes += " select-ghost"
+	case "primary":
+		classes += " select-primary"
+	case "secondary":
+		classes += " select-secondary"
+	case "accent":
+		classes += " select-accent"
+	case "info":
+		classes += " select-info"
+	case "success":
+		classes += " select-success"
+	case "warning":
+		classes += " select-warning"
+	case "error":
+		classes += " select-error"
+	default:
+		classes += " select-bordered"
+	}
+	
+	// Add size classes
+	switch props.Size {
+	case "xs":
+		classes += " select-xs"
+	case "sm":
+		classes += " select-sm"
+	case "lg":
+		classes += " select-lg"
+	default:
+		classes += " select-md"
+	}
+	
+	// Add custom classes
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+} 

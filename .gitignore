@@ -1,0 +1,30 @@
+# Development dirs
+bin
+tmp
+dist
+node_modules
+
+# Mac OS X files
+.DS_Store
+
+.vscode
+.env
+*_templ.txt
+*_templ.go
+
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.db
+
+# Test binary, built with `go test -c`
+*.test
+
+# Go workspace file
+go.work
+routes.json
+archive
+.web

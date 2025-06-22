@@ -1,0 +1,164 @@
+package examples
+
+import "github.com/UchaBokeria/goshad/ui"
+
+templ UI() {
+    <div class="container mx-auto p-8">
+        <h1 class="text-4xl font-bold mb-8 text-center">GoShad UI Components Demo</h1>
+        
+        <!-- Input Components Section -->
+        <div class="mb-12">
+            <h2 class="text-2xl font-semibold mb-6">Input Components</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Basic Input -->
+                <div class="space-y-4">
+                    <h3 class="text-lg font-medium">Basic Inputs</h3>
+                    @ui.Input(ui.InputProps{
+                        Placeholder: "Enter your name",
+                        Variant: "bordered",
+                    })
+                    @ui.Input(ui.InputProps{
+                        Type: "email",
+                        Placeholder: "Enter your email",
+                        Variant: "primary",
+                    })
+                </div>
+                
+                <!-- Input with Labels -->
+                <div class="space-y-4">
+                    <h3 class="text-lg font-medium">Inputs with Labels</h3>
+                    @ui.InputWithLabel("Full Name", ui.InputProps{
+                        Placeholder: "John Doe",
+                        Variant: "bordered",
+                    })
+                    @ui.InputWithLabel("Password", ui.InputProps{
+                        Type: "password",
+                        Placeholder: "••••••••",
+                        Variant: "bordered",
+                    })
+                </div>
+            </div>
+            
+            <!-- Different Input Sizes -->
+            <div class="mt-6">
+                <h3 class="text-lg font-medium mb-4">Input Sizes</h3>
+                <div class="space-y-3">
+                    @ui.Input(ui.InputProps{Placeholder: "Extra Small", Size: "xs", Variant: "bordered"})
+                    @ui.Input(ui.InputProps{Placeholder: "Small", Size: "sm", Variant: "bordered"})
+                    @ui.Input(ui.InputProps{Placeholder: "Medium (Default)", Size: "md", Variant: "bordered"})
+                    @ui.Input(ui.InputProps{Placeholder: "Large", Size: "lg", Variant: "bordered"})
+                </div>
+            </div>
+        </div>
+        
+        <!-- Button Components Section -->
+        <div class="mb-12">
+            <h2 class="text-2xl font-semibold mb-6">Button Components</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Basic Buttons -->
+                <div class="space-y-4">
+                    <h3 class="text-lg font-medium">Button Variants</h3>
+                    <div class="flex flex-wrap gap-2">
+                        @ui.ButtonText("Primary", ui.ButtonProps{Variant: "primary"})
+                        @ui.ButtonText("Secondary", ui.ButtonProps{Variant: "secondary"})
+                        @ui.ButtonText("Accent", ui.ButtonProps{Variant: "accent"})
+                        @ui.ButtonText("Ghost", ui.ButtonProps{Variant: "ghost"})
+                    </div>
+                </div>
+                
+                <!-- Button Sizes -->
+                <div class="space-y-4">
+                    <h3 class="text-lg font-medium">Button Sizes</h3>
+                    <div class="flex flex-wrap gap-2 items-center">
+                        @ui.ButtonText("XS", ui.ButtonProps{Size: "xs", Variant: "primary"})
+                        @ui.ButtonText("Small", ui.ButtonProps{Size: "sm", Variant: "primary"})
+                        @ui.ButtonText("Medium", ui.ButtonProps{Size: "md", Variant: "primary"})
+                        @ui.ButtonText("Large", ui.ButtonProps{Size: "lg", Variant: "primary"})
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Button States -->
+            <div class="mt-6">
+                <h3 class="text-lg font-medium mb-4">Button States</h3>
+                <div class="flex flex-wrap gap-2">
+                    @ui.ButtonText("Loading", ui.ButtonProps{Variant: "primary", Loading: true})
+                    @ui.ButtonText("Disabled", ui.ButtonProps{Variant: "primary", Disabled: true})
+                    @ui.ButtonText("Outline", ui.ButtonProps{Variant: "primary", Outline: true})
+                    @ui.ButtonText("Wide", ui.ButtonProps{Variant: "primary", Wide: true})
+                </div>
+            </div>
+        </div>
+        
+        <!-- Select Components Section -->
+        <div class="mb-12">
+            <h2 class="text-2xl font-semibold mb-6">Select Components</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Basic Select -->
+                <div class="space-y-4">
+                    <h3 class="text-lg font-medium">Basic Select</h3>
+                    @ui.Select(ui.SelectProps{
+                        Variant: "bordered",
+                        Options: []ui.SelectOption{
+                            {Value: "", Label: "Select an option", Selected: true},
+                            {Value: "option1", Label: "Option 1"},
+                            {Value: "option2", Label: "Option 2"},
+                            {Value: "option3", Label: "Option 3"},
+                        },
+                    })
+                </div>
+                
+                <!-- Select with Label -->
+                <div class="space-y-4">
+                    <h3 class="text-lg font-medium">Select with Label</h3>
+                    @ui.SelectWithLabel("Choose Country", ui.SelectProps{
+                        Variant: "bordered",
+                        Options: []ui.SelectOption{
+                            {Value: "", Label: "Select country"},
+                            {Value: "us", Label: "United States"},
+                            {Value: "ca", Label: "Canada"},
+                            {Value: "uk", Label: "United Kingdom"},
+                            {Value: "ge", Label: "Georgia"},
+                        },
+                    })
+                </div>
+            </div>
+        </div>
+        
+        <!-- MultiSelect Components Section -->
+        <div class="mb-12">
+            <h2 class="text-2xl font-semibold mb-6">MultiSelect Components</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Basic MultiSelect -->
+                <div class="space-y-4">
+                    <h3 class="text-lg font-medium">Basic MultiSelect</h3>
+                    @ui.MultiSelect(ui.MultiSelectProps{
+                        Placeholder: "Select multiple options",
+                        Options: []ui.MultiSelectOption{
+                            {Value: "html", Label: "HTML"},
+                            {Value: "css", Label: "CSS"},
+                            {Value: "js", Label: "JavaScript", Selected: true},
+                            {Value: "go", Label: "Go", Selected: true},
+                            {Value: "python", Label: "Python"},
+                        },
+                    })
+                </div>
+                
+                <!-- MultiSelect with Label -->
+                <div class="space-y-4">
+                    <h3 class="text-lg font-medium">MultiSelect with Label</h3>
+                    @ui.MultiSelectWithLabel("Select Skills", ui.MultiSelectProps{
+                        Placeholder: "Choose your skills",
+                        Options: []ui.MultiSelectOption{
+                            {Value: "frontend", Label: "Frontend Development"},
+                            {Value: "backend", Label: "Backend Development"},
+                            {Value: "mobile", Label: "Mobile Development"},
+                            {Value: "devops", Label: "DevOps"},
+                            {Value: "design", Label: "UI/UX Design"},
+                        },
+                    })
+                </div>
+            </div>
+        </div>
+    </div>
+}
