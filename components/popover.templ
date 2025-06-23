@@ -1,0 +1,123 @@
+package components
+
+// PopoverProps defines the properties for the Popover component
+type PopoverProps struct {
+	Content     string
+	Title       string
+	TriggerText string
+	Position    string // top, bottom, left, right
+	Trigger     string // hover, click
+	Size        string // sm, md, lg
+	Arrow       bool
+	Class       string
+}
+
+// Popover creates a popover component
+templ Popover(props PopoverProps) {
+	<div class="relative inline-block">
+		<div class={ getPopoverTriggerClasses(props) } tabindex="0">
+			{ getPopoverTriggerText(props.TriggerText) }
+		</div>
+		
+		<div class={ getPopoverClasses(props) } tabindex="0">
+			<div class="popover-content bg-base-100 border border-base-300 rounded-lg shadow-lg p-4 z-50">
+				if props.Title != "" {
+					<h4 class="font-semibold mb-2">{ props.Title }</h4>
+				}
+				
+				if props.Content != "" {
+					<p class="text-sm text-base-content/80">{ props.Content }</p>
+				} else {
+					{ children... }
+				}
+				
+				if props.Arrow {
+					<div class="popover-arrow"></div>
+				}
+			</div>
+		</div>
+	</div>
+}
+
+// PopoverWithButton creates a popover with custom button styling
+templ PopoverWithButton(props PopoverProps, buttonClass string) {
+	<div class="relative inline-block">
+		<button class={ getPopoverButtonClasses(buttonClass) } tabindex="0">
+			{ getPopoverTriggerText(props.TriggerText) }
+		</button>
+		
+		<div class={ getPopoverClasses(props) } tabindex="0">
+			<div class="popover-content bg-base-100 border border-base-300 rounded-lg shadow-lg p-4 z-50">
+				if props.Title != "" {
+					<h4 class="font-semibold mb-2">{ props.Title }</h4>
+				}
+				
+				if props.Content != "" {
+					<p class="text-sm text-base-content/80">{ props.Content }</p>
+				} else {
+					{ children... }
+				}
+			</div>
+		</div>
+	</div>
+}
+
+// Helper functions
+func getPopoverTriggerClasses(props PopoverProps) string {
+	classes := "btn btn-outline cursor-pointer"
+	
+	if props.Trigger == "hover" {
+		classes += " hover:bg-base-200"
+	}
+	
+	return classes
+}
+
+func getPopoverButtonClasses(buttonClass string) string {
+	if buttonClass != "" {
+		return buttonClass
+	}
+	return "btn btn-primary"
+}
+
+func getPopoverClasses(props PopoverProps) string {
+	classes := "absolute z-50 invisible opacity-0 transition-all duration-200"
+	
+	switch props.Position {
+	case "top":
+		classes += " bottom-full left-1/2 transform -translate-x-1/2 mb-2"
+	case "bottom":
+		classes += " top-full left-1/2 transform -translate-x-1/2 mt-2"
+	case "left":
+		classes += " right-full top-1/2 transform -translate-y-1/2 mr-2"
+	case "right":
+		classes += " left-full top-1/2 transform -translate-y-1/2 ml-2"
+	default:
+		classes += " top-full left-1/2 transform -translate-x-1/2 mt-2"
+	}
+	
+	switch props.Size {
+	case "sm":
+		classes += " w-48"
+	case "lg":
+		classes += " w-80"
+	default:
+		classes += " w-64"
+	}
+	
+	// Add focus/hover visibility
+	classes += " focus-within:visible focus-within:opacity-100 hover:visible hover:opacity-100"
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+}
+
+func getPopoverTriggerText(text string) string {
+	if text != "" {
+		return text
+	}
+	return "Show Popover"
+} 

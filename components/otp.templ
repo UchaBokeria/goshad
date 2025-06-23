@@ -1,0 +1,212 @@
+package components
+
+import "fmt"
+
+// OTPProps defines the properties for the OTP component
+type OTPProps struct {
+	Length      int    // Number of digits (default 6)
+	Size        string // xs, sm, md, lg
+	Variant     string // bordered, ghost, filled
+	Placeholder string // Placeholder for each input
+	Disabled    bool
+	AutoFocus   bool
+	Class       string
+}
+
+// OTP creates an OTP input component
+templ OTP(props OTPProps) {
+	<div class={ getOTPWrapperClasses(props) }>
+		<div class="flex gap-2 justify-center">
+			for i := 0; i < getOTPLength(props.Length); i++ {
+				<input 
+					type="text"
+					maxlength="1"
+					class={ getOTPInputClasses(props) }
+					placeholder={ props.Placeholder }
+					data-index={ fmt.Sprintf("%d", i) }
+					onkeyup="handleOTPInput(event)"
+					onkeydown="handleOTPKeydown(event)"
+					if props.AutoFocus && i == 0 {
+						autofocus
+					}
+					if props.Disabled {
+						disabled
+					}
+				/>
+			}
+		</div>
+		
+		<!-- JavaScript for OTP functionality -->
+		<script>
+			function handleOTPInput(event) {
+				const input = event.target;
+				const value = input.value;
+				const index = parseInt(input.dataset.index);
+				
+				// Only allow numbers
+				if (!/^\d$/.test(value)) {
+					input.value = '';
+					return;
+				}
+				
+				// Move to next input
+				if (value && index < { fmt.Sprintf("%d", getOTPLength(props.Length)-1) }) {
+					const nextInput = input.parentElement.children[index + 1];
+					if (nextInput) {
+						nextInput.focus();
+					}
+				}
+			}
+			
+			function handleOTPKeydown(event) {
+				const input = event.target;
+				const index = parseInt(input.dataset.index);
+				
+				// Handle backspace
+				if (event.key === 'Backspace' && !input.value && index > 0) {
+					const prevInput = input.parentElement.children[index - 1];
+					if (prevInput) {
+						prevInput.focus();
+					}
+				}
+				
+				// Handle arrow keys
+				if (event.key === 'ArrowLeft' && index > 0) {
+					const prevInput = input.parentElement.children[index - 1];
+					if (prevInput) {
+						prevInput.focus();
+					}
+				}
+				
+				if (event.key === 'ArrowRight' && index < { fmt.Sprintf("%d", getOTPLength(props.Length)-1) }) {
+					const nextInput = input.parentElement.children[index + 1];
+					if (nextInput) {
+						nextInput.focus();
+					}
+				}
+			}
+		</script>
+	</div>
+}
+
+// OTPWithSubmit creates an OTP component with submit functionality
+templ OTPWithSubmit(props OTPProps, submitText string) {
+	<div class={ getOTPWrapperClasses(props) }>
+		<div class="flex gap-2 justify-center mb-4">
+			for i := 0; i < getOTPLength(props.Length); i++ {
+				<input 
+					type="text"
+					maxlength="1"
+					class={ getOTPInputClasses(props) }
+					placeholder={ props.Placeholder }
+					data-index={ fmt.Sprintf("%d", i) }
+					onkeyup="handleOTPInputWithSubmit(event)"
+					onkeydown="handleOTPKeydown(event)"
+					if props.AutoFocus && i == 0 {
+						autofocus
+					}
+					if props.Disabled {
+						disabled
+					}
+				/>
+			}
+		</div>
+		
+		<div class="text-center">
+			<button id="otp-submit" class="btn btn-primary" disabled onclick="submitOTP()">
+				{ getSubmitText(submitText) }
+			</button>
+		</div>
+		
+		<script>
+			function handleOTPInputWithSubmit(event) {
+				handleOTPInput(event);
+				checkOTPComplete();
+			}
+			
+			function checkOTPComplete() {
+				const inputs = document.querySelectorAll('[data-index]');
+				let complete = true;
+				let otp = '';
+				
+				inputs.forEach(input => {
+					if (!input.value) {
+						complete = false;
+					} else {
+						otp += input.value;
+					}
+				});
+				
+				const submitBtn = document.getElementById('otp-submit');
+				if (submitBtn) {
+					submitBtn.disabled = !complete;
+					submitBtn.dataset.otp = otp;
+				}
+			}
+			
+			function submitOTP() {
+				const submitBtn = document.getElementById('otp-submit');
+				const otp = submitBtn.dataset.otp;
+				console.log('OTP submitted:', otp);
+				// Add your submission logic here
+			}
+		</script>
+	</div>
+}
+
+// Helper functions
+func getOTPWrapperClasses(props OTPProps) string {
+	classes := "otp-container"
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+}
+
+func getOTPInputClasses(props OTPProps) string {
+	classes := "input text-center font-mono font-bold"
+	
+	switch props.Size {
+	case "xs":
+		classes += " input-xs w-8 h-8"
+	case "sm":
+		classes += " input-sm w-10 h-10"
+	case "lg":
+		classes += " input-lg w-16 h-16 text-xl"
+	default:
+		classes += " input-md w-12 h-12"
+	}
+	
+	switch props.Variant {
+	case "bordered":
+		classes += " input-bordered"
+	case "ghost":
+		classes += " input-ghost"
+	case "filled":
+		classes += " bg-base-200"
+	default:
+		classes += " input-bordered"
+	}
+	
+	if props.Disabled {
+		classes += " input-disabled"
+	}
+	
+	return classes
+}
+
+func getOTPLength(length int) int {
+	if length <= 0 || length > 10 {
+		return 6
+	}
+	return length
+}
+
+func getSubmitText(text string) string {
+	if text != "" {
+		return text
+	}
+	return "Verify"
+} 

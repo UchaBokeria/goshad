@@ -305,44 +305,147 @@ templ FormComponentsSection() {
                             })
                         </div>
 
+
                         <div class="form-control">
                             <label class="label">
-                                <span class="label-text font-medium">📅 Date Selection</span>
-                                <span class="label-text-alt">Pick a date</span>
+                                <span class="label-text font-medium">📅 Date Range Picker</span>
+                                <span class="label-text-alt">Select start and end dates</span>
                             </label>
-                            <div class="relative">
-                                @ui.Input(ui.InputProps{
-                                    Type: "date",
-                                    Variant: "bordered",
-                                    Size: "md",
-                                    Class: "pl-10",
-                                })
-                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <svg class="w-5 h-5 text-base-content/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                    </svg>
-                                </div>
-                            </div>
+                            @ui.DateRange(ui.DateRangeProps{
+                                Name: "daterange",
+                                Placeholder: "Select date range",
+                                Variant: "bordered",
+                                Size: "md",
+                                Presets: true,
+                                Format: "Jan 02, 2006",
+                            })
                         </div>
 
                         <div class="form-control">
                             <label class="label">
-                                <span class="label-text font-medium">⏰ Time Selection</span>
-                                <span class="label-text-alt">Choose time</span>
+                                <span class="label-text font-medium">📊 Date Range (Primary)</span>
+                                <span class="label-text-alt">With preset values</span>
                             </label>
-                            <div class="relative">
-                                @ui.Input(ui.InputProps{
-                                    Type: "time",
-                                    Variant: "bordered",
-                                    Size: "md",
-                                    Class: "pl-10",
-                                })
-                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <svg class="w-5 h-5 text-base-content/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                    </svg>
-                                </div>
-                            </div>
+                            @ui.DateRange(ui.DateRangeProps{
+                                Name: "reporting_range",
+                                StartDate: "2024-01-01",
+                                EndDate: "2024-01-31",
+                                Placeholder: "Select reporting period",
+                                Variant: "primary",
+                                Size: "lg",
+                                Presets: true,
+                                Format: "Monday, Jan 02, 2006",
+                            })
+                        </div>
+
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-medium">🗓️ Simple Date Range</span>
+                                <span class="label-text-alt">Without presets</span>
+                            </label>
+                            @ui.DateRange(ui.DateRangeProps{
+                                Name: "simple_range",
+                                Placeholder: "Pick dates",
+                                Variant: "secondary",
+                                Size: "sm",
+                                Presets: false,
+                            })
+                        </div>
+
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-medium">🕐 Time Picker (12-hour)</span>
+                                <span class="label-text-alt">With quick presets</span>
+                            </label>
+                            @ui.TimePicker(ui.TimePickerProps{
+                                Name: "meeting_time",
+                                Placeholder: "Select meeting time",
+                                Variant: "bordered",
+                                Size: "md",
+                                Format24: false,
+                                ShowSeconds: false,
+                            })
+                        </div>
+
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-medium">⏰ Time Picker (24-hour)</span>
+                                <span class="label-text-alt">With seconds</span>
+                            </label>
+                            @ui.TimePicker(ui.TimePickerProps{
+                                Name: "schedule_time",
+                                Value: "14:30:00",
+                                Placeholder: "Set schedule time",
+                                Variant: "primary",
+                                Size: "lg",
+                                Format24: true,
+                                ShowSeconds: true,
+                            })
+                        </div>
+
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-medium">📅 Year Picker</span>
+                                <span class="label-text-alt">Select graduation year</span>
+                            </label>
+                            @ui.YearPicker(ui.YearPickerProps{
+                                Name: "graduation_year",
+                                Placeholder: "Select year",
+                                Variant: "accent",
+                                Size: "md",
+                                MinYear: 1990,
+                                MaxYear: 2030,
+                            })
+                        </div>
+
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-medium">🔒 Password with Toggle</span>
+                                <span class="label-text-alt">Click eye to reveal</span>
+                            </label>
+                            @ui.PasswordInput(ui.PasswordInputProps{
+                                Name: "password",
+                                Placeholder: "Enter your password",
+                                Variant: "bordered",
+                                Size: "md",
+                                ShowToggle: true,
+                                ShowStrength: false,
+                                MinLength: 8,
+                            })
+                        </div>
+
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-medium">🛡️ Password with Strength</span>
+                                <span class="label-text-alt">Real-time strength meter</span>
+                            </label>
+                            @ui.PasswordInput(ui.PasswordInputProps{
+                                Name: "new_password",
+                                Placeholder: "Create a strong password",
+                                Variant: "primary",
+                                Size: "md",
+                                ShowToggle: true,
+                                ShowStrength: true,
+                                MinLength: 12,
+                                HelperText: "Include uppercase, lowercase, numbers, and symbols",
+                            })
+                        </div>
+
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-medium">⚠️ Password with Error</span>
+                                <span class="label-text-alt">Error state example</span>
+                            </label>
+                            @ui.PasswordInput(ui.PasswordInputProps{
+                                Name: "confirm_password",
+                                Placeholder: "Confirm password",
+                                Variant: "error",
+                                Size: "md",
+                                ShowToggle: true,
+                                ShowStrength: false,
+                                Error: true,
+                                ErrorMsg: "Passwords do not match",
+                            })
                         </div>
 
                         <div class="form-control">

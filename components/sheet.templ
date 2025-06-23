@@ -1,0 +1,115 @@
+package components
+
+// SheetProps defines the properties for the Sheet component
+type SheetProps struct {
+	Title       string
+	Content     string
+	TriggerText string
+	Position    string // left, right, top, bottom
+	Size        string // sm, md, lg, xl, full
+	Backdrop    bool
+	Class       string
+}
+
+// Sheet creates a slide-out sheet component
+templ Sheet(props SheetProps) {
+	<div class="sheet-container">
+		<!-- Trigger Button -->
+		<label for={ "sheet-" + getSheetId(props) } class="btn btn-primary">
+			{ getSheetTriggerText(props.TriggerText) }
+		</label>
+		
+		<!-- Sheet -->
+		<input type="checkbox" id={ "sheet-" + getSheetId(props) } class="modal-toggle" />
+		<div class="modal modal-bottom sm:modal-middle">
+			<div class={ getSheetClasses(props) }>
+				<!-- Header -->
+				<div class="flex items-center justify-between p-4 border-b border-base-300">
+					<h3 class="text-lg font-semibold">{ props.Title }</h3>
+					<label for={ "sheet-" + getSheetId(props) } class="btn btn-sm btn-circle btn-ghost">
+						<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+						</svg>
+					</label>
+				</div>
+				
+				<!-- Content -->
+				<div class="p-4 flex-1 overflow-auto">
+					if props.Content != "" {
+						<p>{ props.Content }</p>
+					} else {
+						{ children... }
+					}
+				</div>
+			</div>
+			
+			if props.Backdrop {
+				<label class="modal-backdrop" for={ "sheet-" + getSheetId(props) }></label>
+			}
+		</div>
+	</div>
+}
+
+// Helper functions
+func getSheetClasses(props SheetProps) string {
+	classes := "modal-box flex flex-col"
+	
+	switch props.Position {
+	case "left":
+		classes += " w-auto h-full max-h-none rounded-none rounded-r-lg"
+	case "right":
+		classes += " w-auto h-full max-h-none rounded-none rounded-l-lg ml-auto"
+	case "top":
+		classes += " w-full h-auto max-w-none rounded-none rounded-b-lg"
+	case "bottom":
+		classes += " w-full h-auto max-w-none rounded-none rounded-t-lg mt-auto"
+	default:
+		classes += " w-auto h-full max-h-none rounded-none rounded-l-lg ml-auto"
+	}
+	
+	switch props.Size {
+	case "sm":
+		if props.Position == "left" || props.Position == "right" {
+			classes += " w-80"
+		} else {
+			classes += " h-64"
+		}
+	case "lg":
+		if props.Position == "left" || props.Position == "right" {
+			classes += " w-96"
+		} else {
+			classes += " h-96"
+		}
+	case "xl":
+		if props.Position == "left" || props.Position == "right" {
+			classes += " w-[32rem]"
+		} else {
+			classes += " h-[32rem]"
+		}
+	case "full":
+		classes += " w-full h-full max-w-none max-h-none rounded-none"
+	default:
+		if props.Position == "left" || props.Position == "right" {
+			classes += " w-80"
+		} else {
+			classes += " h-80"
+		}
+	}
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+}
+
+func getSheetId(props SheetProps) string {
+	return "default"
+}
+
+func getSheetTriggerText(text string) string {
+	if text != "" {
+		return text
+	}
+	return "Open Sheet"
+} 

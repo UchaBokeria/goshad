@@ -1,6 +1,6 @@
 package examples
 
-templ Index() {
+templ Index(page templ.Component) {
 	<!DOCTYPE html>
 	<html lang="en" data-theme="light">
 		<head>
@@ -10,9 +10,24 @@ templ Index() {
             <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css"/>
 		</head>
 		<body>
+			<nav class="w-full bg-base-100 p-4 flex justify-center items-center gap-4">
+				<a href="/ui">UI</a> |
+				<a href="/components">Components</a> |
+				<a href="/typography">Typography</a> |
+				<a href="/icons">Icons</a> |
+				<a href="/utils">Utils</a> |
+				<a href="/hooks">Hooks</a> |
+				<a href="/layouts">Layouts</a> |
+				<a href="/blocks">Blocks</a> |
+				<a href="/pages">Pages</a> |
+				<a href="/colors">Colors</a> |
+				<a href="/themes">Themes</a> |
+				<a href="/types">Types</a> |
+				<a href="/cli">CLI</a> |
+			</nav>
 			<div class="container mx-auto p-8">
-				<h1 class="text-4xl font-bold mb-8 text-center">GoShad UI Components Demo</h1>
-				@Page()
+				<h1 class="text-4xl font-bold mb-8 text-center">🚀 GoShad UI Library</h1>
+				@page
 			</div>
 		</body>
 	</html>

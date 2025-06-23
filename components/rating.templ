@@ -1,0 +1,248 @@
+package components
+
+import "fmt"
+
+// RatingProps defines the properties for the Rating component
+type RatingProps struct {
+    ID          string      // Component ID
+    Name        string      // Input name for forms
+    Value       float64     // Current rating value (0-max)
+    MaxRating   int         // Maximum rating (default: 5)
+    Size        string      // xs, sm, md, lg, xl
+    Variant     string      // primary, secondary, accent, warning, etc.
+    Icon        string      // star, heart, thumb, custom
+    ReadOnly    bool        // Make rating read-only
+    AllowHalf   bool        // Allow half ratings (0.5, 1.5, etc.)
+    ShowValue   bool        // Show numeric value
+    ShowCount   bool        // Show rating count
+    Count       int         // Number of ratings
+    Disabled    bool        // Disable interaction
+    Required    bool        // Required field
+    Class       string      // Additional CSS classes
+    OnChange    string      // JavaScript callback function name
+}
+
+// Rating creates an interactive rating component
+templ Rating(props RatingProps) {
+    <div class={ getRatingWrapperClasses(props) } data-rating={ getRatingID(props) }>
+        <!-- Hidden input for form submission -->
+        if props.Name != "" && !props.ReadOnly {
+            <input 
+                type="hidden" 
+                name={ props.Name }
+                id={ getRatingID(props) + "_input" }
+                value={ fmt.Sprintf("%.1f", props.Value) }
+                if props.Required {
+                    required
+                }
+            />
+        }
+        
+        <!-- Rating container -->
+        <div class="flex items-center gap-2">
+            <!-- Star/Icon rating -->
+            <div class={ getRatingClasses(props) } id={ getRatingID(props) + "_stars" }>
+                for i := 1; i <= getMaxRating(props); i++ {
+                    @RatingIcon(i, props)
+                }
+            </div>
+            
+            <!-- Value display -->
+            if props.ShowValue {
+                <span class="text-sm font-medium text-base-content/80" id={ getRatingID(props) + "_value" }>
+                    { fmt.Sprintf("%.1f", props.Value) }
+                </span>
+            }
+            
+            <!-- Count display -->
+            if props.ShowCount && props.Count > 0 {
+                <span class="text-sm text-base-content/60">
+                    ({ fmt.Sprintf("%d", props.Count) })
+                </span>
+            }
+        </div>
+        
+        <!-- JavaScript for interactivity -->
+        if !props.ReadOnly && !props.Disabled {
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    initRating('{ getRatingID(props) }', {
+                        maxRating: { getMaxRating(props) },
+                        allowHalf: { fmt.Sprintf("%t", props.AllowHalf) },
+                        currentValue: { fmt.Sprintf("%.1f", props.Value) },
+                        onChange: '{ props.OnChange }'
+                    });
+                });
+            </script>
+        }
+    </div>
+}
+
+// RatingIcon creates a single rating icon (star, heart, etc.)
+templ RatingIcon(index int, props RatingProps) {
+    
+    if !props.ReadOnly && !props.Disabled {
+        <button
+            type="button"
+            class={ getRatingIconClasses(index, props) }
+            data-rating-value={ fmt.Sprintf("%d", index) }
+            onclick={ templ.ComponentScript{Call: "setRating('" + getRatingID(props) + "', " + fmt.Sprintf("%d", index) + ")"} }
+            onmouseover={ templ.ComponentScript{Call: "hoverRating('" + getRatingID(props) + "', " + fmt.Sprintf("%d", index) + ")"} }
+            onmouseleave={ templ.ComponentScript{Call: "unhoverRating('" + getRatingID(props) + "')"} }
+        >
+            @RatingIconSVG(props.Icon, getRatingIconFillClass(index, props))
+        </button>
+    } else {
+        <div class={ getRatingIconClasses(index, props) }>
+            @RatingIconSVG(props.Icon, getRatingIconFillClass(index, props))
+        </div>
+    }
+}
+
+// RatingIconSVG renders the appropriate icon based on type
+templ RatingIconSVG(iconType, fillClass string) {
+    switch iconType {
+    case "heart":
+        <svg class={ fillClass } fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+        </svg>
+    case "thumb":
+        <svg class={ fillClass } fill="currentColor" viewBox="0 0 24 24">
+            <path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/>
+        </svg>
+    default:
+        <!-- Default star icon -->
+        <svg class={ fillClass } fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+        </svg>
+    }
+}
+
+// RatingDisplay creates a read-only rating display
+templ RatingDisplay(rating float64, maxRating int, size string, showValue bool) {
+    @Rating(RatingProps{
+        Value: rating,
+        MaxRating: maxRating,
+        Size: size,
+        ReadOnly: true,
+        ShowValue: showValue,
+        Icon: "star",
+    })
+}
+
+// Helper functions
+
+func getRatingID(props RatingProps) string {
+    if props.ID != "" {
+        return props.ID
+    }
+    return "rating_" + props.Name
+}
+
+func getMaxRating(props RatingProps) int {
+    if props.MaxRating > 0 {
+        return props.MaxRating
+    }
+    return 5
+}
+
+func getRatingWrapperClasses(props RatingProps) string {
+    classes := "rating-wrapper"
+    
+    if props.Class != "" {
+        classes += " " + props.Class
+    }
+    
+    return classes
+}
+
+func getRatingClasses(props RatingProps) string {
+    classes := "rating"
+    
+    // Add size classes
+    switch props.Size {
+    case "xs":
+        classes += " rating-xs"
+    case "sm":
+        classes += " rating-sm"
+    case "lg":
+        classes += " rating-lg"
+    case "xl":
+        classes += " rating-xl"
+    default:
+        classes += " rating-md"
+    }
+    
+    if props.Disabled {
+        classes += " opacity-50 pointer-events-none"
+    }
+    
+    return classes
+}
+
+func getRatingIconClasses(index int, props RatingProps) string {
+    baseClasses := "rating-icon cursor-pointer transition-all duration-200"
+    
+    if props.ReadOnly || props.Disabled {
+        baseClasses = "rating-icon"
+    }
+    
+    // Add size classes
+    switch props.Size {
+    case "xs":
+        baseClasses += " w-4 h-4"
+    case "sm":
+        baseClasses += " w-5 h-5"
+    case "lg":
+        baseClasses += " w-8 h-8"
+    case "xl":
+        baseClasses += " w-10 h-10"
+    default:
+        baseClasses += " w-6 h-6"
+    }
+    
+    // Add hover effects for interactive ratings
+    if !props.ReadOnly && !props.Disabled {
+        baseClasses += " hover:scale-110"
+    }
+    
+    return baseClasses
+}
+
+func getRatingIconFillClass(index int, props RatingProps) string {
+    classes := "w-full h-full transition-colors duration-200"
+    
+    // Determine if this icon should be filled
+    isFilled := float64(index) <= props.Value
+    isHalfFilled := props.AllowHalf && float64(index)-0.5 <= props.Value && float64(index) > props.Value
+    
+    if isFilled {
+        // Filled state
+        switch props.Variant {
+        case "primary":
+            classes += " text-primary"
+        case "secondary":
+            classes += " text-secondary"
+        case "accent":
+            classes += " text-accent"
+        case "warning":
+            classes += " text-warning"
+        case "error":
+            classes += " text-error"
+        case "success":
+            classes += " text-success"
+        case "info":
+            classes += " text-info"
+        default:
+            classes += " text-warning" // Default yellow for stars
+        }
+    } else if isHalfFilled {
+        // Half-filled state (could be implemented with gradient)
+        classes += " text-warning opacity-50"
+    } else {
+        // Empty state
+        classes += " text-base-300"
+    }
+    
+    return classes
+} 

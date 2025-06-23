@@ -1,0 +1,270 @@
+package ui
+
+import (
+    "fmt"
+    "time"
+)
+
+// DateRangeProps defines the properties for the DateRange component
+type DateRangeProps struct {
+    StartDate   string    // Start date value (YYYY-MM-DD)
+    EndDate     string    // End date value (YYYY-MM-DD)
+    Name        string    // Input name attribute
+    ID          string    // Component ID
+    Size        string    // xs, sm, md, lg
+    Variant     string    // primary, secondary, accent, etc.
+    Format      string    // Date format for display (default: MMM dd, yyyy)
+    MinDate     string    // Minimum selectable date
+    MaxDate     string    // Maximum selectable date
+    Presets     bool      // Show preset ranges
+    Disabled    bool      // Disable the component
+    Required    bool      // Required field
+    Class       string    // Additional CSS classes
+    Placeholder string    // Placeholder text
+}
+
+// DateRange creates a date range picker component
+templ DateRange(props DateRangeProps) {
+    <div class={ getDateRangeClasses(props) } data-daterange={ getDateRangeID(props) }>
+        <!-- Hidden inputs for form submission -->
+        <input 
+            type="hidden" 
+            if props.Name != "" {
+                name={ props.Name + "_start" }
+            }
+            id={ getDateRangeID(props) + "_start" }
+            value={ props.StartDate }
+        />
+        <input 
+            type="hidden" 
+            if props.Name != "" {
+                name={ props.Name + "_end" }
+            }
+            id={ getDateRangeID(props) + "_end" }
+            value={ props.EndDate }
+        />
+        
+        <!-- Display input -->
+        <div class="dropdown dropdown-end w-full">
+            <div tabindex="0" role="button" class={ getDateRangeInputClasses(props) }>
+                <div class="flex items-center justify-between w-full">
+                    <span class="text-left" id={ getDateRangeID(props) + "_display" }>
+                        if props.StartDate != "" && props.EndDate != "" {
+                            { formatDateRange(props.StartDate, props.EndDate, props.Format) }
+                        } else {
+                            if props.Placeholder != "" {
+                                { props.Placeholder }
+                            } else {
+                                Select date range
+                            }
+                        }
+                    </span>
+                    <svg class="w-4 h-4 text-base-content/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                </div>
+            </div>
+            
+            <!-- Dropdown content -->
+            <div tabindex="0" class="dropdown-content z-[1] menu p-4 shadow-lg bg-base-100 rounded-box w-96 border border-base-300">
+                <div class="flex gap-4">
+                    <!-- Presets (if enabled) -->
+                    if props.Presets {
+                        <div class="w-32 border-r border-base-300 pr-4">
+                            <h4 class="font-semibold text-sm text-base-content/80 mb-2">Quick Select</h4>
+                            <div class="space-y-1">
+                                @DateRangePreset("Today", getDateRangeID(props))
+                                @DateRangePreset("Yesterday", getDateRangeID(props))
+                                @DateRangePreset("Last 7 days", getDateRangeID(props))
+                                @DateRangePreset("Last 30 days", getDateRangeID(props))
+                                @DateRangePreset("This month", getDateRangeID(props))
+                                @DateRangePreset("Last month", getDateRangeID(props))
+                                @DateRangePreset("This year", getDateRangeID(props))
+                            </div>
+                        </div>
+                    }
+                    
+                    <!-- Calendar -->
+                    <div class="flex-1">
+                        <div class="grid grid-cols-2 gap-4">
+                            <!-- Start Date Calendar -->
+                            <div>
+                                <h5 class="font-medium text-sm text-base-content/80 mb-2">Start Date</h5>
+                                @DateRangeCalendar(getDateRangeID(props) + "_start_cal", "start", props)
+                            </div>
+                            
+                            <!-- End Date Calendar -->
+                            <div>
+                                <h5 class="font-medium text-sm text-base-content/80 mb-2">End Date</h5>
+                                @DateRangeCalendar(getDateRangeID(props) + "_end_cal", "end", props)
+                            </div>
+                        </div>
+                        
+                        <!-- Action buttons -->
+                        <div class="flex justify-end gap-2 mt-4 pt-4 border-t border-base-300">
+                            <button type="button" class="btn btn-sm btn-ghost" onclick={ templ.ComponentScript{Call: "clearDateRange('" + getDateRangeID(props) + "')"} }>
+                                Clear
+                            </button>
+                            <button type="button" class="btn btn-sm btn-primary" onclick={ templ.ComponentScript{Call: "applyDateRange('" + getDateRangeID(props) + "')"} }>
+                                Apply
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- JavaScript for functionality -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                initDateRange('{ getDateRangeID(props) }', {
+                    startDate: '{ props.StartDate }',
+                    endDate: '{ props.EndDate }',
+                    minDate: '{ props.MinDate }',
+                    maxDate: '{ props.MaxDate }',
+                    format: '{ getDateFormat(props.Format) }'
+                });
+            });
+        </script>
+    </div>
+}
+
+// DateRangePreset creates a preset button for quick date selection
+templ DateRangePreset(label, id string) {
+    <button 
+        type="button" 
+        class="btn btn-ghost btn-xs justify-start w-full text-left"
+        onclick={ templ.ComponentScript{Call: "selectDatePreset('" + id + "', '" + label + "')"} }
+    >
+        { label }
+    </button>
+}
+
+// DateRangeCalendar creates a mini calendar for date selection
+templ DateRangeCalendar(id string, calType string, props DateRangeProps) {
+    <div class="calendar-widget" id={ id } data-type={ calType }>
+        <!-- Calendar header -->
+        <div class="flex justify-between items-center mb-2">
+            <button type="button" class="btn btn-ghost btn-xs" onclick={ templ.ComponentScript{Call: "prevMonth('" + id + "')"} }>
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                </svg>
+            </button>
+            <span class="text-sm font-medium" id={ id + "_header" }>
+                { getCurrentMonthYear() }
+            </span>
+            <button type="button" class="btn btn-ghost btn-xs" onclick={ templ.ComponentScript{Call: "nextMonth('" + id + "')"} }>
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+            </button>
+        </div>
+        
+        <!-- Calendar grid -->
+        <div class="grid grid-cols-7 gap-1 text-xs">
+            <!-- Day headers -->
+            <div class="text-center text-base-content/60 p-1">Su</div>
+            <div class="text-center text-base-content/60 p-1">Mo</div>
+            <div class="text-center text-base-content/60 p-1">Tu</div>
+            <div class="text-center text-base-content/60 p-1">We</div>
+            <div class="text-center text-base-content/60 p-1">Th</div>
+            <div class="text-center text-base-content/60 p-1">Fr</div>
+            <div class="text-center text-base-content/60 p-1">Sa</div>
+            
+            <!-- Calendar days (populated by JavaScript) -->
+            <div id={ id + "_days" } class="col-span-7 grid grid-cols-7 gap-1">
+                <!-- Days will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+}
+
+// Helper functions
+
+func getDateRangeID(props DateRangeProps) string {
+    if props.ID != "" {
+        return props.ID
+    }
+    return "daterange_" + fmt.Sprintf("%d", time.Now().UnixNano())
+}
+
+func getDateRangeClasses(props DateRangeProps) string {
+    classes := "date-range-picker w-full"
+    
+    if props.Class != "" {
+        classes += " " + props.Class
+    }
+    
+    return classes
+}
+
+func getDateRangeInputClasses(props DateRangeProps) string {
+    classes := "input input-bordered w-full cursor-pointer"
+    
+    // Add variant classes
+    if props.Variant != "" {
+        switch props.Variant {
+        case "primary":
+            classes += " input-primary"
+        case "secondary":
+            classes += " input-secondary"
+        case "accent":
+            classes += " input-accent"
+        case "info":
+            classes += " input-info"
+        case "success":
+            classes += " input-success"
+        case "warning":
+            classes += " input-warning"
+        case "error":
+            classes += " input-error"
+        }
+    }
+    
+    // Add size classes
+    switch props.Size {
+    case "xs":
+        classes += " input-xs"
+    case "sm":
+        classes += " input-sm"
+    case "lg":
+        classes += " input-lg"
+    default:
+        classes += " input-md"
+    }
+    
+    if props.Disabled {
+        classes += " input-disabled"
+    }
+    
+    return classes
+}
+
+func formatDateRange(startDate, endDate, format string) string {
+    if format == "" {
+        format = "Jan 02, 2006"
+    }
+    
+    start, err := time.Parse("2006-01-02", startDate)
+    if err != nil {
+        return startDate + " - " + endDate
+    }
+    
+    end, err := time.Parse("2006-01-02", endDate)
+    if err != nil {
+        return startDate + " - " + endDate
+    }
+    
+    return start.Format(format) + " - " + end.Format(format)
+}
+
+func getDateFormat(format string) string {
+    if format == "" {
+        return "MMM dd, yyyy"
+    }
+    return format
+}
+
+func getCurrentMonthYear() string {
+    return time.Now().Format("January 2006")
+} 

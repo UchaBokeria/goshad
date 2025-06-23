@@ -1,0 +1,322 @@
+package components
+
+import "fmt"
+
+// ChartProps defines the properties for the Chart component
+type ChartProps struct {
+	Title   string
+	Type    string // bar, line, pie, donut, area
+	Data    []ChartData
+	Width   string // full, 1/2, 1/3, etc.
+	Height  string // 64, 80, 96, etc. (in h-units)
+	Colors  []string // Custom colors for data series
+	Size    string // xs, sm, md, lg
+	Class   string
+}
+
+// ChartData represents a single data point
+type ChartData struct {
+	Label string
+	Value float64
+	Color string // Optional custom color
+}
+
+// Chart creates a chart component with different types
+templ Chart(props ChartProps) {
+	<div class={ getChartWrapperClasses(props) }>
+		if props.Title != "" {
+			<h3 class="text-lg font-semibold mb-4 text-center">{ props.Title }</h3>
+		}
+		
+		switch props.Type {
+		case "bar":
+			@BarChart(props)
+		case "line":
+			@LineChart(props)
+		case "pie":
+			@PieChart(props)
+		case "donut":
+			@DonutChart(props)
+		case "area":
+			@AreaChart(props)
+		default:
+			@BarChart(props)
+		}
+	</div>
+}
+
+// BarChart creates a bar chart
+templ BarChart(props ChartProps) {
+	<div class="chart-container">
+		<svg viewBox="0 0 400 200" class="w-full h-full">
+			<!-- Chart bars -->
+			for i, data := range props.Data {
+				<rect
+					x={ fmt.Sprintf("%d", i*60+20) }
+					y={ fmt.Sprintf("%f", 180-(data.Value*1.6)) }
+					width="40"
+					height={ fmt.Sprintf("%f", data.Value*1.6) }
+					fill={ getChartColor(i, data.Color, props.Colors) }
+					class="transition-all duration-300 hover:opacity-80"
+				/>
+				<!-- Labels -->
+				<text
+					x={ fmt.Sprintf("%d", i*60+40) }
+					y="195"
+					text-anchor="middle"
+					class="text-xs fill-current text-base-content"
+				>
+					{ data.Label }
+				</text>
+			}
+		</svg>
+	</div>
+}
+
+// LineChart creates a line chart
+templ LineChart(props ChartProps) {
+	<div class="chart-container">
+		<svg viewBox="0 0 400 200" class="w-full h-full">
+			<!-- Chart line -->
+			<polyline
+				points={ getLinePoints(props.Data) }
+				fill="none"
+				stroke={ getChartColor(0, "", props.Colors) }
+				stroke-width="2"
+				class="transition-all duration-300"
+			/>
+			<!-- Data points -->
+			for i, data := range props.Data {
+				<circle
+					cx={ fmt.Sprintf("%d", i*60+40) }
+					cy={ fmt.Sprintf("%f", 180-(data.Value*1.6)) }
+					r="4"
+					fill={ getChartColor(i, data.Color, props.Colors) }
+					class="transition-all duration-300 hover:r-6"
+				/>
+				<!-- Labels -->
+				<text
+					x={ fmt.Sprintf("%d", i*60+40) }
+					y="195"
+					text-anchor="middle"
+					class="text-xs fill-current text-base-content"
+				>
+					{ data.Label }
+				</text>
+			}
+		</svg>
+	</div>
+}
+
+// PieChart creates a pie chart
+templ PieChart(props ChartProps) {
+	<div class="chart-container flex justify-center">
+		<svg viewBox="0 0 200 200" class="w-48 h-48">
+			<!-- Pie slices -->
+			@getPieSlices(props.Data, props.Colors)
+		</svg>
+		<!-- Legend -->
+		<div class="ml-4 flex flex-col justify-center space-y-2">
+			for i, data := range props.Data {
+				<div class="flex items-center space-x-2">
+					<div 
+						class="w-4 h-4 rounded-sm" 
+						style={ "background-color: " + getChartColor(i, data.Color, props.Colors) }
+					></div>
+					<span class="text-sm">{ data.Label }: { fmt.Sprintf("%.1f", data.Value) }</span>
+				</div>
+			}
+		</div>
+	</div>
+}
+
+// DonutChart creates a donut chart
+templ DonutChart(props ChartProps) {
+	<div class="chart-container flex justify-center">
+		<svg viewBox="0 0 200 200" class="w-48 h-48">
+			<!-- Donut slices -->
+			@getDonutSlices(props.Data, props.Colors)
+			<!-- Center text -->
+			<text
+				x="100"
+				y="100"
+				text-anchor="middle"
+				dominant-baseline="central"
+				class="text-lg font-semibold fill-current text-base-content"
+			>
+				Total
+			</text>
+			<text
+				x="100"
+				y="115"
+				text-anchor="middle"
+				dominant-baseline="central"
+				class="text-sm fill-current text-base-content/70"
+			>
+				{ fmt.Sprintf("%.0f", getTotalValue(props.Data)) }
+			</text>
+		</svg>
+		<!-- Legend -->
+		<div class="ml-4 flex flex-col justify-center space-y-2">
+			for i, data := range props.Data {
+				<div class="flex items-center space-x-2">
+					<div 
+						class="w-4 h-4 rounded-sm" 
+						style={ "background-color: " + getChartColor(i, data.Color, props.Colors) }
+					></div>
+					<span class="text-sm">{ data.Label }: { fmt.Sprintf("%.1f", data.Value) }</span>
+				</div>
+			}
+		</div>
+	</div>
+}
+
+// AreaChart creates an area chart
+templ AreaChart(props ChartProps) {
+	<div class="chart-container">
+		<svg viewBox="0 0 400 200" class="w-full h-full">
+			<!-- Chart area -->
+			<polygon
+				points={ getAreaPoints(props.Data) }
+				fill={ getChartColor(0, "", props.Colors) }
+				fill-opacity="0.3"
+				stroke={ getChartColor(0, "", props.Colors) }
+				stroke-width="2"
+				class="transition-all duration-300"
+			/>
+			<!-- Data points -->
+			for i, data := range props.Data {
+				<circle
+					cx={ fmt.Sprintf("%d", i*60+40) }
+					cy={ fmt.Sprintf("%f", 180-(data.Value*1.6)) }
+					r="3"
+					fill={ getChartColor(0, "", props.Colors) }
+					class="transition-all duration-300 hover:r-5"
+				/>
+				<!-- Labels -->
+				<text
+					x={ fmt.Sprintf("%d", i*60+40) }
+					y="195"
+					text-anchor="middle"
+					class="text-xs fill-current text-base-content"
+				>
+					{ data.Label }
+				</text>
+			}
+		</svg>
+	</div>
+}
+
+// Helper functions
+func getChartWrapperClasses(props ChartProps) string {
+	classes := "chart-wrapper"
+	
+	if props.Width != "" {
+		classes += " w-" + props.Width
+	} else {
+		classes += " w-full"
+	}
+	
+	if props.Height != "" {
+		classes += " h-" + props.Height
+	} else {
+		classes += " h-64"
+	}
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+}
+
+func getChartColor(index int, customColor string, colors []string) string {
+	if customColor != "" {
+		return customColor
+	}
+	
+	if len(colors) > index {
+		return colors[index]
+	}
+	
+	// Default color palette
+	defaultColors := []string{
+		"#3b82f6", // blue
+		"#ef4444", // red
+		"#10b981", // green
+		"#f59e0b", // yellow
+		"#8b5cf6", // purple
+		"#06b6d4", // cyan
+		"#f97316", // orange
+		"#84cc16", // lime
+	}
+	
+	return defaultColors[index%len(defaultColors)]
+}
+
+func getLinePoints(data []ChartData) string {
+	points := ""
+	for i, d := range data {
+		if i > 0 {
+			points += " "
+		}
+		points += fmt.Sprintf("%d,%f", i*60+40, 180-(d.Value*1.6))
+	}
+	return points
+}
+
+func getAreaPoints(data []ChartData) string {
+	points := ""
+	// Start from bottom left
+	points += "40,180"
+	
+	// Add data points
+	for i, d := range data {
+		points += fmt.Sprintf(" %d,%f", i*60+40, 180-(d.Value*1.6))
+	}
+	
+	// End at bottom right
+	points += fmt.Sprintf(" %d,180", (len(data)-1)*60+40)
+	
+	return points
+}
+
+func getTotalValue(data []ChartData) float64 {
+	total := 0.0
+	for _, d := range data {
+		total += d.Value
+	}
+	return total
+}
+
+// Simplified pie slice generation (you would need more complex math for proper pie charts)
+templ getPieSlices(data []ChartData, colors []string) {
+	<!-- This is a simplified version - in a real implementation you'd calculate proper SVG paths -->
+	<circle
+		cx="100"
+		cy="100"
+		r="80"
+		fill={ getChartColor(0, "", colors) }
+		stroke="white"
+		stroke-width="2"
+	/>
+}
+
+// Simplified donut slice generation
+templ getDonutSlices(data []ChartData, colors []string) {
+	<!-- This is a simplified version - in a real implementation you'd calculate proper SVG paths -->
+	<circle
+		cx="100"
+		cy="100"
+		r="80"
+		fill="none"
+		stroke={ getChartColor(0, "", colors) }
+		stroke-width="30"
+	/>
+	<circle
+		cx="100"
+		cy="100"
+		r="50"
+		fill="white"
+	/>
+} 

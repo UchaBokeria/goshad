@@ -5,359 +5,631 @@ import (
 	"github.com/UchaBokeria/goshad/ui"
 )
 
-templ ComponentDemo() {
-	<!DOCTYPE html>
-	<html lang="en" data-theme="light">
-	<head>
-		<meta charset="UTF-8"/>
-		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-		<title>GoShad Components Demo</title>
-		<link href="https://cdn.jsdelivr.net/npm/daisyui@4.4.0/dist/full.min.css" rel="stylesheet" type="text/css" />
-		<script src="https://cdn.tailwindcss.com"></script>
-	</head>
-	<body class="bg-gradient-to-br from-base-100 to-base-200 min-h-screen">
-		<!-- Navigation -->
-		@components.Navigation(components.NavigationProps{
-			Brand: components.NavBrand{
-				Text: "GoShad UI",
-				Href: "/",
-			},
-			Items: []components.NavItem{
-				{Label: "Components", Href: "/components", Active: true},
-				{Label: "Documentation", Href: "/docs"},
-				{Label: "Examples", Href: "/examples"},
-			},
-			Actions: []components.NavAction{
-				{Type: "search"},
-				{Type: "button", Label: "Get Started", Variant: "primary", Href: "/start"},
-				{Type: "avatar"},
-			},
-			Sticky: true,
-			Variant: "bordered",
-		})
+templ Components() {
+	<div class="container mx-auto px-4 py-8 space-y-12">
+		<!-- Header -->
+		<div class="text-center mb-12">
+			@ui.HeadingWithText(ui.HeadingProps{
+				Level: 1,
+				Class: "text-4xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent",
+			}, "GoShad UI Components")
+			@ui.TextWithString(ui.TextProps{
+				Size:  "lg",
+				Class: "text-base-content/70 mt-4 max-w-2xl mx-auto block",
+			}, "A comprehensive collection of beautiful, accessible components built with Templ, Tailwind CSS, and DaisyUI")
+		</div>
 
-		<div class="container mx-auto px-4 py-8">
-			<!-- Header -->
-			<div class="text-center mb-12">
-				@ui.Heading(ui.HeadingProps{
-					Level: 1,
-					Text:  "GoShad UI Components",
-					Class: "text-4xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent",
-				})
-				@ui.Text(ui.TextProps{
-					Text:  "A comprehensive collection of beautiful, accessible components built with Templ, Tailwind CSS, and DaisyUI",
-					Size:  "lg",
-					Class: "text-base-content/70 mt-4 max-w-2xl mx-auto",
-				})
+		<!-- Navigation & Breadcrumbs -->
+		<section class="space-y-6">
+			@ui.HeadingWithText(ui.HeadingProps{Level: 2, Class: "mb-6"}, "Navigation & Breadcrumbs")
+			
+			<div class="card bg-base-100 shadow-xl">
+				<div class="card-body">
+					<h3 class="card-title mb-4">Enhanced Breadcrumbs</h3>
+					@components.Breadcrumbs(components.BreadcrumbsProps{
+						Items: []components.BreadcrumbItem{
+							{Label: "Home", Href: "/", Active: false},
+							{Label: "Components", Href: "/components", Active: false},
+							{Label: "Navigation", Href: "/navigation", Active: false},
+							{Label: "Breadcrumbs", Active: true},
+						},
+					})
+				</div>
 			</div>
 
-			<!-- Improved Breadcrumbs -->
-			<section class="mb-16">
-				@ui.Heading(ui.HeadingProps{Level: 2, Text: "Navigation & Breadcrumbs", Class: "mb-8"})
-				
-				<div class="grid gap-8">
-					<div class="card bg-base-100 shadow-xl">
-						<div class="card-body">
-							<h3 class="card-title mb-4">Enhanced Breadcrumbs</h3>
-							@components.Breadcrumbs(components.BreadcrumbsProps{
-								Items: []components.BreadcrumbItem{
-									{Label: "Home", Href: "/", Active: false},
-									{Label: "Components", Href: "/components", Active: false},
-									{Label: "Navigation", Href: "/navigation", Active: false},
-									{Label: "Breadcrumbs", Active: true},
-								},
-							})
-						</div>
-					</div>
+			<div class="card bg-base-100 shadow-xl">
+				<div class="card-body">
+					<h3 class="card-title mb-4">Navigation Menu</h3>
+					@components.Navigation(components.NavigationProps{
+						Brand: components.NavBrand{
+							Text: "GoShad",
+							Href: "/",
+						},
+						Items: []components.NavItem{
+							{Label: "Components", Href: "/components", Active: true},
+							{Label: "Documentation", Href: "/docs"},
+							{Label: "Examples", Href: "/examples"},
+						},
+						Actions: []components.NavAction{
+							{Type: "search"},
+							{Type: "button", Label: "Get Started", Variant: "primary"},
+						},
+						Variant: "bordered",
+					})
 				</div>
-			</section>
+			</div>
 
-			<!-- Carousel and Slider -->
-			<section class="mb-16">
-				@ui.Heading(ui.HeadingProps{Level: 2, Text: "Carousel & Slider", Class: "mb-8"})
-				
-				<div class="grid gap-8">
-					<div class="card bg-base-100 shadow-xl">
-						<div class="card-body">
-							<h3 class="card-title mb-4">Image Carousel</h3>
-							@components.Carousel(components.CarouselProps{
-								Items: []components.CarouselItem{
-									{Title: "Slide 1", Description: "Beautiful first slide with gradient"},
-									{Title: "Slide 2", Description: "Amazing second slide"},
-									{Title: "Slide 3", Description: "Stunning third slide"},
-								},
-								Navigation: true,
-								Indicators: true,
-								Size: "lg",
-							})
-						</div>
-					</div>
-
-					<div class="card bg-base-100 shadow-xl">
-						<div class="card-body">
-							<h3 class="card-title mb-4">Range Slider</h3>
-							@components.Slider(components.SliderProps{
-								Min:       0,
-								Max:       100,
-								Value:     25,
-								Label:     "Volume",
-								ShowValue: true,
-								Variant:   "primary",
-								Size:      "md",
-							})
-						</div>
-					</div>
+			<div class="card bg-base-100 shadow-xl">
+				<div class="card-body">
+					<h3 class="card-title mb-4">Menu</h3>
+					@components.Menu(components.MenuProps{
+						Items: []components.MenuItem{
+							{Label: "Dashboard", Href: "/dashboard", Icon: "home"},
+							{Label: "Projects", Href: "/projects", Icon: "folder"},
+							{Label: "Settings", Href: "/settings", Icon: "settings"},
+						},
+						Variant: "bordered",
+						Size: "md",
+					})
 				</div>
-			</section>
+			</div>
+		</section>
 
-			<!-- Enhanced Accordion -->
-			<section class="mb-16">
-				@ui.Heading(ui.HeadingProps{Level: 2, Text: "Accordion Layouts", Class: "mb-8"})
-				
-				<div class="grid gap-8">
-					<div class="card bg-base-100 shadow-xl">
-						<div class="card-body">
-							<h3 class="card-title mb-4">Vertical Accordion</h3>
-							@components.Accordion(components.AccordionProps{
-								Items: []components.AccordionItem{
-									{Title: "What is GoShad?", Content: "GoShad is a comprehensive UI component library built for Go applications using Templ, Tailwind CSS, and DaisyUI.", Open: true},
-									{Title: "How to install?", Content: "Simply import the components you need from github.com/UchaBokeria/goshad and start building!"},
-									{Title: "Is it customizable?", Content: "Yes! All components support custom classes and extensive theming options."},
-								},
-								Multiple: false,
-								Size:     "md",
-							})
-						</div>
-					</div>
-
-					<div class="card bg-base-100 shadow-xl">
-						<div class="card-body">
-							<h3 class="card-title mb-4">Horizontal Accordion</h3>
-							@components.HorizontalAccordion(components.AccordionProps{
-								Items: []components.AccordionItem{
-									{Title: "Design", Content: "Beautiful, modern designs that follow best practices and accessibility guidelines.", Open: true},
-									{Title: "Performance", Content: "Optimized components that load fast and provide smooth interactions."},
-									{Title: "Developer Experience", Content: "Easy to use APIs with comprehensive documentation and examples."},
-								},
-							})
-						</div>
-					</div>
-				</div>
-			</section>
-
-			<!-- Improved Clipboard -->
-			<section class="mb-16">
-				@ui.Heading(ui.HeadingProps{Level: 2, Text: "Enhanced Clipboard", Class: "mb-8"})
-				
-				<div class="grid gap-8">
-					<div class="card bg-base-100 shadow-xl">
-						<div class="card-body">
-							<h3 class="card-title mb-4">Copy to Clipboard</h3>
-							<div class="flex gap-4">
-								@components.Clipboard(components.ClipboardProps{
-									Text:     "npm install @goshad/components",
-									Label:    "Copy Install Command",
-									Icon:     true,
-									Feedback: true,
-									Variant:  "primary",
-								})
-								
-								@components.Clipboard(components.ClipboardProps{
-									Text:     "github.com/UchaBokeria/goshad",
-									Label:    "Copy Repository",
-									Icon:     false,
-									Feedback: true,
-									Variant:  "secondary",
-								})
-							</div>
-						</div>
-					</div>
-				</div>
-			</section>
-
-			<!-- Enhanced Tags Input -->
-			<section class="mb-16">
-				@ui.Heading(ui.HeadingProps{Level: 2, Text: "Improved Tags Input", Class: "mb-8"})
-				
-				<div class="grid gap-8">
-					<div class="card bg-base-100 shadow-xl">
-						<div class="card-body">
-							<h3 class="card-title mb-4">Tag Input with Thick Tags</h3>
-							@components.TagsInput(components.TagsInputProps{
-								Tags:        []string{"React", "Vue", "Angular", "Svelte"},
-								Placeholder: "Add a framework...",
-								MaxTags:     10,
-								Suggestions: []string{"Next.js", "Nuxt.js", "SvelteKit", "Remix"},
-								Size:        "md",
-							})
-						</div>
-					</div>
-				</div>
-			</section>
-
-			<!-- Enhanced Search -->
-			<section class="mb-16">
-				@ui.Heading(ui.HeadingProps{Level: 2, Text: "Beautiful Search", Class: "mb-8"})
-				
-				<div class="grid gap-8">
-					<div class="card bg-base-100 shadow-xl">
-						<div class="card-body">
-							<h3 class="card-title mb-4">Search Components</h3>
-							<div class="space-y-4">
-								@components.Search(components.SearchProps{
-									Placeholder: "Search components...",
-									Size:        "lg",
-									Variant:     "bordered",
-									ShowButton:  false,
-								})
-								
-								@components.Search(components.SearchProps{
-									Placeholder: "Search with button...",
-									Size:        "md",
-									ShowButton:  true,
-									ButtonText:  "Search",
-								})
-							</div>
-						</div>
-					</div>
-				</div>
-			</section>
-
-			<!-- Auto-Hide Toast -->
-			<section class="mb-16">
-				@ui.Heading(ui.HeadingProps{Level: 2, Text: "Auto-Hide Toast Notifications", Class: "mb-8"})
-				
-				<div class="grid gap-8">
-					<div class="card bg-base-100 shadow-xl">
-						<div class="card-body">
-							<h3 class="card-title mb-4">Toast Examples</h3>
-							<div class="space-y-4">
-								@components.Toast(components.ToastProps{
-									Message:  "Success! Your changes have been saved.",
-									Type:     "success",
-									Position: "top-end",
-									Duration: 3,
-									Closable: true,
-									Icon:     true,
-								})
-								
-								@components.Toast(components.ToastProps{
-									Message:  "Warning: Please check your input.",
-									Type:     "warning",
-									Position: "top-center",
-									Duration: 5,
-									Closable: true,
-									Icon:     true,
-								})
-							</div>
-						</div>
-					</div>
-				</div>
-			</section>
-
-			<!-- Existing Components -->
-			<section class="mb-16">
-				@ui.Heading(ui.HeadingProps{Level: 2, Text: "Interactive Components", Class: "mb-8"})
-				
-				<div class="grid md:grid-cols-2 gap-8">
-					<!-- Tabs -->
-					<div class="card bg-base-100 shadow-xl">
-						<div class="card-body">
-							<h3 class="card-title mb-4">Tabs</h3>
-							@components.Tabs(components.TabsProps{
-								Items: []components.TabItem{
-									{Label: "Overview", Content: "Welcome to GoShad! This is the overview tab with general information.", Active: true},
-									{Label: "Features", Content: "Discover all the amazing features that make GoShad special."},
-									{Label: "Documentation", Content: "Complete documentation and guides for getting started."},
-								},
-								Variant: "bordered",
-								Size:    "md",
-							})
-						</div>
-					</div>
-
-					<!-- Modal -->
-					<div class="card bg-base-100 shadow-xl">
-						<div class="card-body">
-							<h3 class="card-title mb-4">Modal Dialog</h3>
-							@components.Modal(components.ModalProps{
-								Title:       "Welcome to GoShad",
-								Content:     "This is a beautiful modal dialog with smooth animations and perfect accessibility support.",
-								TriggerText: "Open Modal",
-								Size:        "md",
-								Backdrop:    true,
-							})
-						</div>
-					</div>
-				</div>
-			</section>
-
-			<!-- Data Display -->
-			<section class="mb-16">
-				@ui.Heading(ui.HeadingProps{Level: 2, Text: "Data Display", Class: "mb-8"})
-				
-				<div class="grid md:grid-cols-2 gap-8">
-					<!-- Stats -->
-					<div class="card bg-base-100 shadow-xl">
-						<div class="card-body">
-							<h3 class="card-title mb-4">Statistics</h3>
-							@components.Stat(components.StatProps{
-								Title:       "Total Users",
-								Value:       "12,345",
-								Description: "Active users this month",
-								Change:      "+12%",
-								ChangeType:  "increase",
-								Icon:        "users",
-							})
-						</div>
-					</div>
-
-					<!-- Steps -->
-					<div class="card bg-base-100 shadow-xl">
-						<div class="card-body">
-							<h3 class="card-title mb-4">Process Steps</h3>
-							@components.Steps(components.StepsProps{
-								Items: []components.StepItem{
-									{Label: "Choose Plan", Description: "Select your perfect plan", Status: "completed"},
-									{Label: "Setup Account", Description: "Configure your account", Status: "active"},
-									{Label: "Go Live", Description: "Launch your project", Status: "pending"},
-								},
-								Orientation: "horizontal",
-								Size:        "md",
-							})
-						</div>
-					</div>
-				</div>
-			</section>
-
-			<!-- Pagination -->
-			<section class="mb-16">
-				@ui.Heading(ui.HeadingProps{Level: 2, Text: "Pagination", Class: "mb-8"})
-				
+		<!-- Interactive Components -->
+		<section class="space-y-6">
+			@ui.HeadingWithText(ui.HeadingProps{Level: 2, Class: "mb-6"}, "Interactive Components")
+			
+			<div class="grid md:grid-cols-2 gap-6">
 				<div class="card bg-base-100 shadow-xl">
 					<div class="card-body">
-						<h3 class="card-title mb-4">Data Pagination</h3>
+						<h3 class="card-title mb-4">Tabs</h3>
+						@components.Tabs(components.TabsProps{
+							Items: []components.TabItem{
+								{Label: "Overview", Content: "Welcome to GoShad! This is the overview tab with general information."},
+								{Label: "Features", Content: "Discover all the amazing features that make GoShad special."},
+								{Label: "Documentation", Content: "Complete documentation and guides for getting started."},
+							},
+							ActiveIndex: 0,
+							Variant: "bordered",
+							Size:    "md",
+						})
+					</div>
+				</div>
+
+				<div class="card bg-base-100 shadow-xl">
+					<div class="card-body">
+						<h3 class="card-title mb-4">Modal Dialog</h3>
+						@components.Modal(components.ModalProps{
+							ID:       "demo-modal",
+							Title:    "Welcome to GoShad",
+							Size:     "md",
+							Backdrop: true,
+							Closable: true,
+						}) {
+							<p>This is a beautiful modal dialog with smooth animations and perfect accessibility support.</p>
+						}
+						@components.ModalTrigger("demo-modal", "Open Modal", "btn btn-primary")
+					</div>
+				</div>
+
+				<div class="card bg-base-100 shadow-xl">
+					<div class="card-body">
+						<h3 class="card-title mb-4">Drawer</h3>
+						@components.Drawer(components.DrawerProps{
+							Title:       "Navigation Drawer",
+							Content:     "This is a slide-out drawer component perfect for navigation menus and side panels.",
+							TriggerText: "Open Drawer",
+							Position:    "left",
+							Size:        "md",
+							Overlay:     true,
+						})
+					</div>
+				</div>
+
+				<div class="card bg-base-100 shadow-xl">
+					<div class="card-body">
+						<h3 class="card-title mb-4">Sheet</h3>
+						@components.Sheet(components.SheetProps{
+							Title:       "Action Sheet",
+							Content:     "This is a sheet component that slides up from the bottom, perfect for mobile interfaces.",
+							TriggerText: "Open Sheet",
+							Position:    "bottom",
+							Size:        "md",
+							Backdrop:    true,
+						})
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- Overlays & Popups -->
+		<section class="space-y-6">
+			@ui.HeadingWithText(ui.HeadingProps{Level: 2, Class: "mb-6"}, "Overlays & Popups")
+			
+			<div class="grid md:grid-cols-2 gap-6">
+				<div class="card bg-base-100 shadow-xl">
+					<div class="card-body">
+						<h3 class="card-title mb-4">Popover</h3>
+						@components.Popover(components.PopoverProps{
+							Content:   "This is a popover with helpful information and actions.",
+							Position:  "top",
+							Trigger:   "click",
+							Size:      "md",
+						}) {
+							<button class="btn btn-outline">Click for Popover</button>
+						}
+					</div>
+				</div>
+
+				<div class="card bg-base-100 shadow-xl">
+					<div class="card-body">
+						<h3 class="card-title mb-4">Context Menu</h3>
+						@components.ContextMenu(components.ContextMenuProps{
+							TriggerText: "Right-click me for context menu",
+							Items: []components.ContextMenuItem{
+								{Label: "Cut", Action: "cut", Icon: "scissors"},
+								{Label: "Copy", Action: "copy", Icon: "copy"},
+								{Label: "Paste", Action: "paste", Icon: "paste"},
+								{Divider: true},
+								{Label: "Delete", Action: "delete", Icon: "trash", Danger: true},
+							},
+						})
+					</div>
+				</div>
+
+				<div class="card bg-base-100 shadow-xl">
+					<div class="card-body">
+						<h3 class="card-title mb-4">Alert Dialog</h3>
+						@components.AlertDialog(components.DialogProps{
+							Title: "Confirmation",
+							Size:  "md",
+							Variant: "alert",
+						}, "Are you sure you want to delete this item? This action cannot be undone.", "Confirm")
+					</div>
+				</div>
+
+				<div class="card bg-base-100 shadow-xl">
+					<div class="card-body">
+						<h3 class="card-title mb-4">Toast Notifications</h3>
+						<div class="space-y-4">
+							@components.Toast(components.ToastProps{
+								Message:  "Success! Your changes have been saved.",
+								Type:     "success",
+								Position: "top-end",
+								Duration: 3,
+								Closable: true,
+								Icon:     true,
+							})
+							
+							@components.Toast(components.ToastProps{
+								Message:  "Warning: Please check your input.",
+								Type:     "warning",
+								Position: "top-center",
+								Duration: 5,
+								Closable: true,
+								Icon:     true,
+							})
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- Form Components -->
+		<section class="space-y-6">
+			@ui.HeadingWithText(ui.HeadingProps{Level: 2, Class: "mb-6"}, "Form Components")
+			
+			<div class="grid md:grid-cols-2 gap-6">
+				<div class="card bg-base-100 shadow-xl">
+					<div class="card-body">
+						<h3 class="card-title mb-4">Multi-Select</h3>
+						@ui.MultiSelect(ui.MultiSelectProps{
+							Options: []ui.MultiSelectOption{
+								{Value: "react", Label: "React", Selected: true},
+								{Value: "vue", Label: "Vue"},
+								{Value: "angular", Label: "Angular"},
+								{Value: "svelte", Label: "Svelte"},
+							},
+							Placeholder: "Select frameworks...",
+							MaxHeight: "200px",
+						})
+					</div>
+				</div>
+
+				<div class="card bg-base-100 shadow-xl">
+					<div class="card-body">
+						<h3 class="card-title mb-4">Enhanced Search</h3>
+						<div class="space-y-4">
+							@components.Search(components.SearchProps{
+								Placeholder: "Search components...",
+								Size:        "lg",
+								Variant:     "bordered",
+								ShowButton:  false,
+							})
+							
+							@components.Search(components.SearchProps{
+								Placeholder: "Search with button...",
+								Size:        "md",
+								ShowButton:  true,
+								ButtonText:  "Search",
+							})
+						</div>
+					</div>
+				</div>
+
+				<div class="card bg-base-100 shadow-xl">
+					<div class="card-body">
+						<h3 class="card-title mb-4">Tags Input</h3>
+						@components.TagsInput(components.TagsInputProps{
+							Tags:        []string{"React", "Vue", "Angular", "Svelte"},
+							Placeholder: "Add a framework...",
+							MaxTags:     10,
+							Suggestions: []string{"Next.js", "Nuxt.js", "SvelteKit", "Remix"},
+							Size:        "md",
+						})
+					</div>
+				</div>
+
+				<div class="card bg-base-100 shadow-xl">
+					<div class="card-body">
+						<h3 class="card-title mb-4">Clipboard</h3>
+						<div class="flex gap-4">
+							@components.Clipboard(components.ClipboardProps{
+								Text:     "npm install @goshad/components",
+								Label:    "Copy Install Command",
+								Icon:     true,
+								Feedback: true,
+								Variant:  "primary",
+							})
+							
+							@components.Clipboard(components.ClipboardProps{
+								Text:     "github.com/UchaBokeria/goshad",
+								Label:    "Copy Repository",
+								Icon:     false,
+								Feedback: true,
+								Variant:  "secondary",
+							})
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- Layout & Display -->
+		<section class="space-y-6">
+			@ui.HeadingWithText(ui.HeadingProps{Level: 2, Class: "mb-6"}, "Layout & Display")
+			
+			<div class="grid md:grid-cols-2 gap-6">
+				<div class="card bg-base-100 shadow-xl">
+					<div class="card-body">
+						<h3 class="card-title mb-4">Collapsible</h3>
+						@components.Collapsible(components.CollapsibleProps{
+							Title:   "Click to expand",
+							Open:    false,
+							Variant: "bordered",
+							Icon:    true,
+						}) {
+							<p>This is collapsible content that can be expanded and collapsed. It's perfect for FAQs, documentation sections, and any content that should be hidden by default.</p>
+						}
+					</div>
+				</div>
+
+				<div class="card bg-base-100 shadow-xl">
+					<div class="card-body">
+						<h3 class="card-title mb-4">Accordion</h3>
+						@components.Accordion(components.AccordionProps{
+							Items: []components.AccordionItem{
+								{Title: "What is GoShad?", Content: "GoShad is a comprehensive UI component library built for Go applications using Templ, Tailwind CSS, and DaisyUI.", Open: true},
+								{Title: "How to install?", Content: "Simply import the components you need from github.com/UchaBokeria/goshad and start building!"},
+								{Title: "Is it customizable?", Content: "Yes! All components support custom classes and extensive theming options."},
+							},
+							Multiple: false,
+							Size:     "md",
+						})
+					</div>
+				</div>
+
+				<div class="card bg-base-100 shadow-xl">
+					<div class="card-body">
+						<h3 class="card-title mb-4">Carousel</h3>
+						@components.Carousel(components.CarouselProps{
+							Items: []components.CarouselItem{
+								{Title: "Slide 1", Description: "Beautiful first slide with gradient"},
+								{Title: "Slide 2", Description: "Amazing second slide"},
+								{Title: "Slide 3", Description: "Stunning third slide"},
+							},
+							Navigation: true,
+							Indicators: true,
+							Size: "lg",
+						})
+					</div>
+				</div>
+
+				<div class="card bg-base-100 shadow-xl">
+					<div class="card-body">
+						<h3 class="card-title mb-4">Slider</h3>
+						@components.Slider(components.SliderProps{
+							Min:       0,
+							Max:       100,
+							Value:     25,
+							Label:     "Volume",
+							ShowValue: true,
+							Variant:   "primary",
+							Size:      "md",
+						})
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- Data Display -->
+		<section class="space-y-6">
+			@ui.HeadingWithText(ui.HeadingProps{Level: 2, Class: "mb-6"}, "Data Display")
+			
+			<div class="grid md:grid-cols-2 gap-6">
+				<div class="card bg-base-100 shadow-xl">
+					<div class="card-body">
+						<h3 class="card-title mb-4">Statistics</h3>
+						@components.Stat(components.StatProps{
+							Title:       "Total Users",
+							Value:       "12,345",
+							Description: "Active users this month",
+							Change:      "+12%",
+							ChangeType:  "positive",
+							Icon:        "<path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z'></path>",
+						})
+					</div>
+				</div>
+
+				<div class="card bg-base-100 shadow-xl">
+					<div class="card-body">
+						<h3 class="card-title mb-4">Process Steps</h3>
+						@components.Steps(components.StepsProps{
+							Steps: []components.Step{
+								{Title: "Choose Plan", Description: "Select your perfect plan", Completed: true},
+								{Title: "Setup Account", Description: "Configure your account", Completed: false},
+								{Title: "Go Live", Description: "Launch your project", Completed: false},
+							},
+							CurrentStep: 0,
+							Orientation: "horizontal",
+							Size:        "md",
+						})
+					</div>
+				</div>
+
+				<div class="card bg-base-100 shadow-xl">
+					<div class="card-body">
+						<h3 class="card-title mb-4">Progress</h3>
+						@ui.Progress(ui.ProgressProps{
+							Value:   75,
+							Max:     100,
+							Size:    "md",
+							Variant: "primary",
+							ShowText: true,
+						})
+						<div class="mt-4">
+							@ui.ProgressWithLabel(ui.ProgressProps{
+								Value:   45,
+								Max:     100,
+								Size:    "sm",
+								Variant: "success",
+							}, "Loading...")
+						</div>
+					</div>
+				</div>
+
+				<div class="card bg-base-100 shadow-xl">
+					<div class="card-body">
+						<h3 class="card-title mb-4">Pagination</h3>
 						@components.Pagination(components.PaginationProps{
 							CurrentPage: 3,
 							TotalPages:  10,
 							ShowInfo:    true,
 							Size:        "md",
-							Variant:     "default",
 						})
 					</div>
 				</div>
-			</section>
+			</div>
+		</section>
 
-			<!-- Footer -->
-			<footer class="text-center py-8 border-t border-base-300 mt-16">
-				<p class="text-base-content/60">
-					Built with ❤️ using 
-					<a href="https://github.com/a-h/templ" class="link link-primary">Templ</a>, 
-					<a href="https://tailwindcss.com" class="link link-primary">Tailwind CSS</a>, and 
-					<a href="https://daisyui.com" class="link link-primary">DaisyUI</a>
-				</p>
-			</footer>
-		</div>
-	</body>
-	</html>
+		<!-- Rating & Feedback -->
+		<section class="space-y-6">
+			@ui.HeadingWithText(ui.HeadingProps{Level: 2, Class: "mb-6"}, "Rating & Feedback")
+			
+			<div class="grid md:grid-cols-2 gap-6">
+				<div class="card bg-base-100 shadow-xl">
+					<div class="card-body">
+						<h3 class="card-title mb-4">Interactive Ratings</h3>
+						<div class="space-y-4">
+							<div class="space-y-2">
+								<h5 class="text-sm font-medium">5-Star Rating (Default)</h5>
+								@components.Rating(components.RatingProps{
+									ID: "rating1",
+									Name: "product_rating",
+									Value: 4.0,
+									MaxRating: 5,
+									Size: "md",
+									Variant: "warning",
+									ShowValue: true,
+								})
+							</div>
+							
+							<div class="space-y-2">
+								<h5 class="text-sm font-medium">With Count Display</h5>
+								@components.Rating(components.RatingProps{
+									ID: "rating2",
+									Name: "service_rating",
+									Value: 3.5,
+									MaxRating: 5,
+									Size: "md",
+									Variant: "primary",
+									ShowValue: true,
+									ShowCount: true,
+									Count: 127,
+									AllowHalf: true,
+								})
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="card bg-base-100 shadow-xl">
+					<div class="card-body">
+						<h3 class="card-title mb-4">Different Sizes</h3>
+						<div class="space-y-3">
+							<div class="flex items-center gap-4">
+								<span class="text-sm w-16">XS Size:</span>
+								@components.Rating(components.RatingProps{
+									ID: "rating_xs",
+									Value: 5.0,
+									Size: "xs",
+									ReadOnly: true,
+									ShowValue: true,
+								})
+							</div>
+							<div class="flex items-center gap-4">
+								<span class="text-sm w-16">SM Size:</span>
+								@components.Rating(components.RatingProps{
+									ID: "rating_sm",
+									Value: 4.0,
+									Size: "sm",
+									ReadOnly: true,
+									ShowValue: true,
+								})
+							</div>
+							<div class="flex items-center gap-4">
+								<span class="text-sm w-16">LG Size:</span>
+								@components.Rating(components.RatingProps{
+									ID: "rating_lg",
+									Value: 3.0,
+									Size: "lg",
+									ReadOnly: true,
+									ShowValue: true,
+								})
+							</div>
+							<div class="flex items-center gap-4">
+								<span class="text-sm w-16">XL Size:</span>
+								@components.Rating(components.RatingProps{
+									ID: "rating_xl",
+									Value: 2.0,
+									Size: "xl",
+									ReadOnly: true,
+									ShowValue: true,
+								})
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="card bg-base-100 shadow-xl">
+					<div class="card-body">
+						<h3 class="card-title mb-4">Different Icons & Variants</h3>
+						<div class="space-y-4">
+							<div class="space-y-2">
+								<h5 class="text-sm font-medium">Heart Rating</h5>
+								@components.Rating(components.RatingProps{
+									ID: "rating_heart",
+									Value: 4.0,
+									Icon: "heart",
+									Variant: "error",
+									Size: "md",
+									ReadOnly: true,
+									ShowValue: true,
+								})
+							</div>
+							
+							<div class="space-y-2">
+								<h5 class="text-sm font-medium">Thumb Rating</h5>
+								@components.Rating(components.RatingProps{
+									ID: "rating_thumb",
+									Value: 3.0,
+									Icon: "thumb",
+									Variant: "success",
+									Size: "md",
+									ReadOnly: true,
+									ShowValue: true,
+								})
+							</div>
+							
+							<div class="space-y-2">
+								<h5 class="text-sm font-medium">10-Point Scale</h5>
+								@components.Rating(components.RatingProps{
+									ID: "rating_10",
+									Value: 7.0,
+									MaxRating: 10,
+									Variant: "info",
+									Size: "sm",
+									ReadOnly: true,
+									ShowValue: true,
+								})
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="card bg-base-100 shadow-xl">
+					<div class="card-body">
+						<h3 class="card-title mb-4">Read-Only Displays</h3>
+						<div class="space-y-3">
+							<div class="flex items-center justify-between p-3 bg-base-200 rounded-lg">
+								<span class="font-medium">Overall Rating</span>
+								@components.RatingDisplay(4.3, 5, "md", true)
+							</div>
+							<div class="flex items-center justify-between p-3 bg-base-200 rounded-lg">
+								<span class="font-medium">Quality Score</span>
+								@components.RatingDisplay(3.8, 5, "sm", true)
+							</div>
+							<div class="flex items-center justify-between p-3 bg-base-200 rounded-lg">
+								<span class="font-medium">User Experience</span>
+								@components.RatingDisplay(4.6, 5, "md", true)
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- Additional Components -->
+		<section class="space-y-6">
+			@ui.HeadingWithText(ui.HeadingProps{Level: 2, Class: "mb-6"}, "Additional Components")
+			
+			<div class="grid md:grid-cols-2 gap-6">
+				<div class="card bg-base-100 shadow-xl">
+					<div class="card-body">
+						<h3 class="card-title mb-4">Charts</h3>
+						@components.Chart(components.ChartProps{
+							Title: "Monthly Sales",
+							Type: "bar",
+							Data: []components.ChartData{
+								{Label: "Jan", Value: 12},
+								{Label: "Feb", Value: 19},
+								{Label: "Mar", Value: 3},
+								{Label: "Apr", Value: 5},
+								{Label: "May", Value: 2},
+							},
+							Width:  "full",
+							Height: "64",
+						})
+					</div>
+				</div>
+
+				<div class="card bg-base-100 shadow-xl">
+					<div class="card-body">
+						<h3 class="card-title mb-4">Dropdown</h3>
+						@components.Dropdown(components.DropdownProps{
+							Label: "Options",
+							Items: []components.DropdownItem{
+								{Label: "Edit", Value: "edit"},
+								{Label: "Share", Value: "share"},
+								{Divider: true},
+								{Label: "Delete", Value: "delete"},
+							},
+							Position: "bottom",
+							Size: "md",
+						})
+					</div>
+				</div>
+			</div>
+		</section>
+	</div>
 }

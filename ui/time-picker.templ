@@ -1,0 +1,280 @@
+package ui
+
+import (
+    "fmt"
+    "strconv"
+    "strings"
+)
+
+// TimePickerProps defines the properties for the TimePicker component
+type TimePickerProps struct {
+    Name        string    // Input name attribute
+    ID          string    // Component ID
+    Value       string    // Time value (HH:MM or HH:MM:SS)
+    Size        string    // xs, sm, md, lg
+    Variant     string    // primary, secondary, accent, etc.
+    Format24    bool      // Use 24-hour format (default: false for 12-hour)
+    ShowSeconds bool      // Show seconds selector
+    Disabled    bool      // Disable the component
+    Required    bool      // Required field
+    Class       string    // Additional CSS classes
+    Placeholder string    // Placeholder text
+    MinTime     string    // Minimum selectable time
+    MaxTime     string    // Maximum selectable time
+}
+
+// TimePicker creates a time picker component
+templ TimePicker(props TimePickerProps) {
+    <div class={ getTimePickerClasses(props) } data-timepicker={ getTimePickerID(props) }>
+        <!-- Hidden input for form submission -->
+        <input 
+            type="hidden" 
+            if props.Name != "" {
+                name={ props.Name }
+            }
+            id={ getTimePickerID(props) + "_input" }
+            value={ props.Value }
+        />
+        
+        <!-- Display input -->
+        <div class="dropdown dropdown-end w-full">
+            <div tabindex="0" role="button" class={ getTimePickerInputClasses(props) }>
+                <div class="flex items-center justify-between w-full">
+                    <span class="text-left" id={ getTimePickerID(props) + "_display" }>
+                        if props.Value != "" {
+                            { formatTimeDisplay(props.Value, props.Format24) }
+                        } else {
+                            if props.Placeholder != "" {
+                                { props.Placeholder }
+                            } else {
+                                Select time
+                            }
+                        }
+                    </span>
+                    <svg class="w-4 h-4 text-base-content/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+            </div>
+            
+            <!-- Dropdown content -->
+            <div tabindex="0" class="dropdown-content z-[1] menu p-4 shadow-lg bg-base-100 rounded-box w-80 border border-base-300">
+                <div class="space-y-4">
+                    <h4 class="font-semibold text-base-content/80">Select Time</h4>
+                    
+                    <!-- Time selectors -->
+                    <div class="flex items-center justify-center gap-2">
+                        <!-- Hour selector -->
+                        <div class="flex flex-col items-center">
+                            <label class="text-xs text-base-content/60 mb-1">Hour</label>
+                            <select class="select select-bordered select-sm w-16" id={ getTimePickerID(props) + "_hour" } onchange={ templ.ComponentScript{Call: "updateTime('" + getTimePickerID(props) + "')"} }>
+                                @TimePickerHourOptions(props.Format24)
+                            </select>
+                        </div>
+                        
+                        <span class="text-2xl font-bold text-base-content/40 mt-6">:</span>
+                        
+                        <!-- Minute selector -->
+                        <div class="flex flex-col items-center">
+                            <label class="text-xs text-base-content/60 mb-1">Min</label>
+                            <select class="select select-bordered select-sm w-16" id={ getTimePickerID(props) + "_minute" } onchange={ templ.ComponentScript{Call: "updateTime('" + getTimePickerID(props) + "')"} }>
+                                @TimePickerMinuteOptions()
+                            </select>
+                        </div>
+                        
+                        if props.ShowSeconds {
+                            <span class="text-2xl font-bold text-base-content/40 mt-6">:</span>
+                            
+                            <!-- Second selector -->
+                            <div class="flex flex-col items-center">
+                                <label class="text-xs text-base-content/60 mb-1">Sec</label>
+                                <select class="select select-bordered select-sm w-16" id={ getTimePickerID(props) + "_second" } onchange={ templ.ComponentScript{Call: "updateTime('" + getTimePickerID(props) + "')"} }>
+                                    @TimePickerMinuteOptions()
+                                </select>
+                            </div>
+                        }
+                        
+                        if !props.Format24 {
+                            <!-- AM/PM selector -->
+                            <div class="flex flex-col items-center ml-2">
+                                <label class="text-xs text-base-content/60 mb-1">Period</label>
+                                <select class="select select-bordered select-sm w-16" id={ getTimePickerID(props) + "_period" } onchange={ templ.ComponentScript{Call: "updateTime('" + getTimePickerID(props) + "')"} }>
+                                    <option value="AM">AM</option>
+                                    <option value="PM">PM</option>
+                                </select>
+                            </div>
+                        }
+                    </div>
+                    
+                    <!-- Quick time presets -->
+                    <div class="space-y-2">
+                        <h5 class="text-xs font-medium text-base-content/60">Quick Select</h5>
+                        <div class="grid grid-cols-3 gap-1">
+                            @TimePickerPreset("9:00 AM", getTimePickerID(props), props.Format24)
+                            @TimePickerPreset("12:00 PM", getTimePickerID(props), props.Format24)
+                            @TimePickerPreset("1:00 PM", getTimePickerID(props), props.Format24)
+                            @TimePickerPreset("3:00 PM", getTimePickerID(props), props.Format24)
+                            @TimePickerPreset("5:00 PM", getTimePickerID(props), props.Format24)
+                            @TimePickerPreset("6:00 PM", getTimePickerID(props), props.Format24)
+                        </div>
+                    </div>
+                    
+                    <!-- Action buttons -->
+                    <div class="flex justify-end gap-2 pt-2 border-t border-base-300">
+                        <button type="button" class="btn btn-sm btn-ghost" onclick={ templ.ComponentScript{Call: "clearTime('" + getTimePickerID(props) + "')"} }>
+                            Clear
+                        </button>
+                        <button type="button" class="btn btn-sm btn-primary" onclick={ templ.ComponentScript{Call: "applyTime('" + getTimePickerID(props) + "')"} }>
+                            Apply
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- JavaScript for functionality -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                initTimePicker('{ getTimePickerID(props) }', {
+                    value: '{ props.Value }',
+                    format24: { fmt.Sprintf("%t", props.Format24) },
+                    showSeconds: { fmt.Sprintf("%t", props.ShowSeconds) },
+                    minTime: '{ props.MinTime }',
+                    maxTime: '{ props.MaxTime }'
+                });
+            });
+        </script>
+    </div>
+}
+
+// TimePickerHourOptions creates hour options based on format
+templ TimePickerHourOptions(format24 bool) {
+    <option value="">--</option>
+    if format24 {
+        for i := 0; i < 24; i++ {
+            <option value={ fmt.Sprintf("%02d", i) }>{ fmt.Sprintf("%02d", i) }</option>
+        }
+    } else {
+        for i := 1; i <= 12; i++ {
+            <option value={ fmt.Sprintf("%d", i) }>{ fmt.Sprintf("%02d", i) }</option>
+        }
+    }
+}
+
+// TimePickerMinuteOptions creates minute/second options
+templ TimePickerMinuteOptions() {
+    <option value="">--</option>
+    for i := 0; i < 60; i++ {
+        <option value={ fmt.Sprintf("%02d", i) }>{ fmt.Sprintf("%02d", i) }</option>
+    }
+}
+
+// TimePickerPreset creates a preset time button
+templ TimePickerPreset(timeStr, id string, format24 bool) {
+    <button 
+        type="button" 
+        class="btn btn-ghost btn-xs w-full text-xs"
+        onclick={ templ.ComponentScript{Call: "selectTimePreset('" + id + "', '" + timeStr + "')"} }
+    >
+        { timeStr }
+    </button>
+}
+
+// Helper functions
+
+func getTimePickerID(props TimePickerProps) string {
+    if props.ID != "" {
+        return props.ID
+    }
+    return "timepicker_" + fmt.Sprintf("%d", len(props.Name))
+}
+
+func getTimePickerClasses(props TimePickerProps) string {
+    classes := "time-picker w-full"
+    
+    if props.Class != "" {
+        classes += " " + props.Class
+    }
+    
+    return classes
+}
+
+func getTimePickerInputClasses(props TimePickerProps) string {
+    classes := "input input-bordered w-full cursor-pointer"
+    
+    // Add variant classes
+    if props.Variant != "" {
+        switch props.Variant {
+        case "primary":
+            classes += " input-primary"
+        case "secondary":
+            classes += " input-secondary"
+        case "accent":
+            classes += " input-accent"
+        case "info":
+            classes += " input-info"
+        case "success":
+            classes += " input-success"
+        case "warning":
+            classes += " input-warning"
+        case "error":
+            classes += " input-error"
+        }
+    }
+    
+    // Add size classes
+    switch props.Size {
+    case "xs":
+        classes += " input-xs"
+    case "sm":
+        classes += " input-sm"
+    case "lg":
+        classes += " input-lg"
+    default:
+        classes += " input-md"
+    }
+    
+    if props.Disabled {
+        classes += " input-disabled"
+    }
+    
+    return classes
+}
+
+func formatTimeDisplay(value string, format24 bool) string {
+    if value == "" {
+        return "Select time"
+    }
+    
+    parts := strings.Split(value, ":")
+    if len(parts) < 2 {
+        return value
+    }
+    
+    hour, _ := strconv.Atoi(parts[0])
+    minute := parts[1]
+    
+    if !format24 {
+        period := "AM"
+        displayHour := hour
+        
+        if hour == 0 {
+            displayHour = 12
+        } else if hour > 12 {
+            displayHour = hour - 12
+            period = "PM"
+        } else if hour == 12 {
+            period = "PM"
+        }
+        
+        if len(parts) > 2 {
+            return fmt.Sprintf("%d:%s:%s %s", displayHour, minute, parts[2], period)
+        }
+        return fmt.Sprintf("%d:%s %s", displayHour, minute, period)
+    }
+    
+    if len(parts) > 2 {
+        return fmt.Sprintf("%02d:%s:%s", hour, minute, parts[2])
+    }
+    return fmt.Sprintf("%02d:%s", hour, minute)
+} 

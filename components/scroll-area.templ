@@ -1,0 +1,80 @@
+package components
+
+// ScrollAreaProps defines the properties for the ScrollArea component
+type ScrollAreaProps struct {
+	Height    string // CSS height value
+	Width     string // CSS width value
+	Content   string // Text content for simple usage
+	Variant   string // default, thin, hidden
+	Direction string // vertical, horizontal, both
+	Class     string
+}
+
+// ScrollArea creates a custom scrollable area
+templ ScrollArea(props ScrollAreaProps) {
+	<div class={ getScrollAreaClasses(props) } style={ getScrollAreaStyles(props) }>
+		<div class="scroll-content">
+			if props.Content != "" {
+				<p>{ props.Content }</p>
+			} else {
+				{ children... }
+			}
+		</div>
+	</div>
+}
+
+// ScrollAreaWithContent creates a scroll area with specific content
+templ ScrollAreaWithContent(props ScrollAreaProps, content []string) {
+	<div class={ getScrollAreaClasses(props) } style={ getScrollAreaStyles(props) }>
+		<div class="scroll-content space-y-4">
+			for _, item := range content {
+				<p class="text-sm text-base-content/80">{ item }</p>
+			}
+		</div>
+	</div>
+}
+
+// Helper functions
+func getScrollAreaClasses(props ScrollAreaProps) string {
+	classes := "overflow-auto"
+	
+	switch props.Variant {
+	case "thin":
+		classes += " scrollbar-thin scrollbar-thumb-base-300 scrollbar-track-base-100"
+	case "hidden":
+		classes += " scrollbar-none"
+	default:
+		classes += " custom-scrollbar"
+	}
+	
+	switch props.Direction {
+	case "horizontal":
+		classes += " overflow-x-auto overflow-y-hidden"
+	case "vertical":
+		classes += " overflow-y-auto overflow-x-hidden"
+	case "both":
+		classes += " overflow-auto"
+	default:
+		classes += " overflow-y-auto overflow-x-hidden"
+	}
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+}
+
+func getScrollAreaStyles(props ScrollAreaProps) string {
+	styles := ""
+	
+	if props.Height != "" {
+		styles += "height: " + props.Height + ";"
+	}
+	
+	if props.Width != "" {
+		styles += " width: " + props.Width + ";"
+	}
+	
+	return styles
+} 

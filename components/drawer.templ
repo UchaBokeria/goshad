@@ -1,0 +1,97 @@
+package components
+
+// DrawerProps defines the properties for the Drawer component
+type DrawerProps struct {
+	Title       string
+	Content     string
+	TriggerText string
+	Position    string // left, right
+	Size        string // sm, md, lg, full
+	Overlay     bool
+	Class       string
+}
+
+// Drawer creates a drawer component
+templ Drawer(props DrawerProps) {
+	<div class="drawer">
+		<input id={ "drawer-" + getDrawerId(props) } type="checkbox" class="drawer-toggle" />
+		<div class="drawer-content">
+			<!-- Trigger -->
+			<label for={ "drawer-" + getDrawerId(props) } class="btn btn-primary drawer-button">
+				{ getDrawerTriggerText(props.TriggerText) }
+			</label>
+		</div>
+		
+		<div class={ getDrawerSideClasses(props) }>
+			if props.Overlay {
+				<label for={ "drawer-" + getDrawerId(props) } class="drawer-overlay"></label>
+			}
+			
+			<div class={ getDrawerContentClasses(props) }>
+				<!-- Header -->
+				<div class="flex items-center justify-between p-4 border-b border-base-300">
+					<h3 class="text-lg font-semibold">{ props.Title }</h3>
+					<label for={ "drawer-" + getDrawerId(props) } class="btn btn-sm btn-circle btn-ghost">
+						<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+						</svg>
+					</label>
+				</div>
+				
+				<!-- Content -->
+				<div class="p-4 flex-1 overflow-auto">
+					if props.Content != "" {
+						<p>{ props.Content }</p>
+					} else {
+						{ children... }
+					}
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
+// Helper functions
+func getDrawerSideClasses(props DrawerProps) string {
+	classes := "drawer-side"
+	
+	if props.Position == "left" {
+		classes += " drawer-side-left"
+	} else {
+		classes += " drawer-side-right"
+	}
+	
+	return classes
+}
+
+func getDrawerContentClasses(props DrawerProps) string {
+	classes := "bg-base-100 text-base-content flex flex-col h-full"
+	
+	switch props.Size {
+	case "sm":
+		classes += " w-64"
+	case "lg":
+		classes += " w-96"
+	case "full":
+		classes += " w-full"
+	default:
+		classes += " w-80"
+	}
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+}
+
+func getDrawerId(props DrawerProps) string {
+	return "default"
+}
+
+func getDrawerTriggerText(text string) string {
+	if text != "" {
+		return text
+	}
+	return "Open Drawer"
+} 

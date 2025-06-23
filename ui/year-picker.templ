@@ -1,0 +1,269 @@
+package ui
+
+import (
+    "fmt"
+    "time"
+    "strconv"
+)
+
+// YearPickerProps defines the properties for the YearPicker component
+type YearPickerProps struct {
+    Name        string    // Input name attribute
+    ID          string    // Component ID
+    Value       string    // Selected year value
+    Size        string    // xs, sm, md, lg
+    Variant     string    // primary, secondary, accent, etc.
+    MinYear     int       // Minimum selectable year
+    MaxYear     int       // Maximum selectable year
+    Disabled    bool      // Disable the component
+    Required    bool      // Required field
+    Class       string    // Additional CSS classes
+    Placeholder string    // Placeholder text
+}
+
+// YearPicker creates a year picker component
+templ YearPicker(props YearPickerProps) {
+    <div class={ getYearPickerClasses(props) } data-yearpicker={ getYearPickerID(props) }>
+        <!-- Hidden input for form submission -->
+        <input 
+            type="hidden" 
+            if props.Name != "" {
+                name={ props.Name }
+            }
+            id={ getYearPickerID(props) + "_input" }
+            value={ props.Value }
+        />
+        
+        <!-- Display input -->
+        <div class="dropdown dropdown-end w-full">
+            <div tabindex="0" role="button" class={ getYearPickerInputClasses(props) }>
+                <div class="flex items-center justify-between w-full">
+                    <span class="text-left" id={ getYearPickerID(props) + "_display" }>
+                        if props.Value != "" {
+                            { props.Value }
+                        } else {
+                            if props.Placeholder != "" {
+                                { props.Placeholder }
+                            } else {
+                                Select year
+                            }
+                        }
+                    </span>
+                    <svg class="w-4 h-4 text-base-content/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                </div>
+            </div>
+            
+            <!-- Dropdown content -->
+            <div tabindex="0" class="dropdown-content z-[1] menu p-4 shadow-lg bg-base-100 rounded-box w-72 border border-base-300">
+                <div class="space-y-4">
+                    <!-- Navigation header -->
+                    <div class="flex justify-between items-center">
+                        <button type="button" class="btn btn-ghost btn-sm" onclick={ templ.ComponentScript{Call: "prevYearRange('" + getYearPickerID(props) + "')"} }>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                            </svg>
+                        </button>
+                        <h4 class="font-semibold text-base-content/80" id={ getYearPickerID(props) + "_range" }>
+                            { getYearRangeDisplay(props) }
+                        </h4>
+                        <button type="button" class="btn btn-ghost btn-sm" onclick={ templ.ComponentScript{Call: "nextYearRange('" + getYearPickerID(props) + "')"} }>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <!-- Year grid -->
+                    <div class="grid grid-cols-4 gap-2" id={ getYearPickerID(props) + "_grid" }>
+                        @YearPickerGrid(props)
+                    </div>
+                    
+                    <!-- Quick year presets -->
+                    <div class="space-y-2">
+                        <h5 class="text-xs font-medium text-base-content/60">Quick Select</h5>
+                        <div class="flex flex-wrap gap-1">
+                            @YearPickerPreset("This Year", fmt.Sprintf("%d", time.Now().Year()), getYearPickerID(props))
+                            @YearPickerPreset("Last Year", fmt.Sprintf("%d", time.Now().Year()-1), getYearPickerID(props))
+                            @YearPickerPreset("2020", "2020", getYearPickerID(props))
+                            @YearPickerPreset("2021", "2021", getYearPickerID(props))
+                            @YearPickerPreset("2022", "2022", getYearPickerID(props))
+                            @YearPickerPreset("2023", "2023", getYearPickerID(props))
+                        </div>
+                    </div>
+                    
+                    <!-- Action buttons -->
+                    <div class="flex justify-end gap-2 pt-2 border-t border-base-300">
+                        <button type="button" class="btn btn-sm btn-ghost" onclick={ templ.ComponentScript{Call: "clearYear('" + getYearPickerID(props) + "')"} }>
+                            Clear
+                        </button>
+                        <button type="button" class="btn btn-sm btn-primary" onclick={ templ.ComponentScript{Call: "applyYear('" + getYearPickerID(props) + "')"} }>
+                            Apply
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- JavaScript for functionality -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                initYearPicker('{ getYearPickerID(props) }', {
+                    value: '{ props.Value }',
+                    minYear: { getMinYear(props) },
+                    maxYear: { getMaxYear(props) }
+                });
+            });
+        </script>
+    </div>
+}
+
+// YearPickerGrid creates the year selection grid
+templ YearPickerGrid(props YearPickerProps) {
+    for i := 0; i < 12; i++ {
+        <button 
+            type="button" 
+            class={ getYearButtonClasses(getStartYear(props, time.Now().Year()) + i, props) }
+            onclick={ templ.ComponentScript{Call: "selectYear('" + getYearPickerID(props) + "', " + fmt.Sprintf("%d", getStartYear(props, time.Now().Year()) + i) + ")"} }
+        >
+            { fmt.Sprintf("%d", getStartYear(props, time.Now().Year()) + i) }
+        </button>
+    }
+}
+
+// YearPickerPreset creates a preset year button
+templ YearPickerPreset(label, year, id string) {
+    <button 
+        type="button" 
+        class="btn btn-ghost btn-xs"
+        onclick={ templ.ComponentScript{Call: "selectYearPreset('" + id + "', '" + year + "')"} }
+    >
+        { label }
+    </button>
+}
+
+// Helper functions
+
+func getYearPickerID(props YearPickerProps) string {
+    if props.ID != "" {
+        return props.ID
+    }
+    return "yearpicker_" + fmt.Sprintf("%d", len(props.Name))
+}
+
+func getYearPickerClasses(props YearPickerProps) string {
+    classes := "year-picker w-full"
+    
+    if props.Class != "" {
+        classes += " " + props.Class
+    }
+    
+    return classes
+}
+
+func getYearPickerInputClasses(props YearPickerProps) string {
+    classes := "input input-bordered w-full cursor-pointer"
+    
+    // Add variant classes
+    if props.Variant != "" {
+        switch props.Variant {
+        case "primary":
+            classes += " input-primary"
+        case "secondary":
+            classes += " input-secondary"
+        case "accent":
+            classes += " input-accent"
+        case "info":
+            classes += " input-info"
+        case "success":
+            classes += " input-success"
+        case "warning":
+            classes += " input-warning"
+        case "error":
+            classes += " input-error"
+        }
+    }
+    
+    // Add size classes
+    switch props.Size {
+    case "xs":
+        classes += " input-xs"
+    case "sm":
+        classes += " input-sm"
+    case "lg":
+        classes += " input-lg"
+    default:
+        classes += " input-md"
+    }
+    
+    if props.Disabled {
+        classes += " input-disabled"
+    }
+    
+    return classes
+}
+
+func getYearButtonClasses(year int, props YearPickerProps) string {
+    classes := "btn btn-ghost btn-sm w-full"
+    
+    // Highlight selected year
+    if props.Value != "" {
+        if selectedYear, _ := strconv.Atoi(props.Value); selectedYear == year {
+            classes += " btn-primary"
+        }
+    }
+    
+    // Highlight current year
+    if year == time.Now().Year() {
+        classes += " border-2 border-info"
+    }
+    
+    // Disable years outside range
+    if (props.MinYear > 0 && year < props.MinYear) || (props.MaxYear > 0 && year > props.MaxYear) {
+        classes += " btn-disabled"
+    }
+    
+    return classes
+}
+
+func getMinYear(props YearPickerProps) int {
+    if props.MinYear > 0 {
+        return props.MinYear
+    }
+    return 1900
+}
+
+func getMaxYear(props YearPickerProps) int {
+    if props.MaxYear > 0 {
+        return props.MaxYear
+    }
+    return time.Now().Year() + 10
+}
+
+func getStartYear(props YearPickerProps, currentYear int) int {
+    // Start from a year that makes sense for the grid
+    baseYear := currentYear - 6
+    
+    // Adjust if we have a selected value
+    if props.Value != "" {
+        if selectedYear, err := strconv.Atoi(props.Value); err == nil {
+            baseYear = selectedYear - 6
+        }
+    }
+    
+    // Ensure we don't go below minimum
+    if props.MinYear > 0 && baseYear < props.MinYear {
+        baseYear = props.MinYear
+    }
+    
+    return baseYear
+}
+
+func getYearRangeDisplay(props YearPickerProps) string {
+    currentYear := time.Now().Year()
+    startYear := getStartYear(props, currentYear)
+    endYear := startYear + 11
+    
+    return fmt.Sprintf("%d - %d", startYear, endYear)
+} 
