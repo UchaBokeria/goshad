@@ -139,6 +139,34 @@ templ FormComponentsSection() {
 
                         <div class="form-control">
                             <label class="label">
+                                <span class="label-text font-medium text-error">Email with Error</span>
+                            </label>
+                            @ui.Input(ui.InputProps{
+                                Type: "email",
+                                Placeholder: "invalid-email",
+                                Variant: "bordered",
+                                Size: "md",
+                                Error: true,
+                                ErrorMsg: "Please enter a valid email address",
+                            })
+                        </div>
+
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-medium text-error">Password with Error</span>
+                            </label>
+                            @ui.Input(ui.InputProps{
+                                Type: "password",
+                                Placeholder: "••••••••",
+                                Variant: "bordered",
+                                Size: "md",
+                                Error: true,
+                                ErrorMsg: "Password must be at least 8 characters long",
+                            })
+                        </div>
+
+                        <div class="form-control">
+                            <label class="label">
                                 <span class="label-text font-medium">Textarea</span>
                             </label>
                             @ui.Textarea(ui.TextareaProps{
@@ -239,14 +267,15 @@ templ FormComponentsSection() {
 
                         <div class="form-control">
                             <label class="label">
-                                <span class="label-text font-medium">File Upload</span>
+                                <span class="label-text font-medium">File Upload (Standard)</span>
                                 <span class="label-text-alt">Images only, max 10MB</span>
                             </label>
-                            <input 
-                                type="file" 
-                                accept="image/*"
-                                class="file-input file-input-bordered file-input-primary w-full" 
-                            />
+                            @ui.FileUpload(ui.FileUploadProps{
+                                Accept: "image/*",
+                                MaxSize: "Max 10MB",
+                                Variant: "primary",
+                                Size: "md",
+                            })
                         </div>
 
                         <div class="form-control">
@@ -254,11 +283,26 @@ templ FormComponentsSection() {
                                 <span class="label-text font-medium">Multiple File Upload</span>
                                 <span class="label-text-alt">Select multiple files</span>
                             </label>
-                            <input 
-                                type="file" 
-                                multiple 
-                                class="file-input file-input-bordered file-input-secondary w-full" 
-                            />
+                            @ui.FileUpload(ui.FileUploadProps{
+                                Multiple: true,
+                                Variant: "secondary",
+                                Size: "md",
+                            })
+                        </div>
+
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-medium">Drag & Drop Upload</span>
+                                <span class="label-text-alt">Drag files here or click to browse</span>
+                            </label>
+                            @ui.FileUpload(ui.FileUploadProps{
+                                DragDrop: true,
+                                Accept: "image/*,.pdf,.doc,.docx",
+                                MaxSize: "Max 25MB per file",
+                                Multiple: true,
+                                Variant: "accent",
+                                Size: "lg",
+                            })
                         </div>
 
                         <div class="form-control">
@@ -741,11 +785,28 @@ templ FeedbackSection() {
                     <h3 class="text-xl font-semibold text-secondary">Progress & Loading</h3>
                     <div class="p-4 bg-base-100 rounded-lg border border-base-300 space-y-4">
                         <div>
-                            <h4 class="font-medium mb-2">Progress Bars</h4>
+                            <h4 class="font-medium mb-2">Progress Bars - Standard Thickness</h4>
                             <div class="space-y-3">
-                                @ui.ProgressWithLabel(ui.ProgressProps{Value: 25, Max: 100, Variant: "primary", ShowText: false}, "Upload Progress")
-                                @ui.Progress(ui.ProgressProps{Value: 60, Max: 100, Variant: "secondary", ShowText: true, Animated: true})
-                                @ui.Progress(ui.ProgressProps{Value: 85, Max: 100, Variant: "success", ShowText: true, Striped: true})
+                                @ui.ProgressWithLabel(ui.ProgressProps{Value: 25, Max: 100, Variant: "primary", ShowText: false, Size: "md"}, "Upload Progress")
+                                @ui.Progress(ui.ProgressProps{Value: 60, Max: 100, Variant: "secondary", ShowText: true, Animated: true, Size: "md"})
+                                @ui.Progress(ui.ProgressProps{Value: 85, Max: 100, Variant: "success", ShowText: true, Striped: true, Size: "md"})
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h4 class="font-medium mb-2">Progress Bars - Thick & Extra Thick</h4>
+                            <div class="space-y-3">
+                                @ui.ProgressWithLabel(ui.ProgressProps{Value: 40, Max: 100, Variant: "info", ShowText: true, Size: "lg"}, "Download Progress (Thick)")
+                                @ui.Progress(ui.ProgressProps{Value: 70, Max: 100, Variant: "warning", ShowText: true, Animated: true, Size: "xl"})
+                                @ui.Progress(ui.ProgressProps{Value: 90, Max: 100, Variant: "accent", ShowText: true, Striped: true, Animated: true, Size: "xl"})
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h4 class="font-medium mb-2">Animated Progress Variations</h4>
+                            <div class="space-y-3">
+                                @ui.Progress(ui.ProgressProps{Value: 45, Max: 100, Variant: "primary", ShowText: true, Animated: true, Size: "lg", Text: "Processing..."})
+                                @ui.Progress(ui.ProgressProps{Value: 75, Max: 100, Variant: "secondary", ShowText: false, Striped: true, Animated: true, Size: "lg"})
                             </div>
                             <div class="mt-4 flex justify-center">
                                 @ui.CircularProgress(ui.ProgressProps{Value: 75, Max: 100, Variant: "accent", ShowText: true})

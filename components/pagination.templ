@@ -1,0 +1,181 @@
+package components
+
+import "fmt"
+
+// PaginationProps defines the properties for the Pagination component
+type PaginationProps struct {
+	CurrentPage int
+	TotalPages  int
+	PageSize    int
+	TotalItems  int
+	ShowInfo    bool   // Show "Showing X-Y of Z entries"
+	Size        string // xs, sm, md, lg
+	Class       string
+}
+
+// Pagination creates a pagination component
+templ Pagination(props PaginationProps) {
+	<div class={ getPaginationWrapperClasses(props) }>
+		if props.ShowInfo {
+			<div class="text-sm text-base-content/70 mb-4">
+				{ getPaginationInfo(props) }
+			</div>
+		}
+		
+		<div class={ getPaginationClasses(props) }>
+			<!-- Previous button -->
+			<button 
+				class={ getPaginationButtonClasses(props.CurrentPage <= 1, props.Size) }
+				if props.CurrentPage <= 1 {
+					disabled
+				}
+			>
+				<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+				</svg>
+				Previous
+			</button>
+			
+			<!-- Page numbers -->
+			for i := getStartPage(props.CurrentPage, props.TotalPages); i <= getEndPage(props.CurrentPage, props.TotalPages); i++ {
+				@PageButton(i, i == props.CurrentPage, props.Size)
+			}
+			
+			<!-- Next button -->
+			<button 
+				class={ getPaginationButtonClasses(props.CurrentPage >= props.TotalPages, props.Size) }
+				if props.CurrentPage >= props.TotalPages {
+					disabled
+				}
+			>
+				Next
+				<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+				</svg>
+			</button>
+		</div>
+	</div>
+}
+
+// SimplePagination creates a minimal pagination with just prev/next
+templ SimplePagination(props PaginationProps) {
+	<div class="flex justify-between items-center">
+		<button 
+			class={ getPaginationButtonClasses(props.CurrentPage <= 1, props.Size) }
+			if props.CurrentPage <= 1 {
+				disabled
+			}
+		>
+			← Previous
+		</button>
+		
+		<span class="text-sm text-base-content/70">
+			Page { fmt.Sprintf("%d", props.CurrentPage) } of { fmt.Sprintf("%d", props.TotalPages) }
+		</span>
+		
+		<button 
+			class={ getPaginationButtonClasses(props.CurrentPage >= props.TotalPages, props.Size) }
+			if props.CurrentPage >= props.TotalPages {
+				disabled
+			}
+		>
+			Next →
+		</button>
+	</div>
+}
+
+// PageButton creates a single page button
+templ PageButton(pageNum int, active bool, size string) {
+	<button class={ getPageButtonClasses(active, size) }>
+		{ fmt.Sprintf("%d", pageNum) }
+	</button>
+}
+
+// Helper functions
+func getPaginationWrapperClasses(props PaginationProps) string {
+	classes := "pagination-wrapper"
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+}
+
+func getPaginationClasses(props PaginationProps) string {
+	classes := "join"
+	
+	return classes
+}
+
+func getPaginationButtonClasses(disabled bool, size string) string {
+	classes := "join-item btn flex items-center gap-2"
+	
+	switch size {
+	case "xs":
+		classes += " btn-xs"
+	case "sm":
+		classes += " btn-sm"
+	case "lg":
+		classes += " btn-lg"
+	default:
+		classes += " btn-md"
+	}
+	
+	if disabled {
+		classes += " btn-disabled"
+	}
+	
+	return classes
+}
+
+func getPageButtonClasses(active bool, size string) string {
+	classes := "join-item btn"
+	
+	if active {
+		classes += " btn-active"
+	}
+	
+	switch size {
+	case "xs":
+		classes += " btn-xs"
+	case "sm":
+		classes += " btn-sm"
+	case "lg":
+		classes += " btn-lg"
+	default:
+		classes += " btn-md"
+	}
+	
+	return classes
+}
+
+func getPaginationInfo(props PaginationProps) string {
+	start := (props.CurrentPage-1)*props.PageSize + 1
+	end := start + props.PageSize - 1
+	if end > props.TotalItems {
+		end = props.TotalItems
+	}
+	
+	return fmt.Sprintf("Showing %d-%d of %d entries", start, end, props.TotalItems)
+}
+
+func getStartPage(currentPage int, totalPages int) int {
+	start := currentPage - 2
+	if start < 1 {
+		start = 1
+	}
+	return start
+}
+
+func getEndPage(currentPage int, totalPages int) int {
+	end := currentPage + 2
+	if end > totalPages {
+		end = totalPages
+	}
+	return end
+}
+
+templ PageEllipsis() {
+	<span class="join-item btn btn-disabled">...</span>
+} 

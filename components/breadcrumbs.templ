@@ -1,0 +1,117 @@
+package components
+
+// BreadcrumbsProps defines the properties for the Breadcrumbs component
+type BreadcrumbsProps struct {
+	Items     []BreadcrumbItem
+	Separator string // custom separator icon
+	Size      string // xs, sm, md, lg
+	Class     string
+}
+
+// BreadcrumbItem represents a single breadcrumb item
+type BreadcrumbItem struct {
+	Label  string
+	Href   string
+	Active bool
+}
+
+// Breadcrumbs creates a navigation breadcrumb component
+templ Breadcrumbs(props BreadcrumbsProps) {
+	<nav class={ getBreadcrumbsClasses(props) } aria-label="Breadcrumb">
+		<ol class="flex items-center space-x-1">
+			for i, item := range props.Items {
+				<li class="flex items-center">
+					if item.Active {
+						<span class="inline-flex items-center px-3 py-1.5 rounded-full bg-primary text-primary-content font-medium text-sm shadow-sm">
+							{ item.Label }
+						</span>
+					} else {
+						<a 
+							href={ item.Href }
+							class="inline-flex items-center px-3 py-1.5 rounded-full text-base-content/70 hover:text-primary hover:bg-primary/10 transition-all duration-200 text-sm font-medium"
+						>
+							{ item.Label }
+						</a>
+					}
+					
+					<!-- Separator -->
+					if i < len(props.Items)-1 {
+						<span class="mx-2 text-base-content/30">
+							if props.Separator != "" {
+								{ props.Separator }
+							} else {
+								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+								</svg>
+							}
+						</span>
+					}
+				</li>
+			}
+		</ol>
+	</nav>
+}
+
+// BreadcrumbsWithIcons creates breadcrumbs with custom icons
+templ BreadcrumbsWithIcons(props BreadcrumbsProps) {
+	<div class={ getBreadcrumbsClasses(props) }>
+		<ul class="flex items-center space-x-2">
+			for i, item := range props.Items {
+				<li class="flex items-center">
+					if item.Active {
+						<span class="flex items-center text-base-content font-medium">
+							if i == 0 {
+								<svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+								</svg>
+							}
+							{ item.Label }
+						</span>
+					} else {
+						<a 
+							href={ item.Href }
+							class="flex items-center text-primary hover:text-primary-focus transition-colors"
+						>
+							if i == 0 {
+								<svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+								</svg>
+							}
+							{ item.Label }
+						</a>
+					}
+					
+					if i < len(props.Items)-1 {
+						<span class="mx-2 text-base-content/40">
+							<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+							</svg>
+						</span>
+					}
+				</li>
+			}
+		</ul>
+	</div>
+}
+
+// Helper functions
+func getBreadcrumbsClasses(props BreadcrumbsProps) string {
+	classes := "breadcrumbs"
+	
+	switch props.Size {
+	case "xs":
+		classes += " text-xs"
+	case "sm":
+		classes += " text-sm"
+	case "lg":
+		classes += " text-lg"
+	default:
+		classes += " text-base"
+	}
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+} 

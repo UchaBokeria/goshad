@@ -1,0 +1,118 @@
+package components
+
+// DialogProps defines the properties for the Dialog component
+type DialogProps struct {
+	Open        bool
+	Title       string
+	Description string
+	Size        string // xs, sm, md, lg, xl
+	Variant     string // default, alert, confirm
+	Closable    bool
+	Class       string
+}
+
+// Dialog creates a dialog component using HTML5 dialog element
+templ Dialog(props DialogProps) {
+	<dialog 
+		class={ getDialogClasses(props) }
+		if props.Open {
+			open
+		}
+	>
+		<div class="dialog-box">
+			if props.Closable {
+				<button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+			}
+			
+			if props.Title != "" {
+				<h3 class="dialog-title">{ props.Title }</h3>
+			}
+			
+			if props.Description != "" {
+				<p class="dialog-description">{ props.Description }</p>
+			}
+			
+			<div class="dialog-content">
+				{ children... }
+			</div>
+		</div>
+	</dialog>
+}
+
+// AlertDialog creates an alert-style dialog
+templ AlertDialog(props DialogProps, message string, confirmText string) {
+	<dialog class={ getDialogClasses(props) }>
+		<div class="dialog-box text-center">
+			<div class="mb-4">
+				<svg class="w-16 h-16 mx-auto text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16c-.77.833.192 2.5 1.732 2.5z"></path>
+				</svg>
+			</div>
+			
+			if props.Title != "" {
+				<h3 class="text-lg font-bold mb-2">{ props.Title }</h3>
+			}
+			
+			<p class="mb-6">{ message }</p>
+			
+			<div class="flex justify-center">
+				<button class="btn btn-primary">{ confirmText }</button>
+			</div>
+		</div>
+	</dialog>
+}
+
+// ConfirmDialog creates a confirmation dialog
+templ ConfirmDialog(props DialogProps, message string, confirmText string, cancelText string) {
+	<dialog class={ getDialogClasses(props) }>
+		<div class="dialog-box text-center">
+			<div class="mb-4">
+				<svg class="w-16 h-16 mx-auto text-error" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16c-.77.833.192 2.5 1.732 2.5z"></path>
+				</svg>
+			</div>
+			
+			if props.Title != "" {
+				<h3 class="text-lg font-bold mb-2">{ props.Title }</h3>
+			}
+			
+			<p class="mb-6">{ message }</p>
+			
+			<div class="flex justify-center gap-3">
+				<button class="btn">{ cancelText }</button>
+				<button class="btn btn-error">{ confirmText }</button>
+			</div>
+		</div>
+	</dialog>
+}
+
+// Helper functions
+func getDialogClasses(props DialogProps) string {
+	classes := "dialog"
+	
+	switch props.Size {
+	case "xs":
+		classes += " dialog-xs"
+	case "sm":
+		classes += " dialog-sm"
+	case "lg":
+		classes += " dialog-lg"
+	case "xl":
+		classes += " dialog-xl"
+	default:
+		classes += " dialog-md"
+	}
+	
+	switch props.Variant {
+	case "alert":
+		classes += " dialog-alert"
+	case "confirm":
+		classes += " dialog-confirm"
+	}
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+} 

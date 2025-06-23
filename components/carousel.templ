@@ -1,0 +1,111 @@
+package components
+
+import "fmt"
+
+// CarouselProps defines the properties for the Carousel component
+type CarouselProps struct {
+	Items       []CarouselItem
+	AutoPlay    bool
+	Indicators  bool
+	Navigation  bool
+	Infinite    bool
+	Interval    int    // Auto-play interval in seconds
+	Size        string // xs, sm, md, lg, xl
+	Class       string
+}
+
+// CarouselItem represents a single carousel item
+type CarouselItem struct {
+	Image       string
+	Title       string
+	Description string
+	Link        string
+}
+
+// Carousel creates a carousel/slider component
+templ Carousel(props CarouselProps) {
+	<div class={ getCarouselClasses(props) }>
+		<div class="carousel w-full">
+			for i, item := range props.Items {
+				<div id={ "slide" + fmt.Sprintf("%d", i+1) } class="carousel-item relative w-full">
+					if item.Image != "" {
+						<img src={ item.Image } class="w-full object-cover" alt={ item.Title } />
+					} else {
+						<div class="w-full h-64 bg-gradient-to-r from-primary to-secondary flex items-center justify-center">
+							<div class="text-center text-primary-content">
+								<h3 class="text-2xl font-bold mb-2">{ item.Title }</h3>
+								if item.Description != "" {
+									<p class="text-lg opacity-90">{ item.Description }</p>
+								}
+							</div>
+						</div>
+					}
+					
+					if props.Navigation {
+						<div class="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2">
+							<a href={ "#slide" + getPrevSlide(i+1, len(props.Items)) } class="btn btn-circle btn-sm">❮</a>
+							<a href={ "#slide" + getNextSlide(i+1, len(props.Items)) } class="btn btn-circle btn-sm">❯</a>
+						</div>
+					}
+				</div>
+			}
+		</div>
+		
+		if props.Indicators {
+			<div class="flex justify-center w-full py-2 gap-2">
+				for i := range props.Items {
+					<a href={ "#slide" + fmt.Sprintf("%d", i+1) } class="btn btn-xs">{ fmt.Sprintf("%d", i+1) }</a>
+				}
+			</div>
+		}
+	</div>
+}
+
+// ImageCarousel creates a simple image carousel
+templ ImageCarousel(images []string, height string) {
+	<div class="carousel w-full">
+		for i, image := range images {
+			<div id={ "img" + fmt.Sprintf("%d", i+1) } class="carousel-item w-full">
+				<img src={ image } class={ "w-full object-cover " + height } />
+			</div>
+		}
+	</div>
+}
+
+// Helper functions
+func getCarouselClasses(props CarouselProps) string {
+	classes := "carousel-container"
+	
+	switch props.Size {
+	case "xs":
+		classes += " max-w-xs"
+	case "sm":
+		classes += " max-w-sm"
+	case "lg":
+		classes += " max-w-4xl"
+	case "xl":
+		classes += " max-w-6xl"
+	default:
+		classes += " max-w-2xl"
+	}
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+}
+
+func getPrevSlide(current int, total int) string {
+	if current == 1 {
+		return fmt.Sprintf("%d", total)
+	}
+	return fmt.Sprintf("%d", current-1)
+}
+
+func getNextSlide(current int, total int) string {
+	if current == total {
+		return "1"
+	}
+	return fmt.Sprintf("%d", current+1)
+} 

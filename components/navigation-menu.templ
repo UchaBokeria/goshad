@@ -1,0 +1,209 @@
+package components
+
+// NavigationProps defines the properties for the Navigation component
+type NavigationProps struct {
+	Brand     NavBrand
+	Items     []NavItem
+	Actions   []NavAction
+	Layout    string // horizontal, vertical
+	Sticky    bool
+	Variant   string // default, glass, bordered
+	Size      string // sm, md, lg
+	Class     string
+}
+
+// NavBrand represents the brand/logo section
+type NavBrand struct {
+	Text  string
+	Logo  string
+	Href  string
+	Class string
+}
+
+// NavItem represents a navigation item
+type NavItem struct {
+	Label    string
+	Href     string
+	Active   bool
+	Badge    string
+	Dropdown []NavItem
+	Icon     string
+}
+
+// NavAction represents action buttons (login, search, etc.)
+type NavAction struct {
+	Type    string // button, search, avatar
+	Label   string
+	Variant string // primary, secondary, ghost, etc.
+	Icon    string
+	Href    string
+}
+
+// Navigation creates a main navigation component
+templ Navigation(props NavigationProps) {
+	<nav class={ getNavigationClasses(props) }>
+		<div class="container mx-auto px-4">
+			<div class="flex items-center justify-between h-16">
+				<!-- Brand -->
+				<div class="flex items-center">
+					if props.Brand.Href != "" {
+						<a href={ props.Brand.Href } class="flex items-center space-x-2">
+							if props.Brand.Logo != "" {
+								<img src={ props.Brand.Logo } alt="Logo" class="h-8 w-auto" />
+							}
+							if props.Brand.Text != "" {
+								<span class="text-xl font-bold text-base-content">{ props.Brand.Text }</span>
+							}
+						</a>
+					}
+				</div>
+				
+				<!-- Navigation Items -->
+				<div class="hidden md:flex items-center space-x-6">
+					for _, item := range props.Items {
+						if len(item.Dropdown) > 0 {
+							<div class="dropdown dropdown-end">
+								<div tabindex="0" role="button" class={ getNavItemClasses(item) }>
+									{ item.Label }
+									<svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+									</svg>
+								</div>
+								<ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
+									for _, subItem := range item.Dropdown {
+										<li>
+											<a href={ subItem.Href } class={ getNavSubItemClasses(subItem) }>
+												{ subItem.Label }
+											</a>
+										</li>
+									}
+								</ul>
+							</div>
+						} else {
+							<a href={ item.Href } class={ getNavItemClasses(item) }>
+								{ item.Label }
+								if item.Badge != "" {
+									<span class="badge badge-sm badge-primary ml-1">{ item.Badge }</span>
+								}
+							</a>
+						}
+					}
+				</div>
+				
+				<!-- Actions -->
+				<div class="flex items-center space-x-4">
+					for _, action := range props.Actions {
+						if action.Type == "button" {
+							<a href={ action.Href } class={ getNavActionClasses(action) }>
+								if action.Icon != "" {
+									<svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+										{ getNavIconPath(action.Icon) }
+									</svg>
+								}
+								{ action.Label }
+							</a>
+						} else if action.Type == "search" {
+							<button class="btn btn-ghost btn-circle">
+								<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+								</svg>
+							</button>
+						} else if action.Type == "avatar" {
+							<div class="dropdown dropdown-end">
+								<div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
+									<div class="w-8 rounded-full">
+										<img alt="Avatar" src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+									</div>
+								</div>
+								<ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
+									<li><a>Profile</a></li>
+									<li><a>Settings</a></li>
+									<li><a>Logout</a></li>
+								</ul>
+							</div>
+						}
+					}
+					
+					<!-- Mobile menu button -->
+					<button class="md:hidden btn btn-ghost btn-circle">
+						<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+						</svg>
+					</button>
+				</div>
+			</div>
+		</div>
+	</nav>
+}
+
+// Helper functions
+func getNavigationClasses(props NavigationProps) string {
+	classes := "navbar bg-base-100"
+	
+	if props.Sticky {
+		classes += " sticky top-0 z-50"
+	}
+	
+	switch props.Variant {
+	case "glass":
+		classes += " bg-base-100/80 backdrop-blur"
+	case "bordered":
+		classes += " border-b border-base-300"
+	}
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+}
+
+func getNavItemClasses(item NavItem) string {
+	classes := "text-base-content hover:text-primary transition-colors font-medium"
+	
+	if item.Active {
+		classes += " text-primary"
+	}
+	
+	return classes
+}
+
+func getNavSubItemClasses(item NavItem) string {
+	classes := "text-sm"
+	
+	if item.Active {
+		classes += " active"
+	}
+	
+	return classes
+}
+
+func getNavActionClasses(action NavAction) string {
+	classes := "btn"
+	
+	switch action.Variant {
+	case "primary":
+		classes += " btn-primary"
+	case "secondary":
+		classes += " btn-secondary"
+	case "ghost":
+		classes += " btn-ghost"
+	default:
+		classes += " btn-primary"
+	}
+	
+	return classes
+}
+
+func getNavIconPath(icon string) string {
+	switch icon {
+	case "home":
+		return `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>`
+	case "user":
+		return `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>`
+	case "settings":
+		return `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>`
+	default:
+		return `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>`
+	}
+} 

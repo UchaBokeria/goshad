@@ -1,0 +1,152 @@
+package components
+
+
+// TabsProps defines the properties for the Tabs component
+type TabsProps struct {
+	Items       []TabItem
+	ActiveIndex int
+	Variant     string // boxed, bordered, lifted, pills
+	Size        string // xs, sm, md, lg
+	Position    string // start, center, end
+	Class       string
+}
+
+// TabItem represents a single tab
+type TabItem struct {
+	Label    string
+	Content  string
+	Disabled bool
+	Badge    string // Optional badge text
+}
+
+// Tabs creates a tabs component
+templ Tabs(props TabsProps) {
+	<div class={ getTabsWrapperClasses(props) }>
+		<div class={ getTabsClasses(props) } role="tablist">
+			for i, item := range props.Items {
+				<a 
+					class={ getTabClasses(i == props.ActiveIndex, item.Disabled) }
+					role="tab"
+					if item.Disabled {
+						aria-disabled="true"
+					} else {
+						href={ "#tab-" + getIntAsString(i) }
+					}
+				>
+					{ item.Label }
+					if item.Badge != "" {
+						<div class="badge badge-sm ml-2">{ item.Badge }</div>
+					}
+				</a>
+			}
+		</div>
+		
+		<div class="tab-content mt-4">
+			for i, item := range props.Items {
+				<div 
+					id={ "tab-" + getIntAsString(i) }
+					class={ getTabPanelClasses(i == props.ActiveIndex) }
+					role="tabpanel"
+				>
+					<p>{ item.Content }</p>
+				</div>
+			}
+		</div>
+	</div>
+}
+
+// TabsCustom creates tabs with custom content
+templ TabsCustom(props TabsProps) {
+	<div class={ getTabsWrapperClasses(props) }>
+		<div class={ getTabsClasses(props) } role="tablist">
+			{ children... }
+		</div>
+	</div>
+}
+
+// Tab creates a single tab button
+templ Tab(label string, active bool, disabled bool, badge string) {
+	<a 
+		class={ getTabClasses(active, disabled) }
+		role="tab"
+		if disabled {
+			aria-disabled="true"
+		}
+	>
+		{ label }
+		if badge != "" {
+			<div class="badge badge-sm ml-2">{ badge }</div>
+		}
+	</a>
+}
+
+// Helper functions
+func getTabsWrapperClasses(props TabsProps) string {
+	classes := "w-full"
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+}
+
+func getTabsClasses(props TabsProps) string {
+	classes := "tabs"
+	
+	switch props.Variant {
+	case "boxed":
+		classes += " tabs-boxed"
+	case "bordered":
+		classes += " tabs-bordered"
+	case "lifted":
+		classes += " tabs-lifted"
+	case "pills":
+		classes += " tabs-pills"
+	default:
+		classes += " tabs-bordered"
+	}
+	
+	switch props.Size {
+	case "xs":
+		classes += " tabs-xs"
+	case "sm":
+		classes += " tabs-sm"
+	case "lg":
+		classes += " tabs-lg"
+	default:
+		classes += " tabs-md"
+	}
+	
+	switch props.Position {
+	case "center":
+		classes += " justify-center"
+	case "end":
+		classes += " justify-end"
+	default:
+		classes += " justify-start"
+	}
+	
+	return classes
+}
+
+func getTabClasses(active bool, disabled bool) string {
+	classes := "tab"
+	
+	if active {
+		classes += " tab-active"
+	}
+	
+	if disabled {
+		classes += " tab-disabled opacity-50 cursor-not-allowed"
+	}
+	
+	return classes
+}
+
+func getTabPanelClasses(active bool) string {
+	if active {
+		return "block"
+	}
+	return "hidden"
+}

@@ -1,0 +1,133 @@
+package components
+
+// ComboboxProps defines the properties for the Combobox component
+type ComboboxProps struct {
+	Options     []ComboboxOption
+	Placeholder string
+	Value       string
+	Multiple    bool
+	Searchable  bool
+	Size        string // xs, sm, md, lg
+	Variant     string // bordered, ghost, etc.
+	Disabled    bool
+	Class       string
+}
+
+// ComboboxOption represents a single combobox option
+type ComboboxOption struct {
+	Label    string
+	Value    string
+	Selected bool
+	Disabled bool
+}
+
+// Combobox creates a searchable select dropdown
+templ Combobox(props ComboboxProps) {
+	<div class={ getComboboxClasses(props) }>
+		<div class="dropdown w-full">
+			<div tabindex="0" role="button" class={ getComboboxTriggerClasses(props) }>
+				if props.Searchable {
+					<input 
+						type="text"
+						placeholder={ props.Placeholder }
+						class="input input-ghost w-full focus:outline-none"
+						if props.Disabled {
+							disabled
+						}
+					/>
+				} else {
+					<span class="flex-1 text-left">
+						if props.Value != "" {
+							{ getSelectedLabel(props.Options, props.Value) }
+						} else {
+							<span class="text-base-content/50">{ props.Placeholder }</span>
+						}
+					</span>
+				}
+				<svg class="w-4 h-4 ml-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+				</svg>
+			</div>
+			
+			<div tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-full max-h-60 overflow-auto">
+				for _, option := range props.Options {
+					<li>
+						<button 
+							class={ getComboboxOptionClasses(option.Selected, option.Disabled) }
+							if option.Disabled {
+								disabled
+							}
+							onclick={ templ.ComponentScript{Call: "selectOption('" + option.Value + "')"} }
+						>
+							{ option.Label }
+							if option.Selected {
+								<svg class="w-4 h-4 ml-auto text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+								</svg>
+							}
+						</button>
+					</li>
+				}
+			</div>
+		</div>
+	</div>
+}
+
+// Helper functions
+func getComboboxClasses(props ComboboxProps) string {
+	classes := "form-control w-full"
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+}
+
+func getComboboxTriggerClasses(props ComboboxProps) string {
+	classes := "flex items-center w-full cursor-pointer"
+	
+	if !props.Searchable {
+		classes += " input input-bordered"
+	}
+	
+	switch props.Size {
+	case "xs":
+		classes += " input-xs"
+	case "sm":
+		classes += " input-sm"
+	case "lg":
+		classes += " input-lg"
+	default:
+		classes += " input-md"
+	}
+	
+	if props.Disabled {
+		classes += " opacity-50 cursor-not-allowed"
+	}
+	
+	return classes
+}
+
+func getComboboxOptionClasses(selected bool, disabled bool) string {
+	classes := "text-sm flex items-center"
+	
+	if selected {
+		classes += " active bg-primary/10 text-primary"
+	}
+	
+	if disabled {
+		classes += " text-base-content/40 cursor-not-allowed"
+	}
+	
+	return classes
+}
+
+func getSelectedLabel(options []ComboboxOption, value string) string {
+	for _, option := range options {
+		if option.Value == value {
+			return option.Label
+		}
+	}
+	return value
+} 

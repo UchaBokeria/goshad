@@ -1,0 +1,174 @@
+package components
+
+// DropdownProps defines the properties for the Dropdown component
+type DropdownProps struct {
+	Items     []DropdownItem
+	Label     string
+	Position  string // top, bottom, left, right, end
+	Variant   string // default, hover, click
+	Size      string // xs, sm, md, lg
+	Open      bool
+	Class     string
+}
+
+// DropdownItem represents a single dropdown item
+type DropdownItem struct {
+	Label    string
+	Value    string
+	Href     string
+	Disabled bool
+	Divider  bool
+}
+
+// Dropdown creates a dropdown menu component
+templ Dropdown(props DropdownProps) {
+	<div class={ getDropdownClasses(props) }>
+		<div 
+			tabindex="0" 
+			role="button" 
+			class={ getDropdownTriggerClasses(props) }
+		>
+			{ props.Label }
+			<svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+			</svg>
+		</div>
+		
+		<ul 
+			tabindex="0" 
+			class={ getDropdownMenuClasses(props) }
+		>
+			for _, item := range props.Items {
+				if item.Divider {
+					<li><hr class="my-1 border-base-300" /></li>
+				} else {
+					<li>
+						if item.Href != "" {
+							<a 
+								href={ item.Href }
+								class={ getDropdownItemClasses(item.Disabled) }
+							>
+								{ item.Label }
+							</a>
+						} else {
+							<button 
+								class={ getDropdownItemClasses(item.Disabled) }
+								if item.Disabled {
+									disabled
+								}
+							>
+								{ item.Label }
+							</button>
+						}
+					</li>
+				}
+			}
+		</ul>
+	</div>
+}
+
+// DropdownButton creates a dropdown with custom button styling
+templ DropdownButton(props DropdownProps, buttonClass string) {
+	<div class={ getDropdownClasses(props) }>
+		<div 
+			tabindex="0" 
+			role="button" 
+			class={ "btn " + buttonClass }
+		>
+			{ props.Label }
+		</div>
+		
+		<ul 
+			tabindex="0" 
+			class={ getDropdownMenuClasses(props) }
+		>
+			for _, item := range props.Items {
+				if item.Divider {
+					<li><hr class="my-1 border-base-300" /></li>
+				} else {
+					<li>
+						<a href={ item.Href } class={ getDropdownItemClasses(item.Disabled) }>
+							{ item.Label }
+						</a>
+					</li>
+				}
+			}
+		</ul>
+	</div>
+}
+
+// Helper functions
+func getDropdownClasses(props DropdownProps) string {
+	classes := "dropdown"
+	
+	switch props.Position {
+	case "top":
+		classes += " dropdown-top"
+	case "bottom":
+		classes += " dropdown-bottom"
+	case "left":
+		classes += " dropdown-left"
+	case "right":
+		classes += " dropdown-right"
+	case "end":
+		classes += " dropdown-end"
+	}
+	
+	if props.Variant == "hover" {
+		classes += " dropdown-hover"
+	}
+	
+	if props.Open {
+		classes += " dropdown-open"
+	}
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+}
+
+func getDropdownTriggerClasses(props DropdownProps) string {
+	classes := "btn btn-ghost flex items-center"
+	
+	switch props.Size {
+	case "xs":
+		classes += " btn-xs"
+	case "sm":
+		classes += " btn-sm"
+	case "lg":
+		classes += " btn-lg"
+	default:
+		classes += " btn-md"
+	}
+	
+	return classes
+}
+
+func getDropdownMenuClasses(props DropdownProps) string {
+	classes := "dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box"
+	
+	switch props.Size {
+	case "xs":
+		classes += " w-40"
+	case "sm":
+		classes += " w-48"
+	case "lg":
+		classes += " w-64"
+	default:
+		classes += " w-52"
+	}
+	
+	return classes
+}
+
+func getDropdownItemClasses(disabled bool) string {
+	classes := "text-sm"
+	
+	if disabled {
+		classes += " text-base-content/40 cursor-not-allowed"
+	}
+	
+	return classes
+} 

@@ -1,0 +1,247 @@
+package components
+
+import "fmt"
+
+// StepsProps defines the properties for the Steps component
+type StepsProps struct {
+	Steps       []Step
+	CurrentStep int
+	Orientation string // horizontal, vertical
+	Size        string // xs, sm, md, lg
+	Variant     string // default, numbered, icons
+	Class       string
+}
+
+// Step represents a single step
+type Step struct {
+	Title       string
+	Description string
+	Icon        string // SVG icon content
+	Completed   bool
+	Disabled    bool
+	Error       bool
+}
+
+// Steps creates a multi-step process component
+templ Steps(props StepsProps) {
+	<ul class={ getStepsClasses(props) }>
+		for i, step := range props.Steps {
+			<li class={ getStepClasses(i == props.CurrentStep, i < props.CurrentStep, step.Error) }>
+				{ fmt.Sprintf("%d", i+1) }
+			</li>
+		}
+	</ul>
+}
+
+// StepItem renders a single step
+templ StepItem(step Step, stepNumber int, current bool, completed bool, variant string, size string) {
+	<div class={ getStepItemClasses(current, completed, step.Error, step.Disabled) }>
+		<div class={ getStepIconClasses(current, completed, step.Error, variant, size) }>
+			if variant == "icons" && step.Icon != "" {
+				<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					{ step.Icon }
+				</svg>
+			} else if completed && !step.Error {
+				<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+				</svg>
+			} else if step.Error {
+				<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+				</svg>
+			} else {
+				{ fmt.Sprintf("%d", stepNumber) }
+			}
+		</div>
+		
+		<div class={ getStepContentClasses(size) }>
+			<div class={ getStepTitleClasses(current, completed, step.Error) }>
+				{ step.Title }
+			</div>
+			if step.Description != "" {
+				<div class={ getStepDescriptionClasses(step.Disabled) }>
+					{ step.Description }
+				</div>
+			}
+		</div>
+	</div>
+}
+
+// StepConnector renders the line between steps
+templ StepConnector(size string) {
+	<div class={ getStepConnectorClasses(size) }>
+		<div class="h-px bg-base-300 flex-1"></div>
+	</div>
+}
+
+// VerticalSteps creates vertically oriented steps
+templ VerticalSteps(props StepsProps) {
+	<div class={ getVerticalStepsClasses(props) }>
+		for i, step := range props.Steps {
+			<div class="flex">
+				<div class="flex flex-col items-center mr-4">
+					@StepItem(step, i+1, i == props.CurrentStep, i < props.CurrentStep, props.Variant, props.Size)
+					if i < len(props.Steps)-1 {
+						<div class="w-px h-8 bg-base-300 mt-2"></div>
+					}
+				</div>
+				<div class="pb-8">
+					<h3 class={ getStepTitleClasses(i == props.CurrentStep, i < props.CurrentStep, step.Error) }>
+						{ step.Title }
+					</h3>
+					if step.Description != "" {
+						<p class={ getStepDescriptionClasses(step.Disabled) }>
+							{ step.Description }
+						</p>
+					}
+				</div>
+			</div>
+		}
+	</div>
+}
+
+// Helper functions
+func getStepsClasses(props StepsProps) string {
+	classes := "steps"
+	
+	if props.Orientation == "vertical" {
+		classes += " steps-vertical"
+	} else {
+		classes += " steps-horizontal"
+	}
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+}
+
+func getStepClasses(current bool, completed bool, error bool) string {
+	classes := "step"
+	
+	if current {
+		classes += " step-primary"
+	} else if completed {
+		classes += " step-success"
+	} else if error {
+		classes += " step-error"
+	}
+	
+	return classes
+}
+
+func getStepItemClasses(current bool, completed bool, error bool, disabled bool) string {
+	classes := "step flex items-center"
+	
+	if current {
+		classes += " step-primary"
+	} else if completed {
+		classes += " step-success"
+	} else if error {
+		classes += " step-error"
+	}
+	
+	if disabled {
+		classes += " opacity-50"
+	}
+	
+	return classes
+}
+
+func getStepIconClasses(current bool, completed bool, error bool, variant string, size string) string {
+	classes := "flex items-center justify-center rounded-full border-2 font-medium"
+	
+	switch size {
+	case "xs":
+		classes += " w-6 h-6 text-xs"
+	case "sm":
+		classes += " w-8 h-8 text-sm"
+	case "lg":
+		classes += " w-12 h-12 text-lg"
+	default:
+		classes += " w-10 h-10 text-base"
+	}
+	
+	if current {
+		classes += " border-primary bg-primary text-primary-content"
+	} else if completed {
+		classes += " border-success bg-success text-success-content"
+	} else if error {
+		classes += " border-error bg-error text-error-content"
+	} else {
+		classes += " border-base-300 bg-base-100 text-base-content"
+	}
+	
+	return classes
+}
+
+func getStepContentClasses(size string) string {
+	classes := "ml-3"
+	
+	switch size {
+	case "xs":
+		classes += " text-xs"
+	case "sm":
+		classes += " text-sm"
+	case "lg":
+		classes += " text-lg"
+	default:
+		classes += " text-base"
+	}
+	
+	return classes
+}
+
+func getStepTitleClasses(current bool, completed bool, error bool) string {
+	classes := "font-medium"
+	
+	if current {
+		classes += " text-primary"
+	} else if completed {
+		classes += " text-success"
+	} else if error {
+		classes += " text-error"
+	} else {
+		classes += " text-base-content"
+	}
+	
+	return classes
+}
+
+func getStepDescriptionClasses(disabled bool) string {
+	classes := "text-sm text-base-content/70 mt-1"
+	
+	if disabled {
+		classes += " opacity-50"
+	}
+	
+	return classes
+}
+
+func getStepConnectorClasses(size string) string {
+	classes := "flex items-center"
+	
+	switch size {
+	case "xs":
+		classes += " mx-1"
+	case "sm":
+		classes += " mx-2"
+	case "lg":
+		classes += " mx-4"
+	default:
+		classes += " mx-3"
+	}
+	
+	return classes
+}
+
+func getVerticalStepsClasses(props StepsProps) string {
+	classes := "space-y-4"
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+} 

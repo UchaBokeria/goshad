@@ -1,0 +1,141 @@
+package components
+
+// MenuProps defines the properties for the Menu component
+type MenuProps struct {
+	Items     []MenuItem
+	Vertical  bool   // Vertical or horizontal layout
+	Size      string // xs, sm, md, lg
+	Variant   string // compact, normal, rounded
+	Collapsible bool // Can collapse menu items
+	Class     string
+}
+
+// MenuItem represents a single menu item
+type MenuItem struct {
+	Label    string
+	Href     string
+	Icon     string // SVG icon content
+	Active   bool
+	Disabled bool
+	Badge    string
+	SubItems []MenuItem // Nested menu items
+}
+
+// Menu creates a navigation menu component
+templ Menu(props MenuProps) {
+	<ul class={ getMenuClasses(props) }>
+		for _, item := range props.Items {
+			@MenuItemComponent(item, props.Size)
+		}
+	</ul>
+}
+
+// MenuItemComponent renders a single menu item
+templ MenuItemComponent(item MenuItem, size string) {
+	<li>
+		if len(item.SubItems) > 0 {
+			<details>
+				<summary class={ getMenuItemClasses(item.Active, item.Disabled, size) }>
+					if item.Icon != "" {
+						<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							{ item.Icon }
+						</svg>
+					}
+					{ item.Label }
+					if item.Badge != "" {
+						<div class="badge badge-sm ml-auto">{ item.Badge }</div>
+					}
+				</summary>
+				<ul>
+					for _, subItem := range item.SubItems {
+						@MenuItemComponent(subItem, size)
+					}
+				</ul>
+			</details>
+		} else {
+			<a 
+				href={ item.Href }
+				class={ getMenuItemClasses(item.Active, item.Disabled, size) }
+				if item.Disabled {
+					aria-disabled="true"
+				}
+			>
+				if item.Icon != "" {
+					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						{ item.Icon }
+					</svg>
+				}
+				{ item.Label }
+				if item.Badge != "" {
+					<div class="badge badge-sm ml-auto">{ item.Badge }</div>
+				}
+			</a>
+		}
+	</li>
+}
+
+// SidebarMenu creates a sidebar navigation menu
+templ SidebarMenu(props MenuProps, title string) {
+	<div class="drawer-side">
+		<label for="sidebar-toggle" class="drawer-overlay"></label>
+		<aside class="min-h-full w-64 bg-base-200">
+			if title != "" {
+				<div class="p-4 border-b border-base-300">
+					<h2 class="text-lg font-semibold">{ title }</h2>
+				</div>
+			}
+			<div class="p-4">
+				@Menu(props)
+			</div>
+		</aside>
+	</div>
+}
+
+// Helper functions
+func getMenuClasses(props MenuProps) string {
+	classes := "menu"
+	
+	if props.Vertical {
+		classes += " menu-vertical"
+	} else {
+		classes += " menu-horizontal"
+	}
+	
+	switch props.Size {
+	case "xs":
+		classes += " menu-xs"
+	case "sm":
+		classes += " menu-sm"
+	case "lg":
+		classes += " menu-lg"
+	default:
+		classes += " menu-md"
+	}
+	
+	switch props.Variant {
+	case "compact":
+		classes += " menu-compact"
+	case "rounded":
+		classes += " rounded-box"
+	}
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+}
+
+func getMenuItemClasses(active bool, disabled bool, size string) string {
+	classes := "flex items-center gap-2"
+	
+	if active {
+		classes += " active"
+	}
+	
+	if disabled {
+		classes += " disabled text-base-content/40"
+	}
+	
+	return classes
+} 

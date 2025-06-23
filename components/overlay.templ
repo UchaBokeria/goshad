@@ -1,0 +1,122 @@
+package components
+
+// OverlayProps defines the properties for overlay utilities
+type OverlayProps struct {
+	Show      bool
+	Blur      bool
+	Dark      bool
+	Opacity   string // 10, 20, 30, 40, 50, 60, 70, 80, 90
+	ZIndex    string // Custom z-index
+	Class     string
+}
+
+// Overlay creates a backdrop overlay
+templ Overlay(props OverlayProps) {
+	if props.Show {
+		<div class={ getOverlayClasses(props) }></div>
+	}
+}
+
+// BleedContainer removes container padding for full-width content
+templ BleedContainer() {
+	<div class="bleed-container -mx-4 md:-mx-6 lg:-mx-8">
+		{ children... }
+	</div>
+}
+
+// WrapContainer provides content wrapping with max-width
+templ WrapContainer(maxWidth string) {
+	<div class={ getWrapClasses(maxWidth) }>
+		{ children... }
+	</div>
+}
+
+// VisuallyHidden hides content visually but keeps it accessible to screen readers
+templ VisuallyHidden() {
+	<span class="sr-only">
+		{ children... }
+	</span>
+}
+
+// Helper functions
+func getOverlayClasses(props OverlayProps) string {
+	classes := "fixed inset-0"
+	
+	if props.Dark {
+		classes += " bg-black"
+	} else {
+		classes += " bg-white"
+	}
+	
+	if props.Blur {
+		classes += " backdrop-blur-sm"
+	}
+	
+	switch props.Opacity {
+	case "10":
+		classes += " bg-opacity-10"
+	case "20":
+		classes += " bg-opacity-20"
+	case "30":
+		classes += " bg-opacity-30"
+	case "40":
+		classes += " bg-opacity-40"
+	case "60":
+		classes += " bg-opacity-60"
+	case "70":
+		classes += " bg-opacity-70"
+	case "80":
+		classes += " bg-opacity-80"
+	case "90":
+		classes += " bg-opacity-90"
+	default:
+		classes += " bg-opacity-50"
+	}
+	
+	if props.ZIndex != "" {
+		classes += " z-" + props.ZIndex
+	} else {
+		classes += " z-40"
+	}
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+}
+
+func getWrapClasses(maxWidth string) string {
+	classes := "container mx-auto px-4"
+	
+	switch maxWidth {
+	case "xs":
+		classes += " max-w-xs"
+	case "sm":
+		classes += " max-w-sm"
+	case "md":
+		classes += " max-w-md"
+	case "lg":
+		classes += " max-w-lg"
+	case "xl":
+		classes += " max-w-xl"
+	case "2xl":
+		classes += " max-w-2xl"
+	case "3xl":
+		classes += " max-w-3xl"
+	case "4xl":
+		classes += " max-w-4xl"
+	case "5xl":
+		classes += " max-w-5xl"
+	case "6xl":
+		classes += " max-w-6xl"
+	case "7xl":
+		classes += " max-w-7xl"
+	case "full":
+		classes += " max-w-full"
+	default:
+		classes += " max-w-4xl"
+	}
+	
+	return classes
+} 

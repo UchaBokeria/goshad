@@ -1,0 +1,154 @@
+package components
+
+import "fmt"
+
+// AccordionProps defines the properties for the Accordion component
+type AccordionProps struct {
+	Items     []AccordionItem
+	Multiple  bool   // Allow multiple panels open
+	Variant   string // bordered, filled, ghost
+	Size      string // xs, sm, md, lg
+	Class     string
+}
+
+// AccordionItem represents a single accordion panel
+type AccordionItem struct {
+	Title    string
+	Content  string
+	Open     bool
+	Disabled bool
+}
+
+// Accordion creates an accordion component with collapsible panels
+templ Accordion(props AccordionProps) {
+	<div class={ getAccordionClasses(props) }>
+		for i, item := range props.Items {
+			<div class="collapse">
+				<input 
+					type={ getAccordionInputType(props.Multiple) }
+					if props.Multiple {
+						name={ "accordion-" + getIntAsString(i) }
+					} else {
+						name="accordion-group"
+					}
+					if item.Open {
+						checked
+					}
+					if item.Disabled {
+						disabled
+					}
+				/>
+				<div class="collapse-title text-xl font-medium">
+					{ item.Title }
+				</div>
+				<div class="collapse-content">
+					<p>{ item.Content }</p>
+				</div>
+			</div>
+		}
+	</div>
+}
+
+// AccordionCustom creates an accordion with custom content
+templ AccordionCustom(props AccordionProps) {
+	<div class={ getAccordionClasses(props) }>
+		{ children... }
+	</div>
+}
+
+// HorizontalAccordion creates a horizontal accordion layout
+templ HorizontalAccordion(props AccordionProps) {
+	<div class="flex w-full h-64 overflow-hidden rounded-lg border border-base-300">
+		for i, item := range props.Items {
+			<div class="accordion-panel flex-1 relative transition-all duration-300 hover:flex-[2]">
+				<input 
+					type="radio"
+					name="horizontal-accordion"
+					id={ "panel-" + getIntAsString(i) }
+					class="hidden"
+					if item.Open {
+						checked
+					}
+				/>
+				<label 
+					for={ "panel-" + getIntAsString(i) }
+					class="absolute inset-0 bg-gradient-to-r from-primary/80 to-secondary/80 flex items-center justify-center cursor-pointer text-white font-semibold text-lg hover:from-primary hover:to-secondary transition-all"
+				>
+					<span class="transform -rotate-90 whitespace-nowrap">{ item.Title }</span>
+				</label>
+				<div class="accordion-content hidden absolute inset-0 bg-base-100 p-4 overflow-auto">
+					<h3 class="font-bold text-lg mb-2">{ item.Title }</h3>
+					<p>{ item.Content }</p>
+				</div>
+			</div>
+		}
+	</div>
+}
+
+// AccordionPanel creates a single accordion panel
+templ AccordionPanel(title string, open bool, disabled bool) {
+	<div class="collapse">
+		<input 
+			type="radio"
+			name="accordion-group"
+			if open {
+				checked
+			}
+			if disabled {
+				disabled
+			}
+		/>
+		<div class="collapse-title text-xl font-medium">
+			{ title }
+		</div>
+		<div class="collapse-content">
+			{ children... }
+		</div>
+	</div>
+}
+
+// Helper functions
+func getAccordionClasses(props AccordionProps) string {
+	classes := "accordion"
+	
+	switch props.Variant {
+	case "bordered":
+		classes += " join join-vertical w-full"
+	case "filled":
+		classes += " bg-base-200 rounded-box"
+	case "ghost":
+		classes += " bg-transparent"
+	default:
+		classes += " join join-vertical w-full"
+	}
+	
+	switch props.Size {
+	case "xs":
+		classes += " text-xs"
+	case "sm":
+		classes += " text-sm"
+	case "lg":
+		classes += " text-lg"
+	case "xl":
+		classes += " text-xl"
+	default:
+		classes += " text-base"
+	}
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+}
+
+func getAccordionInputType(multiple bool) string {
+	if multiple {
+		return "checkbox"
+	}
+	return "radio"
+}
+
+func getIntAsString(i int) string {
+	return fmt.Sprintf("%d", i)
+} 

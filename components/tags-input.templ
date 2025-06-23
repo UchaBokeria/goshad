@@ -1,0 +1,145 @@
+package components
+
+// TagsInputProps defines the properties for the TagsInput component
+type TagsInputProps struct {
+	Tags        []string
+	Placeholder string
+	MaxTags     int    // Maximum number of tags (0 = unlimited)
+	Size        string // xs, sm, md, lg
+	Variant     string // bordered, ghost, etc.
+	Suggestions []string // Suggested tags
+	Disabled    bool
+	Class       string
+}
+
+// TagsInput creates a multi-tag input component
+templ TagsInput(props TagsInputProps) {
+	<div class={ getTagsInputClasses(props) }>
+		<div class={ getTagsInputWrapperClasses(props) }>
+			<!-- Display existing tags -->
+			<div class="flex flex-wrap gap-2 mb-3">
+				for _, tag := range props.Tags {
+					<div class="inline-flex items-center gap-2 bg-primary text-primary-content px-3 py-2 rounded-full text-sm font-medium shadow-sm hover:shadow transition-shadow">
+						<span>{ tag }</span>
+						<button class="hover:bg-primary-focus rounded-full p-1 transition-colors" onclick={ templ.ComponentScript{Call: "removeTag('" + tag + "')"} }>
+							<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+							</svg>
+						</button>
+					</div>
+				}
+			</div>
+			
+			<!-- Input for new tags -->
+			<div class="relative">
+				<input 
+					type="text"
+					placeholder={ props.Placeholder }
+					class={ getTagsInputFieldClasses(props) }
+					onkeydown="handleTagInput(event)"
+					if props.Disabled {
+						disabled
+					}
+				/>
+				
+				<!-- Suggestions dropdown -->
+				if len(props.Suggestions) > 0 {
+					<div class="suggestions absolute top-full left-0 w-full bg-base-100 border border-base-300 rounded-lg shadow-lg z-10 hidden">
+						for _, suggestion := range props.Suggestions {
+							<button 
+								class="suggestion-item w-full text-left px-3 py-2 hover:bg-base-200 text-sm"
+								onclick={ templ.ComponentScript{Call: "addTag('" + suggestion + "')"} }
+							>
+								{ suggestion }
+							</button>
+						}
+					</div>
+				}
+			</div>
+		</div>
+		
+		<!-- Helper text -->
+		<div class="text-xs text-base-content/60 mt-1">
+			if props.MaxTags > 0 {
+				{ getTagCountText(len(props.Tags), props.MaxTags) }
+			} else {
+				Press Enter to add tags
+			}
+		</div>
+	</div>
+}
+
+// TagsInputReadonly displays tags in read-only mode
+templ TagsInputReadonly(tags []string, variant string) {
+	<div class="flex flex-wrap gap-1">
+		for _, tag := range tags {
+			<div class={ "badge " + getTagVariantClass(variant) }>
+				{ tag }
+			</div>
+		}
+	</div>
+}
+
+// Helper functions
+func getTagsInputClasses(props TagsInputProps) string {
+	classes := "form-control w-full"
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+}
+
+func getTagsInputWrapperClasses(props TagsInputProps) string {
+	classes := "border border-base-300 rounded-lg p-3 bg-base-100 focus-within:border-primary"
+	
+	if props.Disabled {
+		classes += " opacity-50 cursor-not-allowed"
+	}
+	
+	return classes
+}
+
+func getTagsInputFieldClasses(props TagsInputProps) string {
+	classes := "input input-ghost w-full focus:outline-none p-0"
+	
+	switch props.Size {
+	case "xs":
+		classes += " input-xs"
+	case "sm":
+		classes += " input-sm"
+	case "lg":
+		classes += " input-lg"
+	default:
+		classes += " input-md"
+	}
+	
+	return classes
+}
+
+func getTagVariantClass(variant string) string {
+	switch variant {
+	case "secondary":
+		return "badge-secondary"
+	case "accent":
+		return "badge-accent"
+	case "info":
+		return "badge-info"
+	case "success":
+		return "badge-success"
+	case "warning":
+		return "badge-warning"
+	case "error":
+		return "badge-error"
+	default:
+		return "badge-primary"
+	}
+}
+
+func getTagCountText(current int, max int) string {
+	if current >= max {
+		return "Maximum tags reached"
+	}
+	return "Tags: " + string(rune(current)) + " / " + string(rune(max))
+} 

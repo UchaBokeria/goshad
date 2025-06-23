@@ -1,0 +1,173 @@
+package components
+
+import "fmt"
+
+// ToastProps defines the properties for the Toast component
+type ToastProps struct {
+	Message   string
+	Type      string // success, error, warning, info
+	Position  string // top-start, top-center, top-end, middle-start, middle-center, middle-end, bottom-start, bottom-center, bottom-end
+	Duration  int    // Auto-dismiss duration in seconds (0 = no auto-dismiss)
+	Closable  bool   // Show close button
+	Icon      bool   // Show type icon
+	Class     string
+}
+
+// Toast creates a toast notification component
+templ Toast(props ToastProps) {
+	<div class={ getToastClasses(props) } data-duration={ getToastDuration(props.Duration) }>
+		<div class={ getToastAlertClasses(props.Type) }>
+			if props.Icon {
+				<div class="flex-shrink-0">
+					@getToastIcon(props.Type)
+				</div>
+			}
+			
+			<div class="flex-1">
+				<span>{ props.Message }</span>
+			</div>
+			
+			if props.Closable {
+				<div class="flex-shrink-0">
+					<button class="btn btn-sm btn-ghost btn-square" onclick="this.closest('.toast').remove()">
+						<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+						</svg>
+					</button>
+				</div>
+			}
+		</div>
+		
+		if props.Duration > 0 {
+			<script>
+				{
+					templ.ComponentScript{
+						Call: "setTimeout(() => { const toast = event.target.closest('.toast'); if (toast) { toast.style.opacity = '0'; toast.style.transform = 'translateX(100%)'; setTimeout(() => toast.remove(), 300); } }, " + getToastDuration(props.Duration) + ")",
+					}
+				}
+			</script>
+		}
+	</div>
+}
+
+// ToastContainer creates a container for multiple toasts
+templ ToastContainer(position string) {
+	<div class={ getToastContainerClasses(position) }>
+		{ children... }
+	</div>
+}
+
+// Toast icon helper
+templ getToastIcon(toastType string) {
+	switch toastType {
+	case "success":
+		<svg class="w-5 h-5 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+			<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+		</svg>
+	case "error":
+		<svg class="w-5 h-5 text-error" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+			<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+		</svg>
+	case "warning":
+		<svg class="w-5 h-5 text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+			<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16c-.77.833.192 2.5 1.732 2.5z"></path>
+		</svg>
+	case "info":
+		<svg class="w-5 h-5 text-info" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+			<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+		</svg>
+	default:
+		<svg class="w-5 h-5 text-info" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+			<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+		</svg>
+	}
+}
+
+// Helper functions
+func getToastClasses(props ToastProps) string {
+	classes := "toast"
+	
+	switch props.Position {
+	case "top-start":
+		classes += " toast-top toast-start"
+	case "top-center":
+		classes += " toast-top toast-center"
+	case "top-end":
+		classes += " toast-top toast-end"
+	case "middle-start":
+		classes += " toast-middle toast-start"
+	case "middle-center":
+		classes += " toast-middle toast-center"
+	case "middle-end":
+		classes += " toast-middle toast-end"
+	case "bottom-start":
+		classes += " toast-bottom toast-start"
+	case "bottom-center":
+		classes += " toast-bottom toast-center"
+	case "bottom-end":
+		classes += " toast-bottom toast-end"
+	default:
+		classes += " toast-top toast-end"
+	}
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+}
+
+func getToastAlertClasses(toastType string) string {
+	classes := "alert flex items-center gap-3"
+	
+	switch toastType {
+	case "success":
+		classes += " alert-success"
+	case "error":
+		classes += " alert-error"
+	case "warning":
+		classes += " alert-warning"
+	case "info":
+		classes += " alert-info"
+	default:
+		classes += " alert-info"
+	}
+	
+	return classes
+}
+
+func getToastContainerClasses(position string) string {
+	classes := "toast"
+	
+	switch position {
+	case "top-start":
+		classes += " toast-top toast-start"
+	case "top-center":
+		classes += " toast-top toast-center"
+	case "top-end":
+		classes += " toast-top toast-end"
+	case "middle-start":
+		classes += " toast-middle toast-start"
+	case "middle-center":
+		classes += " toast-middle toast-center"
+	case "middle-end":
+		classes += " toast-middle toast-end"
+	case "bottom-start":
+		classes += " toast-bottom toast-start"
+	case "bottom-center":
+		classes += " toast-bottom toast-center"
+	case "bottom-end":
+		classes += " toast-bottom toast-end"
+	default:
+		classes += " toast-top toast-end"
+	}
+	
+	return classes
+}
+
+func getToastDuration(duration int) string {
+	if duration <= 0 {
+		return "3000" // Default 3 seconds
+	}
+	return fmt.Sprintf("%d", duration*1000) // Convert to milliseconds
+} 

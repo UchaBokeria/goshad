@@ -1,0 +1,115 @@
+package components
+
+// ModalProps defines the properties for the Modal component
+type ModalProps struct {
+	ID          string
+	Title       string
+	Open        bool
+	Size        string // xs, sm, md, lg, xl, full
+	Position    string // top, middle, bottom
+	Backdrop    bool   // Show backdrop
+	Closable    bool   // Show close button
+	Class       string
+}
+
+// Modal creates a modal dialog component
+templ Modal(props ModalProps) {
+	<div class={ getModalClasses(props) }>
+		<div class={ getModalBoxClasses(props) }>
+			if props.Closable {
+				<form method="dialog">
+					<button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+				</form>
+			}
+			
+			if props.Title != "" {
+				<h3 class="font-bold text-lg mb-4">{ props.Title }</h3>
+			}
+			
+			<div class="modal-content">
+				{ children... }
+			</div>
+		</div>
+		
+		if props.Backdrop {
+			<form method="dialog" class="modal-backdrop">
+				<button>close</button>
+			</form>
+		}
+	</div>
+}
+
+// ModalTrigger creates a button that opens a modal
+templ ModalTrigger(modalID string, buttonText string, buttonClass string) {
+	<button 
+		class={ "btn " + buttonClass }
+		onclick={ templ.ComponentScript{Call: "document.getElementById('" + modalID + "').showModal()"} }
+	>
+		{ buttonText }
+	</button>
+}
+
+// ConfirmModal creates a confirmation modal
+templ ConfirmModal(props ModalProps, message string, confirmText string, cancelText string) {
+	<div class={ getModalClasses(props) }>
+		<div class={ getModalBoxClasses(props) }>
+			if props.Title != "" {
+				<h3 class="font-bold text-lg">{ props.Title }</h3>
+			}
+			
+			<p class="py-4">{ message }</p>
+			
+			<div class="modal-action">
+				<form method="dialog" class="flex gap-2">
+					<button class="btn">{ cancelText }</button>
+					<button class="btn btn-primary">{ confirmText }</button>
+				</form>
+			</div>
+		</div>
+	</div>
+}
+
+// Helper functions
+func getModalClasses(props ModalProps) string {
+	classes := "modal"
+	
+	if props.Open {
+		classes += " modal-open"
+	}
+	
+	switch props.Position {
+	case "top":
+		classes += " modal-top"
+	case "bottom":
+		classes += " modal-bottom"
+	default:
+		classes += " modal-middle"
+	}
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+}
+
+func getModalBoxClasses(props ModalProps) string {
+	classes := "modal-box"
+	
+	switch props.Size {
+	case "xs":
+		classes += " w-80 max-w-xs"
+	case "sm":
+		classes += " w-96 max-w-sm"
+	case "lg":
+		classes += " w-11/12 max-w-2xl"
+	case "xl":
+		classes += " w-11/12 max-w-4xl"
+	case "full":
+		classes += " w-11/12 max-w-5xl max-h-full"
+	default:
+		classes += " w-11/12 max-w-lg"
+	}
+	
+	return classes
+} 

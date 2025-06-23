@@ -1,0 +1,155 @@
+package components
+
+// StatProps defines the properties for the Stat component
+type StatProps struct {
+	Title       string
+	Value       string
+	Description string
+	Change      string // Change percentage or value
+	ChangeType  string // positive, negative, neutral
+	Icon        string // SVG icon content
+	Size        string // xs, sm, md, lg
+	Variant     string // default, bordered, card
+	Class       string
+}
+
+// Stat creates a single statistic component
+templ Stat(props StatProps) {
+	<div class={ getStatClasses(props) }>
+		<div class="stat">
+			if props.Icon != "" {
+				<div class="stat-figure text-secondary">
+					<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						{ props.Icon }
+					</svg>
+				</div>
+			}
+			
+			if props.Title != "" {
+				<div class="stat-title">{ props.Title }</div>
+			}
+			
+			<div class={ getStatValueClasses(props) }>{ props.Value }</div>
+			
+			if props.Description != "" || props.Change != "" {
+				<div class="stat-desc">
+					if props.Change != "" {
+						<span class={ getStatChangeClasses(props.ChangeType) }>
+							{ getChangePrefix(props.ChangeType) }{ props.Change }
+						</span>
+						if props.Description != "" {
+							<span class="ml-2">{ props.Description }</span>
+						}
+					} else {
+						{ props.Description }
+					}
+				</div>
+			}
+		</div>
+	</div>
+}
+
+// StatGroup creates a group of statistics
+templ StatGroup(stats []StatProps, variant string) {
+	<div class={ getStatGroupClasses(variant) }>
+		for _, stat := range stats {
+			@Stat(StatProps{
+				Title: stat.Title,
+				Value: stat.Value,
+				Description: stat.Description,
+				Change: stat.Change,
+				ChangeType: stat.ChangeType,
+				Icon: stat.Icon,
+				Size: stat.Size,
+				Variant: variant,
+			})
+		}
+	</div>
+}
+
+// StatCard creates a stat in a card layout
+templ StatCard(props StatProps) {
+	<div class="card bg-base-100 shadow-lg">
+		<div class="card-body">
+			@Stat(props)
+		</div>
+	</div>
+}
+
+// Helper functions
+func getStatClasses(props StatProps) string {
+	classes := ""
+	
+	switch props.Variant {
+	case "bordered":
+		classes += "stats-border"
+	case "card":
+		classes += "card bg-base-100 shadow"
+	default:
+		classes += "stats"
+	}
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+}
+
+func getStatGroupClasses(variant string) string {
+	classes := "stats"
+	
+	switch variant {
+	case "vertical":
+		classes += " stats-vertical"
+	case "horizontal":
+		classes += " stats-horizontal"
+	case "shadow":
+		classes += " shadow"
+	default:
+		classes += " stats-horizontal shadow"
+	}
+	
+	return classes
+}
+
+func getStatValueClasses(props StatProps) string {
+	classes := "stat-value"
+	
+	switch props.Size {
+	case "xs":
+		classes += " text-2xl"
+	case "sm":
+		classes += " text-3xl"
+	case "lg":
+		classes += " text-5xl"
+	case "xl":
+		classes += " text-6xl"
+	default:
+		classes += " text-4xl"
+	}
+	
+	return classes
+}
+
+func getStatChangeClasses(changeType string) string {
+	switch changeType {
+	case "positive":
+		return "text-success"
+	case "negative":
+		return "text-error"
+	default:
+		return "text-base-content/70"
+	}
+}
+
+func getChangePrefix(changeType string) string {
+	switch changeType {
+	case "positive":
+		return "↗︎ +"
+	case "negative":
+		return "↘︎ "
+	default:
+		return ""
+	}
+} 

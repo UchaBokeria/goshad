@@ -1,0 +1,106 @@
+package components
+
+// CollapsibleProps defines the properties for the Collapsible component
+type CollapsibleProps struct {
+	Title    string
+	Open     bool
+	Variant  string // bordered, filled, ghost
+	Size     string // xs, sm, md, lg
+	Icon     bool   // Show expand/collapse icon
+	Disabled bool
+	Class    string
+}
+
+// Collapsible creates a collapsible content section
+templ Collapsible(props CollapsibleProps) {
+	<div class={ getCollapsibleClasses(props) }>
+		<input 
+			type="checkbox"
+			if props.Open {
+				checked
+			}
+			if props.Disabled {
+				disabled
+			}
+		/>
+		<div class={ getCollapsibleTitleClasses(props) }>
+			if props.Icon {
+				<svg class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+				</svg>
+			}
+			{ props.Title }
+		</div>
+		<div class="collapse-content">
+			{ children... }
+		</div>
+	</div>
+}
+
+// CollapsibleGroup creates a group of collapsible items (like accordion but each independent)
+templ CollapsibleGroup(items []CollapsibleItem, variant string) {
+	<div class="space-y-2">
+		for _, item := range items {
+			@Collapsible(CollapsibleProps{
+				Title: item.Title,
+				Open: item.Open,
+				Variant: variant,
+				Icon: true,
+				Disabled: item.Disabled,
+			}) {
+				<p>{ item.Content }</p>
+			}
+		}
+	</div>
+}
+
+// CollapsibleItem represents a single collapsible item
+type CollapsibleItem struct {
+	Title    string
+	Content  string
+	Open     bool
+	Disabled bool
+}
+
+// Helper functions
+func getCollapsibleClasses(props CollapsibleProps) string {
+	classes := "collapse"
+	
+	switch props.Variant {
+	case "bordered":
+		classes += " collapse-plus border border-base-300"
+	case "filled":
+		classes += " collapse-arrow bg-base-200"
+	case "ghost":
+		classes += " collapse-plus"
+	default:
+		classes += " collapse-plus border border-base-300"
+	}
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+}
+
+func getCollapsibleTitleClasses(props CollapsibleProps) string {
+	classes := "collapse-title font-medium flex items-center gap-2"
+	
+	switch props.Size {
+	case "xs":
+		classes += " text-xs"
+	case "sm":
+		classes += " text-sm"
+	case "lg":
+		classes += " text-lg"
+	default:
+		classes += " text-base"
+	}
+	
+	if props.Disabled {
+		classes += " opacity-50 cursor-not-allowed"
+	}
+	
+	return classes
+} 

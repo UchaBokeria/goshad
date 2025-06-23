@@ -12,32 +12,41 @@ type InputProps struct {
 	Variant     string // bordered, ghost, primary, secondary, accent, info, success, warning, error
 	Disabled    bool
 	Required    bool
+	Error       bool   // Add error state
+	ErrorMsg    string // Error message to display
 }
 
 // Input creates a basic input field with DaisyUI styling
 templ Input(props InputProps) {
-	<input
-		type={ getInputType(props.Type) }
-		if props.Placeholder != "" {
-			placeholder={ props.Placeholder }
+	<div class="w-full">
+		<input
+			type={ getInputType(props.Type) }
+			if props.Placeholder != "" {
+				placeholder={ props.Placeholder }
+			}
+			if props.Value != "" {
+				value={ props.Value }
+			}
+			if props.Name != "" {
+				name={ props.Name }
+			}
+			if props.ID != "" {
+				id={ props.ID }
+			}
+			class={ getInputClasses(props) }
+			if props.Disabled {
+				disabled
+			}
+			if props.Required {
+				required
+			}
+		/>
+		if props.Error && props.ErrorMsg != "" {
+			<div class="text-error text-sm mt-1">
+				{ props.ErrorMsg }
+			</div>
 		}
-		if props.Value != "" {
-			value={ props.Value }
-		}
-		if props.Name != "" {
-			name={ props.Name }
-		}
-		if props.ID != "" {
-			id={ props.ID }
-		}
-		class={ getInputClasses(props) }
-		if props.Disabled {
-			disabled
-		}
-		if props.Required {
-			required
-		}
-	/>
+	</div>
 }
 
 // InputWithLabel creates an input field with a label
@@ -61,28 +70,33 @@ func getInputType(inputType string) string {
 func getInputClasses(props InputProps) string {
 	classes := "input"
 	
-	// Add variant classes
-	switch props.Variant {
-	case "bordered":
-		classes += " input-bordered"
-	case "ghost":
-		classes += " input-ghost"
-	case "primary":
-		classes += " input-primary"
-	case "secondary":
-		classes += " input-secondary"
-	case "accent":
-		classes += " input-accent"
-	case "info":
-		classes += " input-info"
-	case "success":
-		classes += " input-success"
-	case "warning":
-		classes += " input-warning"
-	case "error":
+	// Add error state first, then variant
+	if props.Error {
 		classes += " input-error"
-	default:
-		classes += " input-bordered"
+	} else {
+		// Add variant classes only if not in error state
+		switch props.Variant {
+		case "bordered":
+			classes += " input-bordered"
+		case "ghost":
+			classes += " input-ghost"
+		case "primary":
+			classes += " input-primary"
+		case "secondary":
+			classes += " input-secondary"
+		case "accent":
+			classes += " input-accent"
+		case "info":
+			classes += " input-info"
+		case "success":
+			classes += " input-success"
+		case "warning":
+			classes += " input-warning"
+		case "error":
+			classes += " input-error"
+		default:
+			classes += " input-bordered"
+		}
 	}
 	
 	// Add size classes

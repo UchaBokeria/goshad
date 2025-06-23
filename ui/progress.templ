@@ -6,7 +6,7 @@ import "fmt"
 type ProgressProps struct {
 	Value     int    // current value
 	Max       int    // maximum value (default 100)
-	Size      string // xs, sm, md, lg
+	Size      string // xs, sm, md, lg, xl (xl for thicker)
 	Variant   string // primary, secondary, accent, info, success, warning, error
 	ShowText  bool   // show percentage text
 	Text      string // custom text instead of percentage
@@ -102,25 +102,27 @@ func getProgressClasses(props ProgressProps) string {
 	
 	// Add animation if specified
 	if props.Animated {
-		classes += " progress-animated"
+		classes += " animate-pulse"
 	}
 	
 	// Add striped pattern if specified
 	if props.Striped {
-		classes += " progress-striped"
+		classes += " bg-gradient-to-r from-transparent via-white/20 to-transparent bg-[length:30px_100%] animate-[slide_1s_linear_infinite]"
 	}
 	
 	switch props.Size {
 	case "xs":
-		classes += " progress-xs"
+		classes += " h-1"
 	case "sm":
-		classes += " progress-sm"
+		classes += " h-2"
 	case "md":
-		classes += " progress-md"
+		classes += " h-3"
 	case "lg":
-		classes += " progress-lg"
+		classes += " h-4"
+	case "xl":
+		classes += " h-6" // Extra thick option
 	default:
-		classes += " progress-md"
+		classes += " h-4" // Default to lg for thicker appearance
 	}
 	
 	switch props.Variant {
@@ -193,8 +195,6 @@ func getMaxAsString(max int) string {
 	}
 	return fmt.Sprintf("%d", max)
 }
-
-
 
 // getPercentageText returns the percentage text
 func getPercentageText(value, max int) string {

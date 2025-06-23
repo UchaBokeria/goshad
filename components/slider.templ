@@ -1,0 +1,102 @@
+package components
+
+import "fmt"
+
+// SliderProps defines the properties for the Slider component
+type SliderProps struct {
+	Min      int
+	Max      int
+	Value    int
+	Step     int
+	Label    string
+	ShowValue bool
+	Size     string // xs, sm, md, lg
+	Variant  string // primary, secondary, accent, success, warning, error
+	Disabled bool
+	Class    string
+}
+
+// Slider creates a range slider component
+templ Slider(props SliderProps) {
+	<div class={ getSliderWrapperClasses(props) }>
+		if props.Label != "" {
+			<label class="label">
+				<span class="label-text font-medium">{ props.Label }</span>
+				if props.ShowValue {
+					<span class="label-text-alt">{ fmt.Sprintf("%d", props.Value) }</span>
+				}
+			</label>
+		}
+		
+		<input 
+			type="range"
+			min={ fmt.Sprintf("%d", props.Min) }
+			max={ fmt.Sprintf("%d", props.Max) }
+			value={ fmt.Sprintf("%d", props.Value) }
+			step={ fmt.Sprintf("%d", getStep(props.Step)) }
+			class={ getSliderClasses(props) }
+			if props.Disabled {
+				disabled
+			}
+		/>
+		
+		if props.Min != 0 || props.Max != 100 {
+			<div class="w-full flex justify-between text-xs text-base-content/60 mt-1">
+				<span>{ fmt.Sprintf("%d", props.Min) }</span>
+				<span>{ fmt.Sprintf("%d", props.Max) }</span>
+			</div>
+		}
+	</div>
+}
+
+// Helper functions
+func getSliderWrapperClasses(props SliderProps) string {
+	classes := "form-control w-full"
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+}
+
+func getSliderClasses(props SliderProps) string {
+	classes := "range"
+	
+	switch props.Variant {
+	case "primary":
+		classes += " range-primary"
+	case "secondary":
+		classes += " range-secondary"
+	case "accent":
+		classes += " range-accent"
+	case "success":
+		classes += " range-success"
+	case "warning":
+		classes += " range-warning"
+	case "error":
+		classes += " range-error"
+	default:
+		classes += " range-primary"
+	}
+	
+	switch props.Size {
+	case "xs":
+		classes += " range-xs"
+	case "sm":
+		classes += " range-sm"
+	case "lg":
+		classes += " range-lg"
+	default:
+		classes += " range-md"
+	}
+	
+	return classes
+}
+
+func getStep(step int) int {
+	if step <= 0 {
+		return 1
+	}
+	return step
+} 

@@ -1,0 +1,158 @@
+package components
+
+// SearchProps defines the properties for the Search component
+type SearchProps struct {
+	Placeholder string
+	Value       string
+	Size        string // xs, sm, md, lg
+	Variant     string // bordered, ghost, filled
+	Loading     bool
+	Disabled    bool
+	ShowButton  bool   // Show search button
+	ButtonText  string // Custom button text
+	Class       string
+}
+
+// Search creates a search input component
+templ Search(props SearchProps) {
+	<div class={ getSearchWrapperClasses(props) }>
+		<div class={ getSearchContainerClasses(props) }>
+			<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+				if props.Loading {
+					<div class="loading loading-spinner loading-sm text-primary"></div>
+				} else {
+					<svg class="w-5 h-5 text-base-content/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+					</svg>
+				}
+			</div>
+			
+			<input 
+				type="search"
+				placeholder={ props.Placeholder }
+				value={ props.Value }
+				class={ getSearchInputClasses(props) }
+				if props.Disabled {
+					disabled
+				}
+			/>
+			
+			if props.ShowButton {
+				<button class={ getSearchButtonClasses(props) }>
+					<svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+					</svg>
+					{ getSearchButtonText(props.ButtonText) }
+				</button>
+			}
+		</div>
+	</div>
+}
+
+// SearchWithFilters creates a search with filter options
+templ SearchWithFilters(props SearchProps, filters []SearchFilter) {
+	<div class={ getSearchWrapperClasses(props) }>
+		<div class="flex gap-2">
+			<div class="flex-1">
+				@Search(props)
+			</div>
+			
+			<div class="dropdown dropdown-end">
+				<div tabindex="0" role="button" class="btn btn-outline">
+					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.207A1 1 0 013 6.5V4z"></path>
+					</svg>
+					Filters
+				</div>
+				<div tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
+					for _, filter := range filters {
+						<li>
+							<label class="cursor-pointer">
+								<input type="checkbox" class="checkbox checkbox-sm" />
+								<span class="text-sm">{ filter.Label }</span>
+							</label>
+						</li>
+					}
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
+// SearchFilter represents a filter option
+type SearchFilter struct {
+	Label    string
+	Value    string
+	Selected bool
+}
+
+// Helper functions
+func getSearchWrapperClasses(props SearchProps) string {
+	classes := "search-wrapper w-full"
+	
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	
+	return classes
+}
+
+func getSearchContainerClasses(props SearchProps) string {
+	classes := "relative flex items-center"
+	if props.ShowButton {
+		classes += " shadow-lg rounded-full overflow-hidden border border-base-300 focus-within:border-primary transition-colors"
+	}
+	return classes
+}
+
+func getSearchInputClasses(props SearchProps) string {
+	classes := "input w-full pl-12 pr-4 border-0 focus:outline-none bg-transparent"
+	
+	if !props.ShowButton {
+		switch props.Variant {
+		case "ghost":
+			classes += " input-ghost"
+		case "filled":
+			classes += " bg-base-200 rounded-full"
+		default:
+			classes += " input-bordered rounded-full shadow-md border-base-300 focus:border-primary transition-colors"
+		}
+	}
+	
+	switch props.Size {
+	case "xs":
+		classes += " input-xs"
+	case "sm":
+		classes += " input-sm"
+	case "lg":
+		classes += " input-lg text-lg"
+	default:
+		classes += " input-md"
+	}
+	
+	return classes
+}
+
+func getSearchButtonClasses(props SearchProps) string {
+	classes := "btn btn-primary rounded-l-none"
+	
+	switch props.Size {
+	case "xs":
+		classes += " btn-xs"
+	case "sm":
+		classes += " btn-sm"
+	case "lg":
+		classes += " btn-lg"
+	default:
+		classes += " btn-md"
+	}
+	
+	return classes
+}
+
+func getSearchButtonText(buttonText string) string {
+	if buttonText != "" {
+		return buttonText
+	}
+	return "Search"
+} 
