@@ -1,4 +1,4 @@
-# GoShad UI
+# GoShad UI 
 
 
 A comprehensive, modern UI component library for Go web applications built with [a-h/templ](https://github.com/a-h/templ), [Tailwind CSS](https://tailwindcss.com/), and [DaisyUI](https://daisyui.com/).
